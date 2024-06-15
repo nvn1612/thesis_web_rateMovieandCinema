@@ -2,8 +2,8 @@ const { PrismaClient, PrismaClientKnownRequestError } = require("@prisma/client"
 const bcrypt = require("bcryptjs");
 const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
-const multer = require("multer");
-const path = require("path");
+const upload = require('../uploadMiddleware');
+const fs = require('fs');
 const prisma = new PrismaClient();
 
 const registerUser = async (req, res) => {
@@ -153,34 +153,87 @@ const getUsers = async (req, res) => {
 };
 
 const getUser = async (req, res) => {
-  const { id } = req.params;
-  const user = await prisma.users.findUnique({ where: { user_id: Number(id) } });
-  res.json(user);
+  const { user_id } = req.params;
+  try {
+    const user = await prisma.users.findUnique({ 
+      where: { 
+        user_id: Number(user_id) 
+      } 
+    });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    res.json(user);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 };
+  
 
 const createUser = async (req, res) => {
-  const { email, username, password, first_name, last_name, phone_number, address, isAdmin } = req.body;
+  upload(req, res, async (err) => {
+    if (err) {
+      console.log(err);
+      return res.status(400).json({ error: 'Error uploading files.' });
+    }
 
-  const hashedPassword = await bcrypt.hash(password, 10);
-  const activation_token = jwt.sign({ username }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const { email, username, password, name, phone_number, address, is_Admin, is_expert } = req.body;
+    const avatarPath = req.file ? req.file.path : null;
 
-  const newUser = await prisma.users.create({
-    data: {
-      email,
-      username,
-      password: hashedPassword,
-      first_name,
-      last_name,
-      phone_number,
-      address,
-      activation_token,
-      is_active: true,
-      isAdmin,
-    },
+    try {
+      const existingUser = await prisma.users.findFirst({
+        where: {
+          OR: [
+            { email },
+            { username }
+          ]
+        }
+      });
+
+      if (existingUser) {
+        if (avatarPath) {
+          fs.unlinkSync(avatarPath);
+        }
+        return res.status(400).json({ error: 'Email hoặc username đã tồn tại !' });
+      }
+
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const activation_token = jwt.sign({ username }, process.env.JWT_SECRET, { expiresIn: '1h' });
+      const isAdminBool = is_Admin === 'true';
+      const isExpertBool = is_expert === 'true';
+
+      const newUser = await prisma.users.create({
+        data: {
+          email,
+          username,
+          password: hashedPassword,
+          name,
+          phone_number,
+          address,
+          avatar: avatarPath,
+          activation_token,
+          is_active: true,
+          is_Admin: isAdminBool,
+          is_expert: isExpertBool
+        },
+      });
+
+      res.status(201).json(newUser);
+    } catch (error) {
+      console.log(error);
+
+      if (avatarPath) {
+        fs.unlinkSync(avatarPath); 
+        console.log(`Deleted file: ${avatarPath}`);
+      }
+
+      res.status(500).json({ error: 'Có lỗi xảy ra' });
+    }
   });
-
-  res.status(201).json(newUser);
 };
+
+
 
 
 const deleteUser = async (req, res) => {
@@ -196,35 +249,46 @@ const deleteUser = async (req, res) => {
     }
   }
 };
-const storage = multer.diskStorage({
-  destination: function(req, file, cb) {
-    cb(null, 'uploadimage/') 
-  },
-  filename: function(req, file, cb) {
-    cb(null, Date.now() + path.extname(file.originalname)) 
-  }
-});
 
-const upload = multer({ storage: storage });
-exports.updateUser = [upload.single('avatar'), async (req, res) => {
-  const {id} = req.params;
-  const {username,email,password,phone_number,address,is_Admin,is_active,is_expert}= req.body;
-  const avatar = req.file.path;
-  try{
-    const updateUser = await prisma.users.update({
-      where:{user_id: Number(id)},
-      data:{username,email,password,phone_number,address,avatar,is_Admin,is_active,is_expert}
-    })
-    res.status(200).json(updateUser);
-  }catch(error){
-    if(error instanceof PrismaClientKnownRequestError && error.code === 'p2025'){
-      res.status(404).json({error:"User not found"});
-    }else{
-      res.status(500).json({error:error.message})
+const updateUser = async (req, res) => {
+  upload(req, res, async (err) => {
+    if (err) {
+      console.log(err);
+      return res.status(400).json({ error: 'Error uploading files.' });
     }
-  }
-}];
 
+    const { id, name, is_Admin, is_expert } = req.body;
+    const { user_id } = req.params;
+    const avatarPath = req.file ? req.file.path : null;
+    const isAdminBool = is_Admin === 'true';
+    const isExpertBool = is_expert === 'true';
+
+    try {
+      const updatedUser = await prisma.users.update({
+        where: { user_id: Number(user_id) },
+        data: {
+          name,
+          avatar: avatarPath,
+          is_Admin: isAdminBool,
+          is_expert: isExpertBool 
+        },
+      });
+
+      res.status(200).json(updatedUser);
+    } catch (error) {
+      console.log(error);
+    
+      if (avatarPath) {
+        fs.unlinkSync(avatarPath); 
+        console.log(`Deleted file: ${avatarPath}`);
+      }
+
+      res.status(500).json({ error: 'Có lỗi xảy ra' });
+    }
+    
+  });
+
+};
 
 module.exports = {
   registerUser,

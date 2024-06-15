@@ -9,9 +9,9 @@ router.post('/login', loginUser);
 router.post('/forgot-password', forgotPassword);
 
 router.get('/getalluser', getUsers);
-router.get('/getuser/:id', getUser);
-router.post('/createuser', createUser);
+router.get('/getuser/:user_id', getUser);
+router.post('/createuser', createUser); 
 router.delete('/deleteuser/:id', deleteUser);
-router.put('/updateuser/:id', updateUser);
+router.put('/updateuser/:user_id', updateUser);
 
 module.exports = router;
