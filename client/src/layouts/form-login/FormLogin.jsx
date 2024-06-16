@@ -19,7 +19,12 @@ export const FormLogin = () => {
       });
 
       if (response.data.token) {
-        navigate('/home');
+        const { is_Admin } = response.data.user;
+        if(is_Admin) {
+          navigate('/admin');
+        }else{
+          navigate('/');
+        }
       } else {
         setMessage('Login failed. Please try again.');
       }

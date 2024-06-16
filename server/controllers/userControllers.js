@@ -97,7 +97,7 @@ const loginUser = async (req, res) => {
         return res.status(400).json({ error: 'Account is not activated.' });
       }
   
-      const token = jwt.sign({ username: user.username }, process.env.JWT_SECRET, {
+      const token = jwt.sign({ username: user.username, isAdmin: user.is_Admin }, process.env.JWT_SECRET, {
         expiresIn: '1h',
       });
   
@@ -257,13 +257,20 @@ const updateUser = async (req, res) => {
       return res.status(400).json({ error: 'Error uploading files.' });
     }
 
-    const { id, name, is_Admin, is_expert } = req.body;
+    const { name, is_Admin, is_expert } = req.body;
     const { user_id } = req.params;
     const avatarPath = req.file ? req.file.path : null;
     const isAdminBool = is_Admin === 'true';
     const isExpertBool = is_expert === 'true';
 
     try {
+      // Get the old avatar path before updating
+      const oldUser = await prisma.users.findUnique({
+        where: { user_id: Number(user_id) },
+      });
+
+      const oldAvatarPath = oldUser.avatar;
+
       const updatedUser = await prisma.users.update({
         where: { user_id: Number(user_id) },
         data: {
@@ -273,6 +280,12 @@ const updateUser = async (req, res) => {
           is_expert: isExpertBool 
         },
       });
+
+      // Delete the old avatar if a new one was uploaded
+      if (avatarPath && oldAvatarPath) {
+        fs.unlinkSync(oldAvatarPath);
+        console.log(`Deleted old avatar: ${oldAvatarPath}`);
+      }
 
       res.status(200).json(updatedUser);
     } catch (error) {

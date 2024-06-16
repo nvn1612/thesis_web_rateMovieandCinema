@@ -8,6 +8,7 @@ export const UserEdit = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isExpert, setIsExpert] = useState(false);
   const [imagePreviewUrl, setImagePreviewUrl] = useState("");
+  const [selectedFile, setSelectedFile] = useState(null);
 
   let { userId } = useParams();
 
@@ -32,37 +33,24 @@ export const UserEdit = () => {
   const handleIsExpertChange = (event) => setIsExpert(event.target.checked);
 
   const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    const imageUrl = URL.createObjectURL(file);
-    setImagePreviewUrl(imageUrl);
-    uploadProfilePicture(file); // Call function to handle file upload
-  };
+    setSelectedFile(event.target.files[0]);
 
-  const uploadProfilePicture = async (file) => {
-    const formData = new FormData();
-    formData.append("avatar", file);
+    let reader = new FileReader();
 
-    try {
-      const response = await axios.post(`http://localhost:8000/user/update/${userId}`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      console.log("Profile picture uploaded successfully", response.data);
-      alert("Profile picture updated successfully");
-    } catch (error) {
-      console.error("Error uploading profile picture", error);
-      alert("There was an error uploading profile picture: " + error.message);
+    reader.onloadend = () => {
+      setImagePreviewUrl(reader.result);
     }
-  };
+
+    reader.readAsDataURL(event.target.files[0]);
+  }
 
   const handleSubmit = async () => {
-    const data = {
-      name,
-      is_Admin: isAdmin,
-      is_expert: isExpert,
-      is_active: isActive,
-    };
+    const data = new FormData();
+    data.append('name', name);
+    data.append('is_Admin', isAdmin);
+    data.append('is_expert', isExpert);
+    data.append('is_active', isActive);
+    data.append('avatar', selectedFile);
 
     try {
       const response = await axios.put(`http://localhost:8000/user/updateuser/${userId}`, data);
