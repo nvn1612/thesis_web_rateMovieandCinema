@@ -7,6 +7,7 @@ import { UserList } from "./user/UserList";
 import { UserCreate } from "./user/UserCreate";
 import { UserEdit } from "./user/UserEdit";
 import { MovieList } from "./movie/MovieList";
+import { MovieCreate } from "./movie/MovieCreate";
 export const AdminPage = () => {
   return (
     <div className="flex w-full h-screen overflow-hidden">
@@ -61,6 +62,7 @@ export const AdminPage = () => {
           <Route path="user/add" element={<UserCreate />} />
           <Route path="user/edit/:userId" element={<UserEdit />} />
           <Route path="movies/" element={<MovieList />} />
+          <Route path="movies/create" element={<MovieCreate />} />
         </Routes>
       </div>
     </div>

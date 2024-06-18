@@ -12,7 +12,7 @@ app.use(cors());
 app.use('/user', userRoutes);
 app.use('/movie', movieRoutes);
 app.use('/uploadimage', express.static(path.join(__dirname, 'uploadimage')));
-
+app.use('/uploadimagemovie', express.static(path.join(__dirname, 'uploadimagemovie')));
 
 app.get('/', (req, res) => {
   res.send('Hello World!');

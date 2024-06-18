@@ -6,7 +6,6 @@ import { VerifySignup } from "./pages/verification-page/VerifySignup";
 import { NotifySuccess } from "./pages/verification-page/NotifySuccess";
 import { Home } from "./pages/home/Home";
 import { ForgotPassword } from "./pages/forgot-password/ForgotPassword";
-import { MovieCreate } from "./pages/admin-page/movie/MovieCreate";
 import { AdminPage } from "./pages/admin-page/AdminPage"; 
 
 const AppRoutes = () => {
@@ -19,7 +18,6 @@ const AppRoutes = () => {
       <Route path="/notify-success" element={<NotifySuccess />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/admin/*" element={<AdminPage />} />
-      <Route path="/page" element={<MovieCreate />} />
     </Routes>
   );
 };
