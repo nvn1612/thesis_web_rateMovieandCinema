@@ -6,6 +6,7 @@ import { Routes, Route } from "react-router-dom";
 import { UserList } from "./user/UserList";
 import { UserCreate } from "./user/UserCreate";
 import { UserEdit } from "./user/UserEdit";
+import { MovieList } from "./movie/MovieList";
 export const AdminPage = () => {
   return (
     <div className="flex w-full h-screen overflow-hidden">
@@ -27,7 +28,7 @@ export const AdminPage = () => {
               Quản lý user
             </Link>
             <Link
-              to="#"
+              to="/admin/movies"
               className="block py-2.5 px-4 rounded transition duration-200 hover:bg-green-700"
             >
               Quản lý phim
@@ -56,9 +57,10 @@ export const AdminPage = () => {
       </div>
       <div className="page-management flex-1">
         <Routes>
-          <Route path="users/" element={<UserList />} />
+          <Route path="users/*" element={<UserList />} />
           <Route path="user/add" element={<UserCreate />} />
           <Route path="user/edit/:userId" element={<UserEdit />} />
+          <Route path="movies/" element={<MovieList />} />
         </Routes>
       </div>
     </div>
