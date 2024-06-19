@@ -111,14 +111,12 @@ const getGenres = async (req, res) => {
 const deleteMovie = async (req, res) => {
   const { id } = req.params;
   try {
-    // Xóa các bản ghi liên quan trong movie_genres trước
     await prisma.movie_genres.deleteMany({
       where: {
         movie_id: Number(id)
       }
     });
 
-    // Sau đó mới xóa bản ghi trong movies
     const deletedMovie = await prisma.movies.delete({
       where: { movie_id: Number(id) }
     });
@@ -133,4 +131,74 @@ const deleteMovie = async (req, res) => {
   }
 };
 
-module.exports = { createMovie, getGenres, getAllMovies, getMovieById, deleteMovie  };
+const updateMovie = async (req, res) => {
+  uploadMovieImage(req, res, async (err) => {
+    if (err) {
+      console.log(err);
+      return res.status(400).json({ error: 'Error uploading files.' });
+    }
+
+    const { id } = req.params;
+    const { name_movie, trailer_link, country, description, director, release_date, duration, genre } = req.body;
+    const posterImagePath = req.files.poster_image ? req.files.poster_image[0].path : null;
+    const backdropImagePath = req.files.backdrop_image ? req.files.backdrop_image[0].path : null;
+
+    try {
+      const existingMovie = await prisma.movies.findUnique({
+        where: { movie_id: parseInt(id) },
+        include: {
+          movie_genres: true,
+        }
+      });
+
+      if (!existingMovie) {
+        if (posterImagePath) fs.unlinkSync(posterImagePath);
+        if (backdropImagePath) fs.unlinkSync(backdropImagePath);
+        return res.status(404).json({ error: 'Movie not found' });
+      }
+
+      const updatedMovie = await prisma.movies.update({
+        where: { movie_id: parseInt(id) },
+        data: {
+          name_movie,
+          trailer_link,
+          poster_image: posterImagePath || existingMovie.poster_image,
+          backdrop_image: backdropImagePath || existingMovie.backdrop_image,
+          country,
+          description,
+          director,
+          release_date: release_date ? new Date(release_date) : existingMovie.release_date,
+          duration: duration ? parseInt(duration) : existingMovie.duration,
+          movie_genres: {
+            deleteMany: {},
+            create: genre.split(',').map(g => ({
+              genres: {
+                connect: {
+                  genre_id: parseInt(g)
+                }
+              }
+            }))
+          }
+        },
+        include: {
+          movie_genres: true
+        }
+      });
+
+      if (posterImagePath && existingMovie.poster_image) fs.unlinkSync(existingMovie.poster_image);
+      if (backdropImagePath && existingMovie.backdrop_image) fs.unlinkSync(existingMovie.backdrop_image);
+
+      res.json(updatedMovie);
+    } catch (error) {
+      console.log(error);
+
+      if (posterImagePath) fs.unlinkSync(posterImagePath);
+      if (backdropImagePath) fs.unlinkSync(backdropImagePath);
+
+      res.status(500).json({ error: 'Có lỗi xảy ra' });
+    }
+  });
+};
+
+
+module.exports = { createMovie, getGenres, getAllMovies, getMovieById, deleteMovie, updateMovie  };

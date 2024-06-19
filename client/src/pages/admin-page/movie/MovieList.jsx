@@ -25,7 +25,6 @@ export const MovieList = () => {
     try {
       const response = await axios.delete(`http://localhost:8000/movie/deletemovie/${id}`);
       if (response.status === 200) {
-        // Xóa phim thành công, cập nhật danh sách phim
         const updatedMovies = movies.filter(movie => movie.movie_id !== id);
         setMovies(updatedMovies);
       }

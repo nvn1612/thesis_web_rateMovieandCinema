@@ -5,7 +5,7 @@ import { faEnvelope, faPhone, faLocationDot } from "@fortawesome/free-solid-svg-
 import { faFacebook,faInstagram,faTiktok,faTelegram } from '@fortawesome/free-brands-svg-icons';
 export const Footer = () => {
   return (
-    <footer className="footer-wrapper bg-gray-800 text-white p-10">
+    <footer className="footer-wrapper bg-gray-800 text-white p-7">
       <div className="footer-content flex justify-between items-center">
         <div className="footer-left flex space-x-5">
           <div className="footer-logo">
@@ -38,16 +38,16 @@ export const Footer = () => {
         <div className="footer-right">
            <ul className="list-none flex space-x-20">
                 <li className="mb-2">
-                    <a href="#" className="hover:text-green-500 transition text-4xl"><FontAwesomeIcon icon={faFacebook} /></a>
+                    <a href="#" className="hover:text-green-500 transition text-3xl"><FontAwesomeIcon icon={faFacebook} /></a>
                 </li>
                 <li className="mb-2">
-                    <a href="#" className="hover:text-green-500 transition text-4xl"><FontAwesomeIcon icon={faInstagram} /></a>
+                    <a href="#" className="hover:text-green-500 transition text-3xl"><FontAwesomeIcon icon={faInstagram} /></a>
                 </li>
                 <li className="mb-2">
-                    <a href="#" className="hover:text-green-500 transition text-4xl"><FontAwesomeIcon icon={faTiktok} /></a>
+                    <a href="#" className="hover:text-green-500 transition text-3xl"><FontAwesomeIcon icon={faTiktok} /></a>
                 </li>
                 <li className="mb-2">
-                    <a href="#" className="hover:text-green-500 transition text-4xl"><FontAwesomeIcon icon={faTelegram} /></a>
+                    <a href="#" className="hover:text-green-500 transition text-3xl"><FontAwesomeIcon icon={faTelegram} /></a>
                 </li>
            </ul>
         </div>
