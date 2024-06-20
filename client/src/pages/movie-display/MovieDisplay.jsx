@@ -34,7 +34,7 @@ export const MovieDisplay = () => {
               <img 
                 src={`http://localhost:8000/${movie.poster_image}`} 
                 alt={movie.name_movie} 
-                className="poster h-3/4 border rounded-lg" 
+                className="h-3/4 w-full border rounded-lg object-cover" 
               />
               <div className="flex flex-col m-1">
                 <p className="overflow-hidden text-ellipsis whitespace-nowrap">
