@@ -20,7 +20,7 @@ const AppRoutes = () => {
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/admin/*" element={<AdminPage />} />
       <Route path="/page" element={<MovieDisplay />} />
-      <Route path="/page1" element={<MovieDetail />} />
+      <Route path="page/movie/detail/:id" element={<MovieDetail />} />
     </Routes>
   );
 };
