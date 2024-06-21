@@ -8,6 +8,7 @@ import { faCalendarWeek, faClock } from "@fortawesome/free-solid-svg-icons";
 import { BtnRate } from "../../components/btn-rate/BtnRate";
 import { TrailerModal } from "../../components/trailer-modal/TrailerModal";
 import { ModalRateMovie } from "../modal-rate/modal-rate-movie/ModalRateMovie";
+import { faStar } from "@fortawesome/free-solid-svg-icons";
 
 export const MovieDetail = () => {
   const [isTrailerOpen, setIsTrailerOpen] = useState(false);
@@ -18,10 +19,12 @@ export const MovieDetail = () => {
   useEffect(() => {
     const fetchMovie = async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/movie/getmovie/${id}`);
+        const response = await axios.get(
+          `http://localhost:8000/movie/getmovie/${id}`
+        );
         setMovie(response.data);
       } catch (error) {
-        console.error('Có lỗi xảy ra', error);
+        console.error("Có lỗi xảy ra", error);
       }
     };
     fetchMovie();
@@ -69,10 +72,17 @@ export const MovieDetail = () => {
           </div>
           <div className="w-2/3 flex">
             <div className="flex flex-col space-y-2">
-              <p className="text-white uppercase text-2xl font-bold mt-2">{movie.name_movie}</p>
+              <p className="text-white uppercase text-2xl font-bold mt-2">
+                {movie.name_movie}
+              </p>
               <div className="flex space-x-5">
                 {movie.movie_genres.map((genre) => (
-                  <p key={genre.genre_id} className="text-white p-1 bg-gray-500 rounded-xl">{genre.genres.name}</p>
+                  <p
+                    key={genre.genre_id}
+                    className="text-white p-1 bg-gray-500 rounded-xl"
+                  >
+                    {genre.genres.name}
+                  </p>
                 ))}
               </div>
               <p className="text-white w-4/5">{movie.description}</p>
@@ -98,11 +108,16 @@ export const MovieDetail = () => {
               <div className="flex space-x-6">
                 <div className="flex flex-col">
                   <div className="flex space-x-2 items-center">
-                    <FontAwesomeIcon className="text-white" icon={faCalendarWeek} />
+                    <FontAwesomeIcon
+                      className="text-white"
+                      icon={faCalendarWeek}
+                    />
                     <p className="text-white">Ngày khởi chiếu</p>
                   </div>
                   <div className="flex justify-center">
-                    <p className="text-white">{new Date(movie.release_date).toLocaleDateString()}</p>
+                    <p className="text-white">
+                      {new Date(movie.release_date).toLocaleDateString()}
+                    </p>
                   </div>
                 </div>
                 <div className="flex flex-col">
@@ -119,6 +134,39 @@ export const MovieDetail = () => {
           </div>
         </div>
       </div>
+      <div className="bg-gray-200 h-screen flex justify-center">
+        <div className="w-2/3 bg-white h-full">
+          <div className="flex flex-col space-y-3">
+            <div className="flex p-4 bg-slate-400 items-center space-x-1">
+              <p>Các đánh giá của</p>
+              <p>{movie.name_movie}</p>
+            </div>
+            <div className="flex flex-col p-2">
+              <div className="flex flex-col p-2 border rounded-md bg-slate-200 space-y-2">
+                <div className="flex space-x-4">
+                  <img
+                    className="w-12 h-12 rounded-full"
+                    src="https://static.vecteezy.com/system/resources/thumbnails/036/280/650/small_2x/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg"
+                  ></img>
+                  <div className="flex flex-col">
+                    <div className="flex space-x-2">
+                      <p>nguyen van A</p>
+                      <p>
+                        <FontAwesomeIcon icon={faStar} /> 3
+                      </p>
+                    </div>
+                    <div className="text-gray-400"> 3 ngày trước</div>
+                  </div>
+                </div>
+                <div>
+                    <p>Bộ phim thực sự rất hay nha Bộ phim thực sự rất hay nha Bộ phim thực sự rất hay nha Bộ phim thực sự rất hay nha Bộ phim thực sự rất hay nha Bộ phim thực sự rất hay nha </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <TrailerModal
         trailerUrl={`https://www.youtube.com/embed/${movie.trailer_link}`}
         isOpen={isTrailerOpen}
@@ -130,7 +178,8 @@ export const MovieDetail = () => {
         movieName={movie.name_movie}
         posterUrl={`http://localhost:8000/${movie.poster_image}`}
       />
-      <Footer />
+
+      {/* <Footer /> */}
     </>
   );
 };

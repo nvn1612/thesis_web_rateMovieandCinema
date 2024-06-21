@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { Header } from '../../layouts/header/Header';
-import { BgTop } from '../../components/bg-top/BgTop';
-import { Footer } from '../../layouts/footer/Footer';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { Header } from "../../layouts/header/Header";
+import { BgTop } from "../../components/bg-top/BgTop";
+import { Footer } from "../../layouts/footer/Footer";
+import { useNavigate } from "react-router-dom";
 
 export const MovieDisplay = () => {
   const [movies, setMovies] = useState([]);
@@ -14,10 +14,12 @@ export const MovieDisplay = () => {
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/movie/getallmovies');
+        const response = await axios.get(
+          "http://localhost:8000/movie/getallmovies"
+        );
         setMovies(response.data);
       } catch (error) {
-        console.error('Có lỗi xảy ra', error);
+        console.error("Có lỗi xảy ra", error);
       }
     };
     fetchMovies();
@@ -32,14 +34,15 @@ export const MovieDisplay = () => {
       rows.push(
         <div className="row flex space-x-10" key={i}>
           {currentMovies.slice(i, i + 4).map((movie) => (
-            <div className="card-movie flex flex-col w-48 h-80 border rounded-lg" key={movie.movie_id}
+            <div
+              className="card-movie flex flex-col w-48 h-80 border rounded-lg"
+              key={movie.movie_id}
               onClick={() => navigate(`movie/detail/${movie.movie_id}`)}
-
             >
-              <img 
-                src={`http://localhost:8000/${movie.poster_image}`} 
-                alt={movie.name_movie} 
-                className="h-4/5 w-full border rounded-lg object-fill" 
+              <img
+                src={`http://localhost:8000/${movie.poster_image}`}
+                alt={movie.name_movie}
+                className="h-4/5 w-full border rounded-lg object-fill"
               />
               <div className="flex flex-col m-1">
                 <p className="overflow-hidden text-ellipsis whitespace-nowrap font-bold">
@@ -64,7 +67,11 @@ export const MovieDisplay = () => {
         <button
           key={i}
           onClick={() => setCurrentPage(i)}
-          className={`pt-1 pl-2 pr-2 pb-1 rounded ${i === currentPage ? 'bg-gray-500 text-white' : 'bg-gray-300 hover:bg-gray-400'}`}
+          className={`pt-1 pl-2 pr-2 pb-1 rounded ${
+            i === currentPage
+              ? "bg-gray-500 text-white"
+              : "bg-gray-300 hover:bg-gray-400"
+          }`}
         >
           {i}
         </button>
@@ -88,9 +95,7 @@ export const MovieDisplay = () => {
               {renderMovies()}
             </div>
           </div>
-          <div className="flex space-x-2 mt-4 mb-4">
-            {renderPageNumbers()}
-          </div>
+          <div className="flex space-x-2 mt-4 mb-4">{renderPageNumbers()}</div>
         </div>
       </div>
       <Footer />

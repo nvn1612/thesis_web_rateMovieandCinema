@@ -4,7 +4,6 @@ import { ContentModalRate } from "../../../layouts/content-modal-rate/ContentMod
 import { BtnConfirm } from "../../../components/btn-confirm/BtnConfirm";
 export const ModalRateMovie = ({ isOpen, onClose,movieName, posterUrl }) => {
   if (!isOpen) return null;
-
   const handleOverlayClick = (e) => {
     if (e.target === e.currentTarget) {
       onClose();

@@ -1,13 +1,16 @@
+// FormLogin.js
 import React, { useState } from "react";
 import axios from 'axios';
 import logo from "../../assets/images/logo.png";
 import { useNavigate } from "react-router-dom";
+import { useUser } from "../../context/UserContext";
 
 export const FormLogin = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState(null);
   const navigate = useNavigate();
+  const { login } = useUser();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -19,11 +22,17 @@ export const FormLogin = () => {
       });
 
       if (response.data.token) {
+        // Lưu token vào localStorage
+        localStorage.setItem('token', response.data.token);
+
+        // Lưu thông tin người dùng và gọi hàm login từ context
+        login(response.data.user);
+
         const { is_Admin } = response.data.user;
-        if(is_Admin) {
+        if (is_Admin) {
           navigate('/admin');
-        }else{
-          navigate('/');
+        } else {
+          navigate('/page');
         }
       } else {
         setMessage('Login failed. Please try again.');
@@ -40,10 +49,7 @@ export const FormLogin = () => {
         {message && <p className="text-center text-red-500">{message}</p>}
         <form className="space-y-6 mt-4" onSubmit={handleSubmit}>
           <div>
-            <label
-              htmlFor="username"
-              className="block text-md font-medium text-gray-700"
-            >
+            <label htmlFor="username" className="block text-md font-medium text-gray-700">
               Tài khoản
             </label>
             <div className="mt-1">
@@ -62,10 +68,7 @@ export const FormLogin = () => {
 
           <div>
             <div className="flex justify-between items-center">
-              <label
-                htmlFor="password"
-                className="block text-md font-medium text-gray-700"
-              >
+              <label htmlFor="password" className="block text-md font-medium text-gray-700">
                 Mật khẩu
               </label>
               <a href="/forgot-password" className="text-gray-400 hover:underline">

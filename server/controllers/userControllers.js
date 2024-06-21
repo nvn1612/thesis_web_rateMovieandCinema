@@ -2,7 +2,7 @@ const { PrismaClient, PrismaClientKnownRequestError } = require("@prisma/client"
 const bcrypt = require("bcryptjs");
 const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
-const upload = require('../uploadMiddleware');
+const {uploadUserImage } = require('../uploadMiddleware');
 const fs = require('fs');
 const prisma = new PrismaClient();
 
@@ -172,7 +172,7 @@ const getUser = async (req, res) => {
   
 
 const createUser = async (req, res) => {
-  upload(req, res, async (err) => {
+  uploadUserImage(req, res, async (err) => {
     if (err) {
       console.log(err);
       return res.status(400).json({ error: 'Error uploading files.' });
@@ -251,7 +251,7 @@ const deleteUser = async (req, res) => {
 };
 
 const updateUser = async (req, res) => {
-  upload(req, res, async (err) => {
+  uploadUserImage(req, res, async (err) => {
     if (err) {
       console.log(err);
       return res.status(400).json({ error: 'Error uploading files.' });
@@ -264,7 +264,7 @@ const updateUser = async (req, res) => {
     const isExpertBool = is_expert === 'true';
 
     try {
-      // Get the old avatar path before updating
+    
       const oldUser = await prisma.users.findUnique({
         where: { user_id: Number(user_id) },
       });
