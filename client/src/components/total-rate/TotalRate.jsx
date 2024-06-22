@@ -1,6 +1,6 @@
 import React from "react";
 
-export const TotalRate = ({ totalPercent = "30" }) => {
+export const TotalRate = ({ totalPercent }) => {
   const colorText = (totalPercent) => {
     const value = parseInt(totalPercent, 10);
     if (value >= 80) return "text-green-500";

@@ -9,11 +9,29 @@ import { BtnRate } from "../../components/btn-rate/BtnRate";
 import { TrailerModal } from "../../components/trailer-modal/TrailerModal";
 import { ModalRateMovie } from "../modal-rate/modal-rate-movie/ModalRateMovie";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
+import noAvatarUser from "../../assets/images/no_user_avatar.jpg";
+import { TotalRate } from "../../components/total-rate/TotalRate";
+import { ProgressBarGroup } from "../../layouts/progress-bar-group/ProgressBarGroup";
+import { CountRate } from "../../components/count-rate/CountRate";
 
 export const MovieDetail = () => {
   const [isTrailerOpen, setIsTrailerOpen] = useState(false);
   const [isRateModalOpen, setIsRateModalOpen] = useState(false);
   const [movie, setMovie] = useState(null);
+  const [ratings, setRatings] = useState([]);
+  const [averageRating, setAverageRating] = useState(0);
+  const [averageContentRating, setAverageContentRating] = useState(0);
+  const [averageActingRating, setAverageActingRating] = useState(0);
+  const [averageVisualEffectsRating, setAverageVisualEffectsRating] = useState(0);
+  const [averageSoundRating, setAverageSoundRating] = useState(0);
+  const [averageDirectingRating, setAverageDirectingRating] = useState(0);
+  const [averageEntertainmentRating, setAverageEntertainmentRating] = useState(0);
+
+
+
+
+  const [totalRatingsCount, setTotalRatingsCount] = useState(0);
+  const [users, setUsers] = useState({});
   const { id } = useParams();
 
   useEffect(() => {
@@ -27,7 +45,44 @@ export const MovieDetail = () => {
         console.error("Có lỗi xảy ra", error);
       }
     };
+
+    const fetchRatings = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:8000/movie-rating/ratings/${id}`
+        );
+        const ratingsData = response.data.ratings;
+        setRatings(ratingsData);
+        setAverageRating(response.data.averageRating);
+        setTotalRatingsCount(response.data.totalRatingsCount);
+
+        setAverageContentRating(response.data.averageContentRating);
+        setAverageActingRating(response.data.averageActingRating);
+        setAverageVisualEffectsRating(response.data.averageVisualEffectsRating);
+        setAverageSoundRating(response.data.averageSoundRating);
+        setAverageDirectingRating(response.data.averageDirectingRating);
+        setAverageEntertainmentRating(response.data.averageEntertainmentRating);
+
+
+        const usersData = {};
+        await Promise.all(
+          ratingsData.map(async (rating) => {
+            if (!usersData[rating.user_id]) {
+              const userResponse = await axios.get(
+                `http://localhost:8000/user/getuser/${rating.user_id}`
+              );
+              usersData[rating.user_id] = userResponse.data;
+            }
+          })
+        );
+        setUsers(usersData);
+      } catch (error) {
+        console.error("Có lỗi xảy ra", error);
+      }
+    };
+
     fetchMovie();
+    fetchRatings();
   }, [id]);
 
   const handleOpenTrailer = () => {
@@ -134,34 +189,75 @@ export const MovieDetail = () => {
           </div>
         </div>
       </div>
-      <div className="bg-gray-200 h-screen flex justify-center">
+      <div className="bg-gray-200 flex justify-center min-h-screen">
         <div className="w-2/3 bg-white h-full">
+          <div className="flex flex-col items-center space-y-2 mt-3 mb-3">
+            <ProgressBarGroup 
+              label_1={"Nội dung phim"}
+              label_2={"Diễn xuất"}
+              label_3={"Kỹ xảo"}
+              label_4={"Âm thanh"}
+              label_5={"Đạo diễn"}
+              label_6={"Tính giải trí"}
+              average1={Math.round(((averageContentRating)/5)*100)}
+              average2={Math.round(((averageActingRating)/5)*100)}
+              average3={Math.round(((averageVisualEffectsRating)/5)*100)}
+              average4={Math.round(((averageSoundRating)/5)*100)}
+              average5={Math.round(((averageDirectingRating)/5)*100)}
+              average6={Math.round(((averageEntertainmentRating)/5)*100)}
+            />
+            <div className="flex space-x-1 ">
+              <TotalRate 
+                  totalPercent={Math.round(((averageRating)/5)*100)}
+              />
+              <CountRate
+               name={movie.name_movie}
+               allRate={totalRatingsCount}
+               score={averageRating}
+              />
+            </div>
+          </div>
           <div className="flex flex-col space-y-3">
             <div className="flex p-4 bg-slate-400 items-center space-x-1">
               <p>Các đánh giá của</p>
               <p>{movie.name_movie}</p>
             </div>
-            <div className="flex flex-col p-2">
-              <div className="flex flex-col p-2 border rounded-md bg-slate-200 space-y-2">
-                <div className="flex space-x-4">
-                  <img
-                    className="w-12 h-12 rounded-full"
-                    src="https://static.vecteezy.com/system/resources/thumbnails/036/280/650/small_2x/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg"
-                  ></img>
-                  <div className="flex flex-col">
-                    <div className="flex space-x-2">
-                      <p>nguyen van A</p>
-                      <p>
-                        <FontAwesomeIcon icon={faStar} /> 3
-                      </p>
+            <div className="flex flex-col p-2 space-y-3">
+              {ratings.map((rating) => (
+                <div
+                  key={rating.movie_rating_id}
+                  className="flex flex-col p-2 border rounded-md bg-slate-200 space-y-2"
+                >
+                  <div className="flex space-x-4">
+                    <img
+                      className="w-12 h-12 rounded-full"
+                      src={
+                        users[rating.user_id]?.avatar
+                          ? `http://localhost:8000/${
+                              users[rating.user_id].avatar
+                            }`
+                          : noAvatarUser
+                      }
+                      alt="User Avatar"
+                    ></img>
+                    <div className="flex flex-col">
+                      <div className="flex space-x-2">
+                        <p>{users[rating.user_id]?.name || "Unknown User"}</p>
+                        <p>
+                          <FontAwesomeIcon icon={faStar} />{" "}
+                          {Math.round(rating.total_rating.toFixed(1))}
+                        </p>
+                      </div>
+                      <div className="text-gray-400">
+                        {new Date(rating.created_at).toLocaleDateString()}
+                      </div>
                     </div>
-                    <div className="text-gray-400"> 3 ngày trước</div>
+                  </div>
+                  <div>
+                    <p>{rating.comment}</p>
                   </div>
                 </div>
-                <div>
-                    <p>Bộ phim thực sự rất hay nha Bộ phim thực sự rất hay nha Bộ phim thực sự rất hay nha Bộ phim thực sự rất hay nha Bộ phim thực sự rất hay nha Bộ phim thực sự rất hay nha </p>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
         </div>
@@ -175,11 +271,10 @@ export const MovieDetail = () => {
       <ModalRateMovie
         isOpen={isRateModalOpen}
         onClose={handleCloseRateModal}
-        movieName={movie.name_movie}
+        movieId={movie.movie_id}
+        movieName={movie.title}
         posterUrl={`http://localhost:8000/${movie.poster_image}`}
       />
-
-      {/* <Footer /> */}
     </>
   );
 };

@@ -8,7 +8,6 @@ export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    // Khôi phục trạng thái từ localStorage khi ứng dụng khởi động
     const savedUser = localStorage.getItem('user');
     if (savedUser) {
       setUser(JSON.parse(savedUser));
@@ -17,13 +16,11 @@ export const UserProvider = ({ children }) => {
 
   const login = (userData) => {
     setUser(userData);
-    // Lưu thông tin người dùng vào localStorage
     localStorage.setItem('user', JSON.stringify(userData));
   };
 
   const logout = () => {
     setUser(null);
-    // Xóa thông tin người dùng khỏi localStorage
     localStorage.removeItem('user');
   };
 
@@ -33,4 +30,6 @@ export const UserProvider = ({ children }) => {
     </UserContext.Provider>
   );
 };
+
+export default UserContext;
  
