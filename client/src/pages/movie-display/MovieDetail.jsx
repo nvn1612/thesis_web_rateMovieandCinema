@@ -190,6 +190,10 @@ export const MovieDetail = () => {
         </div>
       </div>
       <div className="bg-gray-200 flex justify-center min-h-screen">
+      <div className="absolute left-0 top-50 p-4 flex flex-col">
+          <button className="p-2 m-2 border border-black  rounded-xl">Đáng giá từ người dùng</button>
+          <button className="p-2 m-2 bg-green-500 text-white rounded">Đánh giá từ chuyên gia </button>
+        </div>
         <div className="w-2/3 bg-white h-full">
           <div className="flex flex-col items-center space-y-2 mt-3 mb-3">
             <ProgressBarGroup 

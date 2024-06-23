@@ -73,8 +73,9 @@ model movie_rating {
   updated_at            DateTime? @default(now()) @db.Timestamp(0)
   users                 users     @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "movie_rating_ibfk_1")
   movies                movies    @relation(fields: [movie_id], references: [movie_id], onDelete: Cascade, onUpdate: NoAction, map: "movie_rating_ibfk_2")
-
+  is_expert_rating      Boolean?  @default(false)  // Thêm trường này để phân biệt đánh giá của chuyên gia
   @@unique([user_id, movie_id], map: "user_movie_unique")
   @@index([movie_id], map: "movie_id_index")
   @@index([user_id], map: "user_id_index")
 }
+

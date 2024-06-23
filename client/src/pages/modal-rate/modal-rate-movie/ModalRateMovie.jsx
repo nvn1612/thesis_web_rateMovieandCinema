@@ -3,7 +3,7 @@ import { ImageContent } from "../../../components/image-content/ImageContent";
 import { ContentModalRate } from "../../../layouts/content-modal-rate/ContentModalRate";
 import { BtnConfirm } from "../../../components/btn-confirm/BtnConfirm";
 import axios from "axios";
-import UserContext from "../../../context/UserContext"; // import default
+import UserContext from "../../../context/UserContext"; 
 
 export const ModalRateMovie = ({ isOpen, onClose, movieId, movieName, posterUrl }) => {
   const { user } = useContext(UserContext);
@@ -31,7 +31,6 @@ export const ModalRateMovie = ({ isOpen, onClose, movieId, movieName, posterUrl 
       onClose();
     }
   };
-
   const handleSubmit = async () => {
     try {
       const response = await axios.post('http://localhost:8000/movie-rating/add-rating', {
@@ -44,6 +43,7 @@ export const ModalRateMovie = ({ isOpen, onClose, movieId, movieName, posterUrl 
         directing_rating: ratings.directing_rating,
         entertainment_rating: ratings.entertainment_rating,
         comment,
+        is_expert_rating: user.is_expert
       });
       console.log('Rating added:', response.data);
       onClose();
