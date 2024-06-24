@@ -18,28 +18,20 @@ export const MovieDetail = () => {
   const [isTrailerOpen, setIsTrailerOpen] = useState(false);
   const [isRateModalOpen, setIsRateModalOpen] = useState(false);
   const [movie, setMovie] = useState(null);
-  const [ratings, setRatings] = useState([]);
-  const [averageRating, setAverageRating] = useState(0);
-  const [averageContentRating, setAverageContentRating] = useState(0);
-  const [averageActingRating, setAverageActingRating] = useState(0);
-  const [averageVisualEffectsRating, setAverageVisualEffectsRating] = useState(0);
-  const [averageSoundRating, setAverageSoundRating] = useState(0);
-  const [averageDirectingRating, setAverageDirectingRating] = useState(0);
-  const [averageEntertainmentRating, setAverageEntertainmentRating] = useState(0);
-
-
-
-
-  const [totalRatingsCount, setTotalRatingsCount] = useState(0);
+  const [userRatings, setUserRatings] = useState([]);
+  const [expertRatings, setExpertRatings] = useState([]);
+  const [averageUserRatings, setAverageUserRatings] = useState({});
+  const [averageExpertRatings, setAverageExpertRatings] = useState({});
+  const [totalUserRatingsCount, setTotalUserRatingsCount] = useState(0);
+  const [totalExpertRatingsCount, setTotalExpertRatingsCount] = useState(0);
+  const [isUserRatings, setIsUserRatings] = useState(true);
   const [users, setUsers] = useState({});
   const { id } = useParams();
 
   useEffect(() => {
     const fetchMovie = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8000/movie/getmovie/${id}`
-        );
+        const response = await axios.get(`http://localhost:8000/movie/getmovie/${id}`);
         setMovie(response.data);
       } catch (error) {
         console.error("Có lỗi xảy ra", error);
@@ -48,29 +40,40 @@ export const MovieDetail = () => {
 
     const fetchRatings = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8000/movie-rating/ratings/${id}`
-        );
-        const ratingsData = response.data.ratings;
-        setRatings(ratingsData);
-        setAverageRating(response.data.averageRating);
-        setTotalRatingsCount(response.data.totalRatingsCount);
+        const response = await axios.get(`http://localhost:8000/movie-rating/ratings/${id}`);
+        const ratingsData = response.data;
+        
+        setUserRatings(ratingsData.userRatings);
+        setExpertRatings(ratingsData.expertRatings);
 
-        setAverageContentRating(response.data.averageContentRating);
-        setAverageActingRating(response.data.averageActingRating);
-        setAverageVisualEffectsRating(response.data.averageVisualEffectsRating);
-        setAverageSoundRating(response.data.averageSoundRating);
-        setAverageDirectingRating(response.data.averageDirectingRating);
-        setAverageEntertainmentRating(response.data.averageEntertainmentRating);
+        setAverageUserRatings({
+          averageRating: ratingsData.averageUserRating,
+          averageContentRating: ratingsData.averageUserContentRating,
+          averageActingRating: ratingsData.averageUserActingRating,
+          averageVisualEffectsRating: ratingsData.averageUserVisualEffectsRating,
+          averageSoundRating: ratingsData.averageUserSoundRating,
+          averageDirectingRating: ratingsData.averageUserDirectingRating,
+          averageEntertainmentRating: ratingsData.averageUserEntertainmentRating
+        });
 
+        setAverageExpertRatings({
+          averageRating: ratingsData.averageExpertRating,
+          averageContentRating: ratingsData.averageExpertContentRating,
+          averageActingRating: ratingsData.averageExpertActingRating,
+          averageVisualEffectsRating: ratingsData.averageExpertVisualEffectsRating,
+          averageSoundRating: ratingsData.averageExpertSoundRating,
+          averageDirectingRating: ratingsData.averageExpertDirectingRating,
+          averageEntertainmentRating: ratingsData.averageExpertEntertainmentRating
+        });
+
+        setTotalUserRatingsCount(ratingsData.totalUserRatingsCount);
+        setTotalExpertRatingsCount(ratingsData.totalExpertRatingsCount);
 
         const usersData = {};
         await Promise.all(
-          ratingsData.map(async (rating) => {
+          ratingsData.userRatings.concat(ratingsData.expertRatings).map(async (rating) => {
             if (!usersData[rating.user_id]) {
-              const userResponse = await axios.get(
-                `http://localhost:8000/user/getuser/${rating.user_id}`
-              );
+              const userResponse = await axios.get(`http://localhost:8000/user/getuser/${rating.user_id}`);
               usersData[rating.user_id] = userResponse.data;
             }
           })
@@ -84,6 +87,10 @@ export const MovieDetail = () => {
     fetchMovie();
     fetchRatings();
   }, [id]);
+
+  const handleToggleRatings = (isUser) => {
+    setIsUserRatings(isUser);
+  };
 
   const handleOpenTrailer = () => {
     setIsTrailerOpen(true);
@@ -104,6 +111,10 @@ export const MovieDetail = () => {
   if (!movie) {
     return <div>Loading...</div>;
   }
+
+  const currentRatings = isUserRatings ? userRatings : expertRatings;
+  const currentAverageRatings = isUserRatings ? averageUserRatings : averageExpertRatings;
+  const currentTotalRatingsCount = isUserRatings ? totalUserRatingsCount : totalExpertRatingsCount;
 
   return (
     <>
@@ -190,9 +201,19 @@ export const MovieDetail = () => {
         </div>
       </div>
       <div className="bg-gray-200 flex justify-center min-h-screen">
-      <div className="absolute left-0 top-50 p-4 flex flex-col">
-          <button className="p-2 m-2 border border-black  rounded-xl">Đáng giá từ người dùng</button>
-          <button className="p-2 m-2 bg-green-500 text-white rounded">Đánh giá từ chuyên gia </button>
+        <div className="absolute left-0 top-50 p-4 flex flex-col">
+          <button 
+            onClick={() => handleToggleRatings(true)} 
+            className={`p-2 m-2 border border-black rounded-xl ${isUserRatings ? 'bg-green-500 text-white' : ''}`}
+          >
+            Đánh giá từ khán giả
+          </button>
+          <button 
+            onClick={() => handleToggleRatings(false)} 
+            className={`p-2 m-2 border border-black rounded-xl ${!isUserRatings ? 'bg-green-500 text-white' : ''}`}
+          >
+            Đánh giá từ chuyên gia
+          </button>
         </div>
         <div className="w-2/3 bg-white h-full">
           <div className="flex flex-col items-center space-y-2 mt-3 mb-3">
@@ -203,21 +224,21 @@ export const MovieDetail = () => {
               label_4={"Âm thanh"}
               label_5={"Đạo diễn"}
               label_6={"Tính giải trí"}
-              average1={Math.round(((averageContentRating)/5)*100)}
-              average2={Math.round(((averageActingRating)/5)*100)}
-              average3={Math.round(((averageVisualEffectsRating)/5)*100)}
-              average4={Math.round(((averageSoundRating)/5)*100)}
-              average5={Math.round(((averageDirectingRating)/5)*100)}
-              average6={Math.round(((averageEntertainmentRating)/5)*100)}
+              average1={Math.round(((currentAverageRatings.averageContentRating)/5)*100)}
+              average2={Math.round(((currentAverageRatings.averageActingRating)/5)*100)}
+              average3={Math.round(((currentAverageRatings.averageVisualEffectsRating)/5)*100)}
+              average4={Math.round(((currentAverageRatings.averageSoundRating)/5)*100)}
+              average5={Math.round(((currentAverageRatings.averageDirectingRating)/5)*100)}
+              average6={Math.round(((currentAverageRatings.averageEntertainmentRating)/5)*100)}
             />
             <div className="flex space-x-1 ">
               <TotalRate 
-                  totalPercent={Math.round(((averageRating)/5)*100)}
+                totalPercent={Math.round(((currentAverageRatings.averageRating)/5)*100)}
               />
               <CountRate
-               name={movie.name_movie}
-               allRate={totalRatingsCount}
-               score={averageRating}
+                name={movie.name_movie}
+                allRate={currentTotalRatingsCount}
+                score={currentAverageRatings.averageRating}
               />
             </div>
           </div>
@@ -227,7 +248,7 @@ export const MovieDetail = () => {
               <p>{movie.name_movie}</p>
             </div>
             <div className="flex flex-col p-2 space-y-3">
-              {ratings.map((rating) => (
+              {currentRatings.map((rating) => (
                 <div
                   key={rating.movie_rating_id}
                   className="flex flex-col p-2 border rounded-md bg-slate-200 space-y-2"
@@ -237,13 +258,11 @@ export const MovieDetail = () => {
                       className="w-12 h-12 rounded-full"
                       src={
                         users[rating.user_id]?.avatar
-                          ? `http://localhost:8000/${
-                              users[rating.user_id].avatar
-                            }`
+                          ? `http://localhost:8000/${users[rating.user_id].avatar}`
                           : noAvatarUser
                       }
                       alt="User Avatar"
-                    ></img>
+                    />
                     <div className="flex flex-col">
                       <div className="flex space-x-2">
                         <p>{users[rating.user_id]?.name || "Unknown User"}</p>

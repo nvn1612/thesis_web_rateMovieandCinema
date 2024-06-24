@@ -11,7 +11,7 @@ export const ModalRateMovie = ({ isOpen, onClose, movieId, movieName, posterUrl 
     content_rating: 0,
     acting_rating: 0,
     visual_effects_rating: 0,
-    sound_rating: 0,
+    sound_rating: 0,  
     directing_rating: 0,
     entertainment_rating: 0,
   };
