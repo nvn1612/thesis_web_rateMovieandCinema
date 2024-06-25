@@ -4,15 +4,15 @@ import axios from "axios";
 import { Header } from "../../layouts/header/Header";
 import { Footer } from "../../layouts/footer/Footer";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendarWeek, faClock } from "@fortawesome/free-solid-svg-icons";
+import { faCalendarWeek, faClock,faStar } from "@fortawesome/free-solid-svg-icons";
 import { BtnRate } from "../../components/btn-rate/BtnRate";
 import { TrailerModal } from "../../components/trailer-modal/TrailerModal";
 import { ModalRateMovie } from "../modal-rate/modal-rate-movie/ModalRateMovie";
-import { faStar } from "@fortawesome/free-solid-svg-icons";
 import noAvatarUser from "../../assets/images/no_user_avatar.jpg";
 import { TotalRate } from "../../components/total-rate/TotalRate";
 import { ProgressBarGroup } from "../../layouts/progress-bar-group/ProgressBarGroup";
 import { CountRate } from "../../components/count-rate/CountRate";
+import { DetailRateUser } from "../../components/detail-rate-user/DetailRateUser";
 
 export const MovieDetail = () => {
   const [isTrailerOpen, setIsTrailerOpen] = useState(false);
@@ -267,15 +267,23 @@ export const MovieDetail = () => {
                       <div className="flex space-x-2">
                         <p>{users[rating.user_id]?.name || "Unknown User"}</p>
                         <p>
-                          <FontAwesomeIcon icon={faStar} />{" "}
-                          {Math.round(rating.total_rating.toFixed(1))}
+                          {(rating.total_rating).toFixed(1)}/5
                         </p>
                       </div>
                       <div className="text-gray-400">
                         {new Date(rating.created_at).toLocaleDateString()}
                       </div>
-                    </div>
+                    </div>     
                   </div>
+                    
+                  <DetailRateUser
+                    score1={rating.content_rating}
+                    score2={rating.acting_rating}
+                    score3={rating.visual_effects_rating}
+                    score4={rating.sound_rating}
+                    score5={rating.directing_rating}
+                    score6={rating.entertainment_rating}
+                  />
                   <div>
                     <p>{rating.comment}</p>
                   </div>

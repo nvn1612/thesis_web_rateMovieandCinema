@@ -108,7 +108,9 @@ const addMovieRating = async (req, res) => {
       // Kiểm tra xem có đánh giá của chuyên gia hay không
       if (expertRatings.length > 0) {
         const differenceThreshold = 1; // Ngưỡng chênh lệch cho phép
-
+      
+        let isAnyRatingValid = false; // Biến cờ để xác định xem có ít nhất một đánh giá hợp lệ hay không
+      
         // So sánh đánh giá của người dùng với đánh giá của chuyên gia
         for (const expertRating of expertRatings) {
           const contentRatingDifference = Math.abs(content_rating - expertRating.content_rating);
@@ -117,17 +119,43 @@ const addMovieRating = async (req, res) => {
           const soundRatingDifference = Math.abs(sound_rating - expertRating.sound_rating);
           const directingRatingDifference = Math.abs(directing_rating - expertRating.directing_rating);
           const entertainmentRatingDifference = Math.abs(entertainment_rating - expertRating.entertainment_rating);
+      
 
+          console.log('Đánh giá của Chuyên gia:', expertRating);
+          console.log('Đánh giá của Người dùng:', {
+          content_rating,
+          acting_rating,
+          visual_effects_rating,
+          sound_rating,
+          directing_rating,
+          entertainment_rating,
+          });
+          console.log('Sự khác biệt:', {
+          contentRatingDifference,
+          actingRatingDifference,
+          visualEffectsRatingDifference,
+          soundRatingDifference,
+          directingRatingDifference,
+          entertainmentRatingDifference,
+          });
+
+          // Kiểm tra nếu tất cả sự chênh lệch đều nhỏ hơn hoặc bằng ngưỡng cho phép
           if (
-            contentRatingDifference > differenceThreshold ||
-            actingRatingDifference > differenceThreshold ||
-            visualEffectsRatingDifference > differenceThreshold ||
-            soundRatingDifference > differenceThreshold ||
-            directingRatingDifference > differenceThreshold ||
-            entertainmentRatingDifference > differenceThreshold
+            contentRatingDifference <= differenceThreshold &&
+            actingRatingDifference <= differenceThreshold &&
+            visualEffectsRatingDifference <= differenceThreshold &&
+            soundRatingDifference <= differenceThreshold &&
+            directingRatingDifference <= differenceThreshold &&
+            entertainmentRatingDifference <= differenceThreshold
           ) {
-            return res.status(400).json({ error: 'User rating is significantly different from expert ratings.' });
+            isAnyRatingValid = true; // Đánh giá hợp lệ
+            break; // Không cần kiểm tra thêm nếu đã tìm thấy đánh giá hợp lệ
           }
+        }
+      
+        // Nếu không có đánh giá nào hợp lệ, trả về lỗi
+        if (!isAnyRatingValid) {
+          return res.status(400).json({ error: 'Người dùng có dấu hiệu đánh giá giả mạo !' });
         }
       }
     }

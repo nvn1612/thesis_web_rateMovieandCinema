@@ -281,7 +281,6 @@ const updateUser = async (req, res) => {
         },
       });
 
-      // Delete the old avatar if a new one was uploaded
       if (avatarPath && oldAvatarPath) {
         fs.unlinkSync(oldAvatarPath);
         console.log(`Deleted old avatar: ${oldAvatarPath}`);
