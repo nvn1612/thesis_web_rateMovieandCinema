@@ -4,7 +4,7 @@ import axios from "axios";
 import { Header } from "../../layouts/header/Header";
 import { Footer } from "../../layouts/footer/Footer";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendarWeek, faClock,faStar } from "@fortawesome/free-solid-svg-icons";
+import { faCalendarWeek, faClock } from "@fortawesome/free-solid-svg-icons";
 import { BtnRate } from "../../components/btn-rate/BtnRate";
 import { TrailerModal } from "../../components/trailer-modal/TrailerModal";
 import { ModalRateMovie } from "../modal-rate/modal-rate-movie/ModalRateMovie";

@@ -71,11 +71,22 @@ model movie_rating {
   comment               String?   @db.Text
   created_at            DateTime? @default(now()) @db.Timestamp(0)
   updated_at            DateTime? @default(now()) @db.Timestamp(0)
+  is_expert_rating      Boolean?  @default(false)
   users                 users     @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "movie_rating_ibfk_1")
   movies                movies    @relation(fields: [movie_id], references: [movie_id], onDelete: Cascade, onUpdate: NoAction, map: "movie_rating_ibfk_2")
-  is_expert_rating      Boolean?  @default(false)  // Thêm trường này để phân biệt đánh giá của chuyên gia
+
   @@unique([user_id, movie_id], map: "user_movie_unique")
   @@index([movie_id], map: "movie_id_index")
   @@index([user_id], map: "user_id_index")
 }
 
+model movie_theaters {
+  theater_id       Int     @id @default(autoincrement())
+  theater_name     String  @db.VarChar(255)
+  theater_logo     String? @db.VarChar(255)
+  theater_image_1  String? @db.VarChar(255) 
+  theater_image_2  String? @db.VarChar(255) 
+  address          String  @db.Text
+  region           String  @db.VarChar(100)
+  description      String? @db.Text
+}

@@ -9,6 +9,9 @@ import { UserEdit } from "./user/UserEdit";
 import { MovieList } from "./movie/MovieList";
 import { MovieCreate } from "./movie/MovieCreate";
 import { MovieEdit } from "./movie/MovieEdit";
+import { TheaterList } from "./theater/TheaterList";
+import { TheaterCreate } from "./theater/TheaterCreate";
+import { TheaterEdit } from "./theater/TheaterEdit";
 export const AdminPage = () => {
   return (
     <div className="flex w-full h-screen overflow-hidden">
@@ -27,7 +30,7 @@ export const AdminPage = () => {
               to="/admin/users"
               className="block py-2.5 px-4 rounded transition duration-200 hover:bg-green-700"
             >
-              Quản lý user
+              Quản lý người dùng
             </Link>
             <Link
               to="/admin/movies"
@@ -36,7 +39,7 @@ export const AdminPage = () => {
               Quản lý phim
             </Link>
             <Link
-              to="#"
+              to="/admin/theaters"
               className="block py-2.5 px-4 rounded transition duration-200 hover:bg-green-700"
             >
               Quản lý rạp chiếu
@@ -59,12 +62,15 @@ export const AdminPage = () => {
       </div>
       <div className="page-management flex-1">
         <Routes>
-          <Route path="users/*" element={<UserList />} />
+          <Route path="users/" element={<UserList />} />
           <Route path="user/add" element={<UserCreate />} />
           <Route path="user/edit/:userId" element={<UserEdit />} />
           <Route path="movies/" element={<MovieList />} />
           <Route path="movies/create" element={<MovieCreate />} />
           <Route path="movies/edit/:movieId" element={<MovieEdit />} />
+          <Route path="theaters/" element={<TheaterList />} />
+          <Route path="theaters/add" element={<TheaterCreate/>} />
+          <Route path="theaters/edit/:theaterId" element={<TheaterEdit />} />
         </Routes>
       </div>
     </div>

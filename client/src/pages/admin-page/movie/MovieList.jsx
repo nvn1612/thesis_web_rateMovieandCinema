@@ -39,12 +39,7 @@ export const MovieList = () => {
         <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8 h-full">
           <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg h-full flex flex-col">
             <div className="flex items-center mb-4 justify-between m-2">
-              <div>
-                <span className="inline-block h-3 w-3 rounded-full bg-red-200 mr-2"></span>
-                <span>Chưa kích hoạt</span>
-                <span className="inline-block h-3 w-3 rounded-full bg-green-200 ml-4 mr-2"></span>
-                <span>Đã kích hoạt</span>
-              </div>
+          
               <button onClick={() => navigate('/admin/movies/create')} className="p-2 border text-white bg-blue-400 rounded-lg hover:bg-blue-600 transition">
                 Thêm phim
                 <FontAwesomeIcon className="ml-2" icon={faPlus} />

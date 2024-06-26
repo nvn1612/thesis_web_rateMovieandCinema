@@ -1,70 +1,6 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
-// const addMovieRating = async (req, res) => {
-//   const {
-//     user_id,
-//     movie_id,
-//     content_rating,
-//     acting_rating,
-//     visual_effects_rating,
-//     sound_rating,
-//     directing_rating,
-//     entertainment_rating,
-//     comment,
-//     is_expert_rating  // Thêm trường này để xác định loại đánh giá
-//   } = req.body;
-
-//   try {
-//     // Kiểm tra xem người dùng đã đánh giá phim này chưa
-//     const existingRating = await prisma.movie_rating.findUnique({
-//       where: {
-//         user_id_movie_id: {
-//           user_id,
-//           movie_id,
-//         },
-//       },
-//     });
-
-//     if (existingRating) {
-//       return res.status(400).json({ error: 'User has already rated this movie.' });
-//     }
-
-//     // Tính toán total_rating
-//     const totalRating = (
-//       content_rating +
-//       acting_rating +
-//       visual_effects_rating +
-//       sound_rating +
-//       directing_rating +
-//       entertainment_rating
-//     ) / 6;
-
-//     // Thêm đánh giá mới
-//     const newRating = await prisma.movie_rating.create({
-//       data: {
-//         user_id,
-//         movie_id,
-//         content_rating,
-//         acting_rating,
-//         visual_effects_rating,
-//         sound_rating,
-//         directing_rating,
-//         entertainment_rating,
-//         total_rating: totalRating, 
-//         comment,
-//         is_expert_rating: is_expert_rating || false  // Đặt giá trị của is_expert_rating dựa vào input từ người dùng
-//       },
-//     });
-
-//     return res.status(201).json(newRating);
-//   } catch (error) {
-//     console.error(error);
-//     return res.status(500).json({ error: 'An error occurred while adding the rating.' });
-//   }
-// };
-
-
 
 const addMovieRating = async (req, res) => {
   const {
@@ -77,11 +13,11 @@ const addMovieRating = async (req, res) => {
     directing_rating,
     entertainment_rating,
     comment,
-    is_expert_rating  // Thêm trường này để xác định loại đánh giá
+    is_expert_rating  
   } = req.body;
 
   try {
-    // Kiểm tra xem người dùng đã đánh giá phim này chưa
+   
     const existingRating = await prisma.movie_rating.findUnique({
       where: {
         user_id_movie_id: {
@@ -95,9 +31,9 @@ const addMovieRating = async (req, res) => {
       return res.status(400).json({ error: 'User has already rated this movie.' });
     }
 
-    // Nếu is_expert_rating là false thì mới kiểm tra đánh giá
+
     if (!is_expert_rating) {
-      // Lấy đánh giá của chuyên gia cho phim này
+     
       const expertRatings = await prisma.movie_rating.findMany({
         where: {
           movie_id,
@@ -105,13 +41,11 @@ const addMovieRating = async (req, res) => {
         },
       });
 
-      // Kiểm tra xem có đánh giá của chuyên gia hay không
       if (expertRatings.length > 0) {
-        const differenceThreshold = 1; // Ngưỡng chênh lệch cho phép
+        const differenceThreshold = 1; 
+  
+        let isAnyRatingValid = false; 
       
-        let isAnyRatingValid = false; // Biến cờ để xác định xem có ít nhất một đánh giá hợp lệ hay không
-      
-        // So sánh đánh giá của người dùng với đánh giá của chuyên gia
         for (const expertRating of expertRatings) {
           const contentRatingDifference = Math.abs(content_rating - expertRating.content_rating);
           const actingRatingDifference = Math.abs(acting_rating - expertRating.acting_rating);
@@ -139,7 +73,6 @@ const addMovieRating = async (req, res) => {
           entertainmentRatingDifference,
           });
 
-          // Kiểm tra nếu tất cả sự chênh lệch đều nhỏ hơn hoặc bằng ngưỡng cho phép
           if (
             contentRatingDifference <= differenceThreshold &&
             actingRatingDifference <= differenceThreshold &&
@@ -148,19 +81,17 @@ const addMovieRating = async (req, res) => {
             directingRatingDifference <= differenceThreshold &&
             entertainmentRatingDifference <= differenceThreshold
           ) {
-            isAnyRatingValid = true; // Đánh giá hợp lệ
-            break; // Không cần kiểm tra thêm nếu đã tìm thấy đánh giá hợp lệ
+            isAnyRatingValid = true; 
+            break; 
           }
         }
       
-        // Nếu không có đánh giá nào hợp lệ, trả về lỗi
         if (!isAnyRatingValid) {
           return res.status(400).json({ error: 'Người dùng có dấu hiệu đánh giá giả mạo !' });
         }
       }
     }
 
-    // Tính toán total_rating
     const totalRating = (
       content_rating +
       acting_rating +
@@ -170,7 +101,6 @@ const addMovieRating = async (req, res) => {
       entertainment_rating
     ) / 6;
 
-    // Thêm đánh giá mới
     const newRating = await prisma.movie_rating.create({
       data: {
         user_id,
@@ -183,7 +113,7 @@ const addMovieRating = async (req, res) => {
         entertainment_rating,
         total_rating: totalRating,
         comment,
-        is_expert_rating: is_expert_rating || false  // Đặt giá trị của is_expert_rating dựa vào input từ người dùng
+        is_expert_rating: is_expert_rating || false  
       },
     });
 

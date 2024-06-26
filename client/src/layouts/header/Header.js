@@ -1,4 +1,3 @@
-// Header.js
 import React from "react";
 import logo from "../../assets/images/logo.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -7,10 +6,12 @@ import {
   faArrowRight,
 } from "@fortawesome/free-solid-svg-icons";
 import { useUser } from "../../context/UserContext";
+import { useNavigate } from "react-router-dom";
+
 
 export const Header = () => {
   const { user, logout } = useUser();
-
+  const navigate = useNavigate();
   const handleLogout = () => {
     logout();
     localStorage.removeItem('token');
@@ -37,10 +38,10 @@ export const Header = () => {
         <a href="#" className="mx-2 font-bold hover:text-green-500 transition">
           Trang chủ
         </a>
-        <a href="#" className="mx-2 font-bold hover:text-green-500 transition">
+        <a href="/page" className="mx-2 font-bold hover:text-green-500 transition">
           Phim
         </a>
-        <a href="#" className="mx-2 font-bold hover:text-green-500 transition">
+        <a href="/theater" className="mx-2 font-bold hover:text-green-500 transition">
           Rạp chiếu
         </a>
         <a href="#" className="mx-2 font-bold hover:text-green-500 transition">
@@ -56,19 +57,22 @@ export const Header = () => {
               />
             )}
             <span>{user.username}</span>
-            <button onClick={handleLogout} className="mx-2 font-bold text-sm hover:text-red-500 transition">
+            <button 
+              onClick={handleLogout} className="mx-2 font-bold text-sm hover:text-red-500 transition">
               Đăng xuất
             </button>
           </div>
         ) : (
           <>
-            <a
-              href="/login"
+            <button
+              onClick={() => navigate('/login')}
               className="mx-2 font-bold text-sm hover:text-green-500 transition"
             >
               Đăng nhập
-            </a>
-            <button className="btn-register text-sm font-bold bg-green-600 pt-2 pb-2 pl-7 pr-10 rounded-xl">
+            </button>
+            <button 
+              onClick={() => navigate('/signup')}
+            className="btn-register text-sm font-bold bg-green-600 pt-2 pb-2 pl-7 pr-10 rounded-xl">
               <div className="flex items-center space-x-3">
                 <p>Đăng kí</p>
                 <FontAwesomeIcon icon={faArrowRight} />

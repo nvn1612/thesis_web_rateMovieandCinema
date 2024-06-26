@@ -7,8 +7,10 @@ import { NotifySuccess } from "./pages/verification-page/NotifySuccess";
 import { Home } from "./pages/home/Home";
 import { ForgotPassword } from "./pages/forgot-password/ForgotPassword";
 import { AdminPage } from "./pages/admin-page/AdminPage"; 
-import { MovieDisplay } from "./pages/movie-display/MovieDisplay";
-import { MovieDetail } from "./pages/movie-display/MovieDetail";
+import { MovieDisplay } from "./pages/movie-pages/MovieDisplay";
+import { MovieDetail } from "./pages/movie-pages/MovieDetail";
+import { TheaterDisplay } from "./pages/theater-pages/TheaterDisplay";
+import { TheaterDetail } from "./pages/theater-pages/TheaterDetail";
 const AppRoutes = () => {
   return (
     <Routes>
@@ -21,6 +23,8 @@ const AppRoutes = () => {
       <Route path="/admin/*" element={<AdminPage />} />
       <Route path="/page" element={<MovieDisplay />} />
       <Route path="page/movie/detail/:id" element={<MovieDetail />} />
+      <Route path="/theater" element={<TheaterDisplay />} />
+      <Route path="theater/detail/:id" element={<TheaterDetail />} />
     </Routes>
   );
 };

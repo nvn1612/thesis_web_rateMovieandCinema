@@ -6,6 +6,8 @@ const storage = (uploadType) => multer.diskStorage({
     let uploadPath = 'uploadimage';
     if (uploadType === 'movie') {
       uploadPath = 'uploadimage/uploadimagemovie';
+    } else if (uploadType === 'theater') {
+      uploadPath = 'uploadimage/uploadimagetheater';
     }
     cb(null, uploadPath);
   },
@@ -32,4 +34,13 @@ const uploadMovieImage = multer({
   fileFilter: fileFilter,
 }).fields([{ name: 'poster_image', maxCount: 1 }, { name: 'backdrop_image', maxCount: 1 }]);
 
-module.exports = { uploadUserImage, uploadMovieImage };
+const uploadTheaterImages = multer({
+  storage: storage('theater'),
+  fileFilter: fileFilter,
+}).fields([
+  { name: 'theater_logo', maxCount: 1 },
+  { name: 'theater_image_1', maxCount: 1 },
+  { name: 'theater_image_2', maxCount: 1 }
+]);
+
+module.exports = { uploadUserImage, uploadMovieImage, uploadTheaterImages };
