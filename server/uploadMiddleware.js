@@ -8,6 +8,8 @@ const storage = (uploadType) => multer.diskStorage({
       uploadPath = 'uploadimage/uploadimagemovie';
     } else if (uploadType === 'theater') {
       uploadPath = 'uploadimage/uploadimagetheater';
+    } else if (uploadType === 'post') {
+      uploadPath = 'uploadimage/uploadimagepost';
     }
     cb(null, uploadPath);
   },
@@ -43,4 +45,9 @@ const uploadTheaterImages = multer({
   { name: 'theater_image_2', maxCount: 1 }
 ]);
 
-module.exports = { uploadUserImage, uploadMovieImage, uploadTheaterImages };
+const uploadPostImage = multer({
+  storage: storage('post'),
+  fileFilter: fileFilter,
+}).single('image_post');
+
+module.exports = { uploadUserImage, uploadMovieImage, uploadTheaterImages, uploadPostImage };

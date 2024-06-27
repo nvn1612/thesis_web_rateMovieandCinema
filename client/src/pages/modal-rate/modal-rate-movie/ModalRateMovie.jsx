@@ -84,6 +84,7 @@ export const ModalRateMovie = ({ isOpen, onClose, movieId, movieName, posterUrl 
               setRatings={setRatings} 
               comment={comment}
               setComment={setComment}
+              isMovieRating={true}
             />
           </div>
         </div>

@@ -8,20 +8,24 @@ datasource db {
 }
 
 model users {
-  user_id               Int            @id @default(autoincrement())
-  email                 String         @unique(map: "email") @db.VarChar(255)
-  username              String         @unique(map: "username") @db.VarChar(255)
-  password              String         @db.VarChar(255)
-  avatar                String?        @db.VarChar(255)
-  name                  String?        @db.VarChar(255)
-  phone_number          String?        @unique(map: "phone_number") @db.VarChar(20)
-  address               String?        @db.VarChar(255)
-  activation_token      String?        @unique(map: "activation_token") @db.VarChar(255)
-  forgot_password_token String?        @unique(map: "forgot_password_token") @db.VarChar(255)
-  is_active             Boolean        @default(false)
-  is_Admin              Boolean        @default(false)
-  is_expert             Boolean        @default(false)
+  user_id               Int              @id @default(autoincrement())
+  email                 String           @unique(map: "email") @db.VarChar(255)
+  username              String           @unique(map: "username") @db.VarChar(255)
+  password              String           @db.VarChar(255)
+  avatar                String?          @db.VarChar(255)
+  name                  String?          @db.VarChar(255)
+  phone_number          String?          @unique(map: "phone_number") @db.VarChar(20)
+  address               String?          @db.VarChar(255)
+  activation_token      String?          @unique(map: "activation_token") @db.VarChar(255)
+  forgot_password_token String?          @unique(map: "forgot_password_token") @db.VarChar(255)
+  is_active             Boolean          @default(false)
+  is_Admin              Boolean          @default(false)
+  is_expert             Boolean          @default(false)
   movie_rating          movie_rating[]
+  post_comments         post_comments[]
+  post_likes            post_likes[]
+  posts                 posts[]
+  theater_rating        theater_rating[]
 }
 
 model genres {
@@ -81,12 +85,77 @@ model movie_rating {
 }
 
 model movie_theaters {
-  theater_id       Int     @id @default(autoincrement())
-  theater_name     String  @db.VarChar(255)
-  theater_logo     String? @db.VarChar(255)
-  theater_image_1  String? @db.VarChar(255) 
-  theater_image_2  String? @db.VarChar(255) 
-  address          String  @db.Text
-  region           String  @db.VarChar(100)
-  description      String? @db.Text
+  theater_id      Int              @id @default(autoincrement())
+  theater_name    String           @db.VarChar(255)
+  theater_logo    String?          @db.VarChar(255)
+  theater_image_1 String?          @db.VarChar(255)
+  theater_image_2 String?          @db.VarChar(255)
+  address         String           @db.Text
+  region          String           @db.VarChar(100)
+  description     String?          @db.Text
+  theater_rating  theater_rating[]
+}
+
+model theater_rating {
+  theater_rating_id       Int            @id @default(autoincrement())
+  user_id                 Int
+  theater_id              Int
+  image_quality_rating    Int
+  sound_quality_rating    Int
+  seating_rating          Int
+  theater_space_rating    Int
+  customer_service_rating Int
+  ticket_price_rating     Int
+  total_rating            Float          @db.Float
+  comment                 String?        @db.Text
+  created_at              DateTime?      @default(now()) @db.Timestamp(0)
+  updated_at              DateTime?      @default(now()) @db.Timestamp(0)
+  is_expert_rating        Boolean?       @default(false)
+  movie_theaters          movie_theaters @relation(fields: [theater_id], references: [theater_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_theater_id")
+  users                   users          @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_user_id")
+
+  @@unique([user_id, theater_id], map: "user_theater_unique")
+  @@index([theater_id], map: "theater_id_index")
+  @@index([user_id], map: "user_id_index")
+}
+
+model post_comments {
+  comment_id Int       @id @default(autoincrement())
+  post_id    Int?
+  user_id    Int?
+  content    String?   @db.Text
+  created_at DateTime? @default(now()) @db.Timestamp(0)
+  updated_at DateTime? @default(now()) @db.Timestamp(0)
+  posts      posts?    @relation(fields: [post_id], references: [post_id], onDelete: Cascade, onUpdate: NoAction, map: "post_comments_ibfk_1")
+  users      users?    @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "post_comments_ibfk_2")
+
+  @@index([post_id], map: "post_id")
+  @@index([user_id], map: "user_id")
+}
+
+model post_likes {
+  like_id    Int       @id @default(autoincrement())
+  post_id    Int?
+  user_id    Int?
+  created_at DateTime? @default(now()) @db.Timestamp(0)
+  posts      posts?    @relation(fields: [post_id], references: [post_id], onDelete: Cascade, onUpdate: NoAction, map: "post_likes_ibfk_1")
+  users      users?    @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "post_likes_ibfk_2")
+
+  @@index([post_id], map: "post_id")
+  @@index([user_id], map: "user_id")
+}
+
+model posts {
+  post_id            Int             @id @default(autoincrement())
+  user_id            Int?
+  content            String?         @db.Text
+  image_post         String?         @db.VarChar(255)
+  is_movie_related   Boolean?        @default(false)
+  created_at         DateTime?       @default(now()) @db.Timestamp(0)
+  updated_at         DateTime?       @default(now()) @db.Timestamp(0)
+  post_comments      post_comments[]
+  post_likes         post_likes[]
+  users              users?          @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "posts_ibfk_1")
+
+  @@index([user_id], map: "user_id")
 }

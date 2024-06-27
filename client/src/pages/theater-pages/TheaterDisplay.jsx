@@ -6,11 +6,12 @@ import { Footer } from '../../layouts/footer/Footer';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMap } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
+import theaterBg from '../../assets/images/CinemaBG.jpg';
 
 export const TheaterDisplay = () => {
   const [theaters, setTheaters] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const theatersPerPage = 10; // Adjust as needed
+  const theatersPerPage = 10; 
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -75,9 +76,10 @@ export const TheaterDisplay = () => {
         <BgTop
           title="Rạp chiếu phim tại Việt Nam"
           decribe="Danh sách các rạp chiếu phim trên toàn quốc. Xem thông tin, đánh giá và xem đánh giá một cách thật tiện ích!"
+          CinemaBG={theaterBg}
         />
         <div className="main-content bg-gray-200 w-full flex-grow flex flex-col items-center justify-center">
-          <div className="w-2/5 h-full bg-white overflow-auto">
+          <div className="w-3/5 h-full bg-white overflow-auto">
             <div className="flex flex-col m-4">
               {renderTheaters()}
             </div>

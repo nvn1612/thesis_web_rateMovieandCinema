@@ -4,7 +4,10 @@ import { Header } from "../../layouts/header/Header";
 import { BgTop } from "../../components/bg-top/BgTop";
 import { Footer } from "../../layouts/footer/Footer";
 import { useNavigate } from "react-router-dom";
-
+import movieBG from "../../assets/images/bgmovie.jpg";
+import { GenreSelect } from "../../components/select-box/GenreSelect";
+import { CountrySelect } from "../../components/select-box/CountrySelect";
+import { MovieLeverSelect } from "../../components/select-box/MovieLeverSelect";
 export const MovieDisplay = () => {
   const [movies, setMovies] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -88,9 +91,16 @@ export const MovieDisplay = () => {
         <BgTop
           title="Phim chiếu rạp"
           decribe="Danh sách các phim chiếu rạp trên toàn quốc. Xem thông tin, đánh giá và xem đánh giá một cách thật tiện ích !"
+          CinemaBG={movieBG}
         />
         <div className="main-content bg-gray-200 w-full flex-grow flex flex-col items-center justify-center">
+
           <div className="w-2/3 h-full bg-white overflow-auto">
+           <div className="flex space-x-3">
+              <GenreSelect />
+              <CountrySelect />
+              <MovieLeverSelect/>
+           </div>
             <div className="column flex flex-col space-y-10 mt-4 ml-16 mb-4">
               {renderMovies()}
             </div>

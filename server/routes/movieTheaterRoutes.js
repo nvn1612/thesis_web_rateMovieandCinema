@@ -3,7 +3,7 @@ const { getAllTheaters,
     getTheaterById,
     createTheater,
     updateTheater,
-    deleteTheater} = require('../controllers/movieTheatersControllers');
+    deleteTheater} = require('../controllers/movieTheaterController');
 const router = express.Router();
 
 router.get('/getalltheaters',getAllTheaters);

@@ -237,6 +237,7 @@ export const MovieDetail = () => {
               />
               <CountRate
                 name={movie.name_movie}
+                userType={isUserRatings ? 'khán giả' : 'chuyên gia'}
                 allRate={currentTotalRatingsCount}
                 score={currentAverageRatings.averageRating}
               />
@@ -265,7 +266,7 @@ export const MovieDetail = () => {
                     />
                     <div className="flex flex-col">
                       <div className="flex space-x-2">
-                        <p>{users[rating.user_id]?.name || "Unknown User"}</p>
+                        <p>{users[rating.user_id]?.username || "Unknown User"}</p>
                         <p>
                           {(rating.total_rating).toFixed(1)}/5
                         </p>

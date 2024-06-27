@@ -16,7 +16,7 @@ export const ProgressBarGroup = ({
   average6,
 }) => {
   return (
-    <div className="flex flex-col space-y-4 w-[700px]">
+    <div className="flex flex-col space-y-4 w-[750px]">
       <div className="flex flex-col space-y-3 p-5 border rounded-2xl shadow">
         <div className="flex space-x-5">
           <div className="flex flex-col space-y-2 items-center">

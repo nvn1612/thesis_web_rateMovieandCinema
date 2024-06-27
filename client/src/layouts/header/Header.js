@@ -44,7 +44,7 @@ export const Header = () => {
         <a href="/theater" className="mx-2 font-bold hover:text-green-500 transition">
           Rạp chiếu
         </a>
-        <a href="#" className="mx-2 font-bold hover:text-green-500 transition">
+        <a href="/community" className="mx-2 font-bold hover:text-green-500 transition">
           Cộng đồng
         </a>
         {user ? (

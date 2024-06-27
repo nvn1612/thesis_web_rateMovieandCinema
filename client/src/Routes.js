@@ -11,20 +11,26 @@ import { MovieDisplay } from "./pages/movie-pages/MovieDisplay";
 import { MovieDetail } from "./pages/movie-pages/MovieDetail";
 import { TheaterDisplay } from "./pages/theater-pages/TheaterDisplay";
 import { TheaterDetail } from "./pages/theater-pages/TheaterDetail";
+import { PostDisplay } from "./pages/community-page/PostDisplay";
+import { Header } from "./layouts/header/Header";
+import { Footer } from "./layouts/footer/Footer";
 const AppRoutes = () => {
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/verify-signup" element={<VerifySignup />} />
       <Route path="/notify-success" element={<NotifySuccess />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/admin/*" element={<AdminPage />} />
-      <Route path="/page" element={<MovieDisplay />} />
-      <Route path="page/movie/detail/:id" element={<MovieDetail />} />
-      <Route path="/theater" element={<TheaterDisplay />} />
-      <Route path="theater/detail/:id" element={<TheaterDetail />} />
+
+
+        <Route path="/" element={<Home />} />
+        <Route path="/page" element={<MovieDisplay />} />
+        <Route path="page/movie/detail/:id" element={<MovieDetail />} />
+        <Route path="/theater" element={<TheaterDisplay />} />
+        <Route path="theater/detail/:id" element={<TheaterDetail />} />
+        <Route path="/community" element={<PostDisplay />} />
     </Routes>
   );
 };
