@@ -24,6 +24,7 @@ export const TheaterDetail = () => {
   const [totalExpertRatingsCount, setTotalExpertRatingsCount] = useState(0);
   const [isUserRatings, setIsUserRatings] = useState(true);
   const [users, setUsers] = useState({});
+  const [visibleRatingsCount, setVisibleRatingsCount] = useState(5); // Số lượng đánh giá hiển thị ban đầu
 
   useEffect(() => {
     const fetchTheater = async () => {
@@ -87,6 +88,7 @@ export const TheaterDetail = () => {
 
   const handleToggleRatings = (isUser) => {
     setIsUserRatings(isUser);
+    setVisibleRatingsCount(5); // Đặt lại số lượng đánh giá hiển thị khi chuyển đổi giữa người dùng và chuyên gia
   };
 
   const handleOpenRateModal = () => {
@@ -95,6 +97,10 @@ export const TheaterDetail = () => {
 
   const handleCloseRateModal = () => {
     setIsRateModalOpen(false);
+  };
+
+  const handleLoadMoreRatings = () => {
+    setVisibleRatingsCount((prevCount) => prevCount + 5);
   };
 
   if (!theater) {
@@ -195,7 +201,7 @@ export const TheaterDetail = () => {
                 <p>{theater.theater_name}</p>
               </div>
               <div className="flex flex-col p-2 space-y-3">
-                {currentRatings.map((rating) => (
+                {currentRatings.slice(0, visibleRatingsCount).map((rating) => (
                   <div
                     key={rating.theater_rating_id}
                     className="flex flex-col p-2 border rounded-md bg-slate-200 space-y-2"
@@ -220,15 +226,15 @@ export const TheaterDetail = () => {
                         <div className="text-gray-400">
                           {new Date(rating.created_at).toLocaleDateString()}
                         </div>
-                    </div>
+                      </div>
                     </div>
                     <DetailRateUser
-                    score1={rating.image_quality_rating}
-                    score2={rating.sound_quality_rating}
-                    score3={rating.seating_rating}
-                    score4={rating.theater_space_rating}
-                    score5={rating.customer_service_rating}
-                    score6={rating.ticket_price_rating}
+                      score1={rating.image_quality_rating}
+                      score2={rating.sound_quality_rating}
+                      score3={rating.seating_rating}
+                      score4={rating.theater_space_rating}
+                      score5={rating.customer_service_rating}
+                      score6={rating.ticket_price_rating}
                     />
                     <div>
                       <p>{rating.comment}</p>
@@ -236,6 +242,14 @@ export const TheaterDetail = () => {
                   </div>
                 ))}
               </div>
+              {visibleRatingsCount < currentRatings.length && (
+                <button 
+                  onClick={handleLoadMoreRatings} 
+                  className="p-2 m-2 border border-black rounded-xl bg-green-500 text-white"
+                >
+                  Xem thêm
+                </button>
+              )}
             </div>
           </div>
         </div>

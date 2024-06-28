@@ -8,23 +8,38 @@ import movieBG from "../../assets/images/bgmovie.jpg";
 import { GenreSelect } from "../../components/select-box/GenreSelect";
 import { CountrySelect } from "../../components/select-box/CountrySelect";
 import { MovieLeverSelect } from "../../components/select-box/MovieLeverSelect";
+import { SearchInput } from "../../components/search-input/SearchInput";
+
 export const MovieDisplay = () => {
   const [movies, setMovies] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const moviesPerPage = 16;
   const navigate = useNavigate();
 
+  const fetchMovies = async () => {
+    try {
+      const response = await axios.get("http://localhost:8000/movie/getallmovies");
+      setMovies(response.data);
+    } catch (error) {
+      console.error("Có lỗi xảy ra", error);
+    }
+  };
+
+  const searchMovies = async (name) => {
+    if (!name) {
+      fetchMovies(); 
+      return;
+    }
+
+    try {
+      const response = await axios.get(`http://localhost:8000/movie/search/movies?name=${name}`);
+      setMovies(response.data);
+    } catch (error) {
+      console.error("Có lỗi xảy ra", error);
+    }
+  };
+
   useEffect(() => {
-    const fetchMovies = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:8000/movie/getallmovies"
-        );
-        setMovies(response.data);
-      } catch (error) {
-        console.error("Có lỗi xảy ra", error);
-      }
-    };
     fetchMovies();
   }, []);
 
@@ -94,13 +109,17 @@ export const MovieDisplay = () => {
           CinemaBG={movieBG}
         />
         <div className="main-content bg-gray-200 w-full flex-grow flex flex-col items-center justify-center">
-
           <div className="w-2/3 h-full bg-white overflow-auto">
-           <div className="flex space-x-3">
-              <GenreSelect />
-              <CountrySelect />
-              <MovieLeverSelect/>
-           </div>
+            <div className="flex flex-col space-y-3 mt-2">
+              <div className="flex justify-center">
+                <SearchInput contentSearch={"Tìm kiếm theo tên phim"} onSearch={searchMovies} />
+              </div>
+              <div className="flex space-x-3 ml-2">
+                <GenreSelect />
+                <CountrySelect />
+                <MovieLeverSelect />
+              </div>
+            </div>
             <div className="column flex flex-col space-y-10 mt-4 ml-16 mb-4">
               {renderMovies()}
             </div>

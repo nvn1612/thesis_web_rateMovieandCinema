@@ -4,6 +4,32 @@ const fs = require('fs');
 const prisma = new PrismaClient();
 
 
+  const searchMoviesByName = async (req, res) => {
+    const { name } = req.query;
+    if (!name) {
+      return res.status(400).json({ error: 'Tên phim không được bỏ trống' });
+    }
+
+    try {
+      const movies = await prisma.movies.findMany({
+        where: {
+          name_movie: {
+            contains: name,
+          },
+        },
+        include: {
+          movie_genres: true,
+        },
+      });
+      res.json(movies);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ error: 'Có lỗi xảy ra' });
+    }
+  };
+
+
+
 const getAllMovies = async (req, res) => {
   try {
     const movies = await prisma.movies.findMany({
@@ -200,4 +226,4 @@ const updateMovie = async (req, res) => {
 };
 
 
-module.exports = { createMovie, getGenres, getAllMovies, getMovieById, deleteMovie, updateMovie  };
+module.exports = { createMovie, getGenres, getAllMovies, getMovieById, deleteMovie, updateMovie, searchMoviesByName  };

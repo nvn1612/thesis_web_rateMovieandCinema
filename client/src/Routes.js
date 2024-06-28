@@ -12,8 +12,9 @@ import { MovieDetail } from "./pages/movie-pages/MovieDetail";
 import { TheaterDisplay } from "./pages/theater-pages/TheaterDisplay";
 import { TheaterDetail } from "./pages/theater-pages/TheaterDetail";
 import { PostDisplay } from "./pages/community-page/PostDisplay";
-import { Header } from "./layouts/header/Header";
-import { Footer } from "./layouts/footer/Footer";
+import { UserProfile } from "./pages/user-profile/UserProfile";
+import { CompletedModal } from "./components/Completed-modal/CompletedModal";
+import { ModalCompletedRate } from "./components/modal-completed-rate/ModalCompletedRate";
 const AppRoutes = () => {
   return (
     <Routes>
@@ -31,6 +32,8 @@ const AppRoutes = () => {
         <Route path="/theater" element={<TheaterDisplay />} />
         <Route path="theater/detail/:id" element={<TheaterDetail />} />
         <Route path="/community" element={<PostDisplay />} />
+        <Route path="/profile" element={<UserProfile />} />
+        <Route path="/test" element={<ModalCompletedRate />} />
     </Routes>
   );
 };

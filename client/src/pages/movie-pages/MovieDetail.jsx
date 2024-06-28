@@ -26,6 +26,7 @@ export const MovieDetail = () => {
   const [totalExpertRatingsCount, setTotalExpertRatingsCount] = useState(0);
   const [isUserRatings, setIsUserRatings] = useState(true);
   const [users, setUsers] = useState({});
+  const [visibleUserRatingsCount, setVisibleUserRatingsCount] = useState(5);
   const { id } = useParams();
 
   useEffect(() => {
@@ -90,6 +91,7 @@ export const MovieDetail = () => {
 
   const handleToggleRatings = (isUser) => {
     setIsUserRatings(isUser);
+    setVisibleUserRatingsCount(5); // Reset visible count when switching between user and expert ratings
   };
 
   const handleOpenTrailer = () => {
@@ -106,6 +108,10 @@ export const MovieDetail = () => {
 
   const handleCloseRateModal = () => {
     setIsRateModalOpen(false);
+  };
+
+  const handleLoadMoreRatings = () => {
+    setVisibleUserRatingsCount((prevCount) => prevCount + 5);
   };
 
   if (!movie) {
@@ -249,7 +255,7 @@ export const MovieDetail = () => {
               <p>{movie.name_movie}</p>
             </div>
             <div className="flex flex-col p-2 space-y-3">
-              {currentRatings.map((rating) => (
+              {currentRatings.slice(0, visibleUserRatingsCount).map((rating) => (
                 <div
                   key={rating.movie_rating_id}
                   className="flex flex-col p-2 border rounded-md bg-slate-200 space-y-2"
@@ -290,10 +296,19 @@ export const MovieDetail = () => {
                   </div>
                 </div>
               ))}
+              {visibleUserRatingsCount < currentRatings.length && (
+                <button
+                  onClick={handleLoadMoreRatings}
+                  className="self-center p-2 border rounded-xl hover:bg-gray-300 transition"
+                >
+                  Xem thêm
+                </button>
+              )}
             </div>
           </div>
         </div>
       </div>
+      <Footer />
 
       <TrailerModal
         trailerUrl={`https://www.youtube.com/embed/${movie.trailer_link}`}

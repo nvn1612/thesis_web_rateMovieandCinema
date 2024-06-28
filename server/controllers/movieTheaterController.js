@@ -3,6 +3,32 @@ const { uploadTheaterImages } = require('../uploadMiddleware');
 const fs = require('fs');
 const prisma = new PrismaClient();
 
+
+const searchTheatersByName = async (req, res) => {
+  const { name } = req.query;
+  if (!name) {
+    return res.status(400).json({ error: 'Tên rạp không được bỏ trống' });
+  }
+
+  try {
+    const theaters = await prisma.movie_theaters.findMany({
+      where: {
+        theater_name: {
+          contains: name, 
+        },
+      },
+      include: {
+        theater_rating: true,
+      },
+    });
+    res.json(theaters);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Có lỗi xảy ra' });
+  }
+};
+
+
 const getAllTheaters = async (req, res) => {
   try {
     const theaters = await prisma.movie_theaters.findMany();
@@ -147,5 +173,6 @@ module.exports = {
   getTheaterById,
   createTheater,
   updateTheater,
-  deleteTheater
+  deleteTheater,
+  searchTheatersByName
 };

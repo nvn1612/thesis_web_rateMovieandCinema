@@ -3,7 +3,8 @@ import axios from "axios";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faPenToSquare, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from "react-router-dom";
-
+import { SearchInput } from "../../../components/search-input/SearchInput";
+import { UserSelect } from "../../../components/select-box/UserSelect";
 export const UserList = () => {
   const [getUsers, setGetUsers] = useState([]);
   const navigate = useNavigate();
@@ -39,6 +40,10 @@ export const UserList = () => {
                   <span className="inline-block h-3 w-3 rounded-full bg-green-200 ml-4 mr-2"></span>
                   <span>Đã kích hoạt</span>
                 </div>
+                <SearchInput
+                    contentSearch="Tìm kiếm người dùng"
+                />
+                <UserSelect/>
                 <button onClick={() => navigate('/admin/user/add')} className="p-2 border text-white bg-blue-400 rounded-lg hover:bg-blue-600 transition">
                   Thêm người dùng
                   <FontAwesomeIcon className="ml-2" icon={faPlus} />

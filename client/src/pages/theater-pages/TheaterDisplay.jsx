@@ -7,6 +7,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMap } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 import theaterBg from '../../assets/images/CinemaBG.jpg';
+import { SearchInput } from '../../components/search-input/SearchInput';
+import { TheaterLeverSelect } from '../../components/select-box/TheaterLeverSelect';
+import { RegionSelect } from '../../components/select-box/RegionSelect';
 
 export const TheaterDisplay = () => {
   const [theaters, setTheaters] = useState([]);
@@ -14,18 +17,32 @@ export const TheaterDisplay = () => {
   const theatersPerPage = 10; 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchTheaters = async () => {
-      try {
-        const response = await axios.get('http://localhost:8000/movie-theater/getalltheaters');
-        setTheaters(response.data);
-      } catch (error) {
-        console.error('Error fetching theaters:', error);
-      }
-    };
+  const fetchTheaters = async () => {
+    try {
+      const response = await axios.get('http://localhost:8000/movie-theater/getalltheaters');
+      setTheaters(response.data);
+    } catch (error) {
+      console.error('Có lỗi xảy ra khi lấy danh sách rạp chiếu phim:', error);
+    }
+  };
 
+  useEffect(() => {
     fetchTheaters();
   }, []);
+
+  const handleSearchTheaters = async (searchTerm) => {
+    if (searchTerm === '') {
+      fetchTheaters();
+      return;
+    }
+
+    try {
+      const response = await axios.get(`http://localhost:8000/movie-theater/search/theaters?name=${searchTerm}`);
+      setTheaters(response.data);
+    } catch (error) {
+      console.error('Có lỗi xảy ra khi tìm kiếm rạp chiếu phim:', error);
+    }
+  };
 
   const renderTheaters = () => {
     const startIndex = (currentPage - 1) * theatersPerPage;
@@ -80,6 +97,11 @@ export const TheaterDisplay = () => {
         />
         <div className="main-content bg-gray-200 w-full flex-grow flex flex-col items-center justify-center">
           <div className="w-3/5 h-full bg-white overflow-auto">
+            <div className="flex space-x-3 mt-2 ml-2">
+                <SearchInput onSearch={handleSearchTheaters} contentSearch={"Tìm kiếm theo tên rạp chiếu"}/>
+                <TheaterLeverSelect/>
+                <RegionSelect/>
+            </div>
             <div className="flex flex-col m-4">
               {renderTheaters()}
             </div>

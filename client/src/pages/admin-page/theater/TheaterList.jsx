@@ -65,6 +65,9 @@ export const TheaterList = () => {
                       Khu vực
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Đáng giá
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Chức năng
                     </th>
                   </tr>
@@ -91,6 +94,7 @@ export const TheaterList = () => {
                       <td className="px-6 py-4 whitespace-nowrap">
                         {theater.region}
                       </td>
+                      <td className="px-6 py-4 whitespace-nowrap"><a>Xem chi tiết</a></td>
                       <td className="px-6 py-4 whitespace-nowrap space-x-3">
                         <FontAwesomeIcon
                           icon={faTrash}

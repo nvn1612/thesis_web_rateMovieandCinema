@@ -73,28 +73,54 @@ const getAllPosts = async (req, res) => {
     });
   };
 
+  
 
-  const getCommentsByPostId = async (postId) => {
+  const getCommentCountByPostId = async (req, res) => {
+    const { post_id } = req.params;
     try {
-      const comments = await prisma.post_comments.findMany({
-        where: { post_id: postId },
-        orderBy: { created_at: 'desc' }, 
-        include: {
-          users: true, 
-        },
-      });
-      return comments;
+        const count = await prisma.post_comments.count({
+            where: { post_id: parseInt(post_id) },
+        });
+        res.json({ count });
     } catch (error) {
-      console.error(error);
-      throw new Error('Error fetching comments');
+        console.error(error); 
+        res.status(500).json({ error: 'Could not retrieve comment count' });
     }
-  };
+};
+
+const getLikeCountByPostId = async (req, res) => {
+  const { post_id } = req.params;
+  try {
+      const count = await prisma.post_likes.count({
+          where: { post_id: parseInt(post_id) },
+      });
+      res.json({ count });
+  } catch (error) {
+      console.error(error); 
+      res.status(500).json({ error: 'Could not retrieve like count' });
+  }
+}
+
+const getEarliestPosts = async (req, res) => {
+  try {
+    const earliestPosts = await prisma.posts.findMany({
+      orderBy: {
+        created_at: 'asc',
+      },
+      take: 3,
+    });
+    res.json(earliestPosts);
+  } catch (error) {
+    res.status(500).json({ error: 'Could not retrieve earliest posts' });
+  }
+};
 
 module.exports = {
     getAllPosts,
     getMoviePosts,
     getTheaterPosts,
     createPost,
-    
-    getCommentsByPostId,
+    getCommentCountByPostId,
+    getLikeCountByPostId,
+    getEarliestPosts,
 };

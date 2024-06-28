@@ -3,6 +3,7 @@ import axios from "axios";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faPenToSquare, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from "react-router-dom";
+import { SearchInput } from "../../../components/search-input/SearchInput";
 
 export const MovieList = () => {
   const [movies, setMovies] = useState([]);
@@ -39,7 +40,6 @@ export const MovieList = () => {
         <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8 h-full">
           <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg h-full flex flex-col">
             <div className="flex items-center mb-4 justify-between m-2">
-          
               <button onClick={() => navigate('/admin/movies/create')} className="p-2 border text-white bg-blue-400 rounded-lg hover:bg-blue-600 transition">
                 Thêm phim
                 <FontAwesomeIcon className="ml-2" icon={faPlus} />
@@ -56,6 +56,7 @@ export const MovieList = () => {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Đạo diễn</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày phát hành</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thời lượng</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Đáng giá</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Chức năng</th>
                   </tr>
                 </thead>
@@ -71,6 +72,7 @@ export const MovieList = () => {
                       <td className="px-6 py-4 whitespace-nowrap">{movie.director}</td>
                       <td className="px-6 py-4 whitespace-nowrap">{new Date(movie.release_date).toLocaleDateString()}</td>
                       <td className="px-6 py-4 whitespace-nowrap">{movie.duration} phút</td>
+                      <td className="px-6 py-4 whitespace-nowrap"><a>Xem chi tiết</a></td>
                       <td className="px-6 py-4 whitespace-nowrap space-x-3">
                         <FontAwesomeIcon icon={faTrash} onClick={() => handleDeleteMovie(movie.movie_id)} />
                         <FontAwesomeIcon icon={faPenToSquare} onClick={() => navigate(`/admin/movies/edit/${movie.movie_id}`)} />

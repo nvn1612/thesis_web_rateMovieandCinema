@@ -34,8 +34,8 @@ const registerUser = async (req, res) => {
     const mailOptions = {
       from: process.env.EMAIL_USERNAME,
       to: email,
-      subject: "Account Activation Link",
-      text: `Hello ${username},\n\nPlease click on the following link to activate your account:\nhttp://${req.headers.host}/user/activate/${activation_token}\n\nIf you did not request this, please ignore this email.\n`,
+      subject: "Kích hoạt tài khoản",
+      text: `Chào ${username},\n\nHãy nhấn vào link bên dưới để kích hoạt tài khoản của bạn:\nhttp://${req.headers.host}/user/activate/${activation_token}\n\nNếu bạn không yêu cầu điều này vui lòng bỏ qua email này.\n`,
     };
 
     transporter.sendMail(mailOptions, function (error, info) {
