@@ -34,16 +34,22 @@ export const MovieList = () => {
     }
   };
 
+  const handleViewMovieRatings = (movieId) => {
+    navigate(`/admin/movies/ratings/${movieId}`);
+  };
+
   return (
     <div className="flex flex-col w-full h-screen">
       <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8 h-full">
         <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8 h-full">
           <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg h-full flex flex-col">
             <div className="flex items-center mb-4 justify-between m-2">
-              <button onClick={() => navigate('/admin/movies/create')} className="p-2 border text-white bg-blue-400 rounded-lg hover:bg-blue-600 transition">
+              <button onClick={() => navigate('/admin/movies/create')} className="p-2 border text-white bg-green-400 rounded-lg hover:bg-green-600 transition">
                 Thêm phim
                 <FontAwesomeIcon className="ml-2" icon={faPlus} />
               </button>
+              <SearchInput contentSearch="Tìm kiếm phim"/>
+              <button className="pt-2 pb-2 pr-3 pl-3 bg-black text-white rounded-full hover:bg-green-500 transition"onClick={() => navigate('/admin/movies/fake-rating')}>Kiểm tra đánh giá nghi ngờ giả mạo</button>
             </div>
             <div className="flex-grow overflow-y-auto">
               <table className="min-w-full divide-y divide-gray-200">
@@ -72,10 +78,14 @@ export const MovieList = () => {
                       <td className="px-6 py-4 whitespace-nowrap">{movie.director}</td>
                       <td className="px-6 py-4 whitespace-nowrap">{new Date(movie.release_date).toLocaleDateString()}</td>
                       <td className="px-6 py-4 whitespace-nowrap">{movie.duration} phút</td>
-                      <td className="px-6 py-4 whitespace-nowrap"><a>Xem chi tiết</a></td>
+                      <td className="px-6 py-4 whitespace-nowrap"><button className="hover:text-orange-500 transition" onClick={() => handleViewMovieRatings(movie.movie_id)}>Xem chi tiết</button></td>
                       <td className="px-6 py-4 whitespace-nowrap space-x-3">
-                        <FontAwesomeIcon icon={faTrash} onClick={() => handleDeleteMovie(movie.movie_id)} />
-                        <FontAwesomeIcon icon={faPenToSquare} onClick={() => navigate(`/admin/movies/edit/${movie.movie_id}`)} />
+                        <button className="text-red-400 hover:text-red-500 transition">
+                            <FontAwesomeIcon icon={faTrash} onClick={() => handleDeleteMovie(movie.movie_id)} />
+                        </button>
+                        <button className="text-blue-400 hover:text-blue-500 transition">
+                          <FontAwesomeIcon icon={faPenToSquare} onClick={() => navigate(`/admin/movies/edit/${movie.movie_id}`)} />
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -87,4 +97,4 @@ export const MovieList = () => {
       </div>
     </div>
   );
-}
+};

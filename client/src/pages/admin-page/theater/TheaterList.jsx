@@ -3,6 +3,7 @@ import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faTrash, faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
+import { SearchInput } from "../../../components/search-input/SearchInput";
 
 export const TheaterList = () => {
   const [theaters, setTheaters] = useState([]);
@@ -26,8 +27,11 @@ export const TheaterList = () => {
       await axios.delete(`http://localhost:8000/movie-theater/deletetheater/${theater_id}`);
       setTheaters(theaters.filter(theater => theater.theater_id !== theater_id));
     } catch (error) {
-      console.error('Error deleting theater:', error);
+      console.error('Có lỗi khi xóa rạp chiếu:', error);
     }
+  };
+  const handleViewTheaterRatings = (theaterId) => {
+    navigate(`/admin/theaters/ratings/${theaterId}`);
   };
 
   return (
@@ -39,11 +43,12 @@ export const TheaterList = () => {
               
               <button
                 onClick={() => navigate("/admin/theaters/add")}
-                className="p-2 border text-white bg-blue-400 rounded-lg hover:bg-blue-600 transition"
+                className="p-2 border text-white bg-green-400 rounded-lg hover:bg-green-500 transition"
               >
                 Thêm rạp chiếu
                 <FontAwesomeIcon className="ml-2" icon={faPlus} />
               </button>
+              <SearchInput contentSearch="Tìm kiếm rạp chiếu"/>
             </div>
             <div className="flex-grow overflow-y-auto">
               <table className="min-w-full divide-y divide-gray-200">
@@ -94,16 +99,20 @@ export const TheaterList = () => {
                       <td className="px-6 py-4 whitespace-nowrap">
                         {theater.region}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap"><a>Xem chi tiết</a></td>
+                      <td className="px-6 py-4 whitespace-nowrap"><button className="hover:text-orange-500 transition"onClick={() =>handleViewTheaterRatings(theater.theater_id)}>Xem chi tiết</button></td>
                       <td className="px-6 py-4 whitespace-nowrap space-x-3">
-                        <FontAwesomeIcon
-                          icon={faTrash}
-                          onClick={() => handleDeleteTheater(theater.theater_id)}
-                        />
-                        <FontAwesomeIcon
-                          icon={faPenToSquare}
-                          onClick={() => navigate(`/admin/theaters/edit/${theater.theater_id}`)}
-                        />
+                        <button className="text-red-400 hover:text-red-500 transition">
+                          <FontAwesomeIcon
+                            icon={faTrash}
+                            onClick={() => handleDeleteTheater(theater.theater_id)}
+                          />
+                        </button>
+                        <button className="text-blue-400 hover:text-blue-500">
+                          <FontAwesomeIcon
+                            icon={faPenToSquare}
+                            onClick={() => navigate(`/admin/theaters/edit/${theater.theater_id}`)}
+                          />
+                        </button>
                       </td>
                     </tr>
                   ))}

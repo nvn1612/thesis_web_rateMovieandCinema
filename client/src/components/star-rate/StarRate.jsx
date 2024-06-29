@@ -13,9 +13,9 @@ export const StarRate = ({ label, rating, setRating }) => {
 
   return (
     <div className="flex items-center space-x-2">
-      <label className="font-bold text-sm w-2/4">{label}</label>
-      <div className="flex space-x-1 w-2/4">
-        {[...Array(5)].map((_, index) => (
+      <label className="font-bold text-sm min-w-28 ">{label}</label>
+      <div className="flex space-x-1 w-2/3">
+        {[...Array(10)].map((_, index) => (
           <FontAwesomeIcon
             key={index}
             icon={faStar}

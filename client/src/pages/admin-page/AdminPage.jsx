@@ -12,12 +12,21 @@ import { MovieEdit } from "./movie/MovieEdit";
 import { TheaterList } from "./theater/TheaterList";
 import { TheaterCreate } from "./theater/TheaterCreate";
 import { TheaterEdit } from "./theater/TheaterEdit";
+import { MovieRatingList } from "./movie/MovieRatingList";
+import { TheaterRatingList } from "./theater/TheaterRatingList";
+import { FakeRatingMovie } from "./movie/FakeRatingMovie";
+import { CommentMovie } from "./movie/CommentMovie";
 export const AdminPage = () => {
   return (
     <div className="flex w-full h-screen overflow-hidden">
       <div className="sider-bar">
         <div className="h-screen bg-gray-800 text-white w-64 space-y-6 py-7 px-2 inset-y-0 left-0 transform transition-transform duration-200 ease-in-out">
-          <img className="mx-auto h-12 w-auto" src={logo} alt="" />
+          
+          <div className="flex flex-col space-y-3 items-center">
+              <img src="https://static.vecteezy.com/system/resources/previews/019/896/008/original/male-user-avatar-icon-in-flat-design-style-person-signs-illustration-png.png" className="rounded-full h-24 w-24"></img>
+              <p>Quản trị viên</p>
+          </div>
+
           <hr />
           <nav>
             <Link
@@ -58,6 +67,7 @@ export const AdminPage = () => {
             </Link>
           </nav>
           <hr />
+          <img className="mx-auto h-12 w-auto" src={logo} alt="" />
         </div>
       </div>
       <div className="page-management flex-1">
@@ -71,6 +81,10 @@ export const AdminPage = () => {
           <Route path="theaters/" element={<TheaterList />} />
           <Route path="theaters/add" element={<TheaterCreate/>} />
           <Route path="theaters/edit/:theaterId" element={<TheaterEdit />} />
+          <Route path="movies/ratings/:movieId" element={<MovieRatingList />} />
+          <Route path="theaters/ratings/:theaterId" element={<TheaterRatingList />} />
+          <Route path="movies/fake-rating" element={<FakeRatingMovie />} />
+          <Route path="movies/rating-comment/:movie_rating_id" element={<CommentMovie />} />
         </Routes>
       </div>
     </div>

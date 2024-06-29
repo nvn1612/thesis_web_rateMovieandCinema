@@ -9,5 +9,4 @@ router.get('/genres', getGenres);
 router.delete('/deletemovie/:id', deleteMovie);
 router.put('/updatemovie/:id', updateMovie);
 router.get('/search/movies', searchMoviesByName);
-
 module.exports = router;

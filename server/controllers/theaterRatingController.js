@@ -100,6 +100,21 @@ const addTheaterRating = async (req, res) => {
   }
 };
 
+const deleteTheaterRating = async (req, res) => {
+  const { theater_rating_id } = req.params;
+
+  try {
+    const deletedRating = await prisma.theater_rating.delete({
+      where: { theater_rating_id: parseInt(theater_rating_id) },
+    });
+
+    return res.status(200).json({ message: 'Rating deleted successfully', deletedRating });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'An error occurred while deleting the rating.' });
+  }
+};
+
 const getTheaterRatings = async (req, res) => {
     const { theater_id } = req.params;
     try {
@@ -180,5 +195,6 @@ const getTheaterRatings = async (req, res) => {
   
 module.exports = {
   addTheaterRating,
-  getTheaterRatings
+  getTheaterRatings,
+  deleteTheaterRating
 };

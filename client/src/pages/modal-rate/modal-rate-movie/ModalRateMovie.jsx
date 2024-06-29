@@ -5,7 +5,7 @@ import { BtnConfirm } from "../../../components/btn-confirm/BtnConfirm";
 import axios from "axios";
 import UserContext from "../../../context/UserContext"; 
 
-export const ModalRateMovie = ({ isOpen, onClose, movieId, movieName, posterUrl }) => {
+export const ModalRateMovie = ({ isOpen, onClose, onCompleted, movieId, movieName, posterUrl }) => {
   const { user } = useContext(UserContext);
   const initialRatings = {
     content_rating: 0,
@@ -31,6 +31,7 @@ export const ModalRateMovie = ({ isOpen, onClose, movieId, movieName, posterUrl 
       onClose();
     }
   };
+
   const handleSubmit = async () => {
     try {
       const response = await axios.post('http://localhost:8000/movie-rating/add-rating', {
@@ -46,6 +47,7 @@ export const ModalRateMovie = ({ isOpen, onClose, movieId, movieName, posterUrl 
         is_expert_rating: user.is_expert
       });
       console.log('Rating added:', response.data);
+      onCompleted(); 
       onClose();
     } catch (error) {
       console.error('Error adding rating:', error);
@@ -59,10 +61,10 @@ export const ModalRateMovie = ({ isOpen, onClose, movieId, movieName, posterUrl 
       className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
       onClick={handleOverlayClick}
     >
-      <div className="relative w-full max-w-3xl bg-white rounded-lg">
+      <div className="relative w-full max-w-4xl bg-white rounded-lg">
         <div className="p-3 bg-slate-400 flex space-x-1 items-center justify-between">
           <div className="flex space-x-1">
-            <p className="font-bold">Đáng Giá Phim</p>
+            <p className="font-bold">Đánh Giá Phim</p>
             <p className="font-bold text-red-600">{movieName}</p>
           </div>
           <button onClick={onClose} className="text-black text-2xl">
@@ -70,7 +72,7 @@ export const ModalRateMovie = ({ isOpen, onClose, movieId, movieName, posterUrl 
           </button>
         </div>
         <div className="flex p-4">
-          <div className="w-2/4 flex justify-center">
+          <div className="flex justify-center w-2/5">
             <ImageContent
               width="w-[200px]"
               height="h-[290px]"
@@ -78,7 +80,7 @@ export const ModalRateMovie = ({ isOpen, onClose, movieId, movieName, posterUrl 
               image={posterUrl}
             />
           </div>
-          <div className="w-2/4">
+          <div className="w-3/5">
             <ContentModalRate 
               ratings={ratings} 
               setRatings={setRatings} 

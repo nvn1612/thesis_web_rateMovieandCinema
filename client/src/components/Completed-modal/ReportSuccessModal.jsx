@@ -1,7 +1,7 @@
 import React from 'react';
 import confirmRateBg from "../../assets/images/confirmRateBG.png";
 
-export const ModalCompletedRate = ({ isOpen, onClose }) => {
+export const ReportSuccessModal = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
@@ -9,8 +9,8 @@ export const ModalCompletedRate = ({ isOpen, onClose }) => {
       <div className="w-96 h-60 border rounded-lg flex flex-col space-y-4 justify-center bg-white p-4">
         <div className="flex items-center space-x-2 justify-center">
           <img src={confirmRateBg} alt="confirm" className="w-24" />
-          <p className="text-green-500 text-2xl font-bold">
-            Hệ thống đã ghi nhận lại đánh giá của bạn. Cảm ơn bạn đã tham gia đánh giá!
+          <p className="text-green-500 text-xl font-bold">
+              Cảm ơn bạn đã báo cáo đánh giá giả mạo. Hệ thống sẽ kiểm tra đáng giá này !
           </p>
         </div>
         <div className="flex justify-center">   

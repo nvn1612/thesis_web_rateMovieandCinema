@@ -4,7 +4,7 @@ import axios from "axios";
 import { Header } from "../../layouts/header/Header";
 import { Footer } from "../../layouts/footer/Footer";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendarWeek, faClock } from "@fortawesome/free-solid-svg-icons";
+import { faClock,faCalendarWeek } from "@fortawesome/free-solid-svg-icons";
 import { BtnRate } from "../../components/btn-rate/BtnRate";
 import { TrailerModal } from "../../components/trailer-modal/TrailerModal";
 import { ModalRateMovie } from "../modal-rate/modal-rate-movie/ModalRateMovie";
@@ -13,6 +13,8 @@ import { TotalRate } from "../../components/total-rate/TotalRate";
 import { ProgressBarGroup } from "../../layouts/progress-bar-group/ProgressBarGroup";
 import { CountRate } from "../../components/count-rate/CountRate";
 import { DetailRateUser } from "../../components/detail-rate-user/DetailRateUser";
+import { ModalCompletedRate } from "../../components/modal-completed-rate/ModalCompletedRate";
+import { BtnReport } from "../../components/btn-report/BtnReport";
 
 export const MovieDetail = () => {
   const [isTrailerOpen, setIsTrailerOpen] = useState(false);
@@ -27,6 +29,7 @@ export const MovieDetail = () => {
   const [isUserRatings, setIsUserRatings] = useState(true);
   const [users, setUsers] = useState({});
   const [visibleUserRatingsCount, setVisibleUserRatingsCount] = useState(5);
+  const [isCompletedModalOpen, setIsCompletedModalOpen] = useState(false);
   const { id } = useParams();
 
   useEffect(() => {
@@ -43,7 +46,7 @@ export const MovieDetail = () => {
       try {
         const response = await axios.get(`http://localhost:8000/movie-rating/ratings/${id}`);
         const ratingsData = response.data;
-        
+
         setUserRatings(ratingsData.userRatings);
         setExpertRatings(ratingsData.expertRatings);
 
@@ -87,11 +90,11 @@ export const MovieDetail = () => {
 
     fetchMovie();
     fetchRatings();
-  }, [id]);
+  }, [id, isRateModalOpen]);
 
   const handleToggleRatings = (isUser) => {
     setIsUserRatings(isUser);
-    setVisibleUserRatingsCount(5); // Reset visible count when switching between user and expert ratings
+    setVisibleUserRatingsCount(5); 
   };
 
   const handleOpenTrailer = () => {
@@ -112,6 +115,14 @@ export const MovieDetail = () => {
 
   const handleLoadMoreRatings = () => {
     setVisibleUserRatingsCount((prevCount) => prevCount + 5);
+  };
+
+  const handleOpenCompletedModal = () => {
+    setIsCompletedModalOpen(true);
+  };
+
+  const handleCloseCompletedModal = () => {
+    setIsCompletedModalOpen(false);
   };
 
   if (!movie) {
@@ -230,16 +241,16 @@ export const MovieDetail = () => {
               label_4={"Âm thanh"}
               label_5={"Đạo diễn"}
               label_6={"Tính giải trí"}
-              average1={Math.round(((currentAverageRatings.averageContentRating)/5)*100)}
-              average2={Math.round(((currentAverageRatings.averageActingRating)/5)*100)}
-              average3={Math.round(((currentAverageRatings.averageVisualEffectsRating)/5)*100)}
-              average4={Math.round(((currentAverageRatings.averageSoundRating)/5)*100)}
-              average5={Math.round(((currentAverageRatings.averageDirectingRating)/5)*100)}
-              average6={Math.round(((currentAverageRatings.averageEntertainmentRating)/5)*100)}
+              average1={Math.round(((currentAverageRatings.averageContentRating)/10)*100)}
+              average2={Math.round(((currentAverageRatings.averageActingRating)/10)*100)}
+              average3={Math.round(((currentAverageRatings.averageVisualEffectsRating)/10)*100)}
+              average4={Math.round(((currentAverageRatings.averageSoundRating)/10)*100)}
+              average5={Math.round(((currentAverageRatings.averageDirectingRating)/10)*100)}
+              average6={Math.round(((currentAverageRatings.averageEntertainmentRating)/10)*100)}
             />
             <div className="flex space-x-1 ">
               <TotalRate 
-                totalPercent={Math.round(((currentAverageRatings.averageRating)/5)*100)}
+                totalPercent={Math.round(((currentAverageRatings.averageRating)/10)*100)}
               />
               <CountRate
                 name={movie.name_movie}
@@ -260,29 +271,37 @@ export const MovieDetail = () => {
                   key={rating.movie_rating_id}
                   className="flex flex-col p-2 border rounded-md bg-slate-200 space-y-2"
                 >
-                  <div className="flex space-x-4">
-                    <img
-                      className="w-12 h-12 rounded-full"
-                      src={
-                        users[rating.user_id]?.avatar
-                          ? `http://localhost:8000/${users[rating.user_id].avatar}`
-                          : noAvatarUser
-                      }
-                      alt="User Avatar"
-                    />
-                    <div className="flex flex-col">
-                      <div className="flex space-x-2">
-                        <p>{users[rating.user_id]?.username || "Unknown User"}</p>
-                        <p>
-                          {(rating.total_rating).toFixed(1)}/5
-                        </p>
-                      </div>
-                      <div className="text-gray-400">
-                        {new Date(rating.created_at).toLocaleDateString()}
-                      </div>
-                    </div>     
+                  <div className="flex justify-between items-center">
+                    <div className="flex space-x-4">
+                      <img
+                        className="w-12 h-12 rounded-full object-cover"
+                        src={
+                          users[rating.user_id]?.avatar
+                            ? `http://localhost:8000/${users[rating.user_id].avatar}`
+                            : noAvatarUser
+                        }
+                        alt="User Avatar"
+                      />
+                      <div className="flex flex-col">
+                        <div className="flex space-x-2">
+                          <p>{users[rating.user_id]?.username || "Unknown User"}</p>
+                          <p>
+                            {(rating.total_rating).toFixed(1)}/10
+                          </p>
+                        </div>
+                        <div className="text-gray-400">
+                          {new Date(rating.created_at).toLocaleDateString()}
+                        </div>
+                      </div>     
+                    </div>
+                    <div>
+                      {isUserRatings && (
+                         <BtnReport id={rating.movie_rating_id}/>
+                         
+                      )}
+                    </div>
                   </div>
-                    
+                  
                   <DetailRateUser
                     score1={rating.content_rating}
                     score2={rating.acting_rating}
@@ -318,9 +337,14 @@ export const MovieDetail = () => {
       <ModalRateMovie
         isOpen={isRateModalOpen}
         onClose={handleCloseRateModal}
+        onCompleted={handleOpenCompletedModal}
         movieId={movie.movie_id}
         movieName={movie.title}
         posterUrl={`http://localhost:8000/${movie.poster_image}`}
+      />
+      <ModalCompletedRate
+        isOpen={isCompletedModalOpen} 
+        onClose={handleCloseCompletedModal} 
       />
     </>
   );
