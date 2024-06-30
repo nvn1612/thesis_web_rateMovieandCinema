@@ -34,7 +34,7 @@ export const ModalRateMovie = ({ isOpen, onClose, onCompleted, movieId, movieNam
 
   const handleSubmit = async () => {
     try {
-      const response = await axios.post('http://localhost:8000/movie-rating/add-rating', {
+      const response = await axios.post('/movie-rating/add-rating', {
         user_id: user.user_id,
         movie_id: movieId,
         content_rating: ratings.content_rating,

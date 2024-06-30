@@ -1,28 +1,28 @@
 import React, { useState } from 'react';
 
-export const PostTypeSelect = () => {
-  const [selectedPostType, setselectedPostType] = useState('');
+export const ModerateSelect = () => {
+  const [selectedModerate, setselectedModerate] = useState('');
 
-  const levers = [ 'bài viết về phim', 'bài viết về rạp chiếu'];
+  const Moderates = ['Chưa kiểm duyệt', 'Đã kiểm duyệt'];
 
   const handleChange = (event) => {
-    setselectedPostType(event.target.value);
+    setselectedModerate(event.target.value);
   };
 
   return (
     <div className="relative inline-block">
       <select 
-        value={selectedPostType} 
+        value={selectedModerate} 
         onChange={handleChange}
         className="border rounded-md p-2 flex items-center cursor-pointer"
       >
         <option value="" disabled hidden>
-          Lọc chủ đề
+          Tài khoản
         </option>
         <option value="Tất cả">Tất cả</option>
-        {levers.map((lever, index) => (
-          <option key={index} value={lever}>
-            {lever}
+        {Moderates.map((moderate, index) => (
+          <option key={index} value={moderate}>
+            {moderate}
           </option>
         ))}
       </select>

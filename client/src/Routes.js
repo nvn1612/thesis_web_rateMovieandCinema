@@ -15,6 +15,9 @@ import { PostDisplay } from "./pages/community-page/PostDisplay";
 import { UserProfile } from "./pages/user-profile/UserProfile";
 import { CompletedModal } from "./components/Completed-modal/CompletedModal";
 import { ModalCompletedRate } from "./components/modal-completed-rate/ModalCompletedRate";
+import { ModalAddPost } from "./components/modal-add-post/ModalAddPost";
+import { CommentPostList } from "./pages/admin-page/post/CommentPostList";
+import { PostDetail } from "./pages/community-page/PostDetail";
 const AppRoutes = () => {
   return (
     <Routes>
@@ -34,6 +37,7 @@ const AppRoutes = () => {
         <Route path="/community" element={<PostDisplay />} />
         <Route path="/profile" element={<UserProfile />} />
         <Route path="/test" element={<ModalCompletedRate />} />
+        <Route path="/community/post-detail/:postId" element={<PostDetail />} />
     </Routes>
   );
 };

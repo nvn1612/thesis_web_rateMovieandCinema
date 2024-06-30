@@ -18,7 +18,7 @@ export const MovieCreate = () => {
 
   useEffect(() => {
     const fetchGenres = async () => {
-      const response = await axios.get("http://localhost:8000/movie/genres");
+      const response = await axios.get("/movie/genres");
       setGenres(response.data);
     };
     fetchGenres();

@@ -28,7 +28,7 @@ app.use('/movie-rating', movieRatingRoutes);
 app.use('/theater-rating', theaterRatingRoutes);
 
 app.use('/post', postRoutes);
-
+app.use('/uploadimagepost', express.static(path.join(__dirname, 'uploadimagepost')));
 
 
 app.get('/', (req, res) => {

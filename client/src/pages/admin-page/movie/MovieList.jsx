@@ -12,7 +12,7 @@ export const MovieList = () => {
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/movie/getallmovies');
+        const response = await axios.get('/movie/getallmovies');
         setMovies(response.data);
       } catch (error) {
         console.error("Có lỗi xảy ra khi lấy dữ liệu phim:", error);

@@ -70,9 +70,10 @@ export const Header = () => {
             {dropdownVisible && (
               <div className="absolute right-0 mt-2 w-48 bg-white text-black rounded-md shadow-lg z-10">
                 <a href="/profile" className="block px-4 py-2 hover:bg-green-200 hover:rounded-md text-sm transition">Trang cá nhân</a>
-                <a href="/rated-movies" className="block px-4 py-2 hover:bg-green-200 text-sm transition">Phim đã đánh giá</a>
-                <a href="/rated-theaters" className="block px-4 py-2 hover:bg-green-200 text-sm transition">Rạp chiếu đã đánh giá</a>
+                <a href="/rated-theaters" className="block px-4 py-2 hover:bg-green-200 text-sm transition">Các đánh giá rạp chiếu</a>
+                <a href="/rated-theaters" className="block px-4 py-2 hover:bg-green-200 text-sm transition">Các đánh giá Phim</a>
                 <a href="/posts" className="block px-4 py-2 hover:bg-green-200 text-sm transition">Bài viết đã đăng</a>
+                <a href="/rated-movies" className="block px-4 py-2 hover:bg-green-200 text-sm transition">Đổi mật khẩu</a>
                 <button 
                   onClick={handleLogout} 
                   className="block w-full text-left px-4 py-2 hover:bg-green-200 text-sm hover:rounded-md transition">

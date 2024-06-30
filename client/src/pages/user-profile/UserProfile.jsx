@@ -21,17 +21,17 @@ export const UserProfile = () => {
             <FontAwesomeIcon icon={faUser} className="mr-4 text-blue-500" />
             <span className="font-medium text-gray-700">Thông tin cá nhân</span>
           </li>
-          <li className="px-6 py-4 flex items-center hover:bg-green-300 transition">
+          {/* <li className="px-6 py-4 flex items-center hover:bg-green-300 transition">
             <FontAwesomeIcon icon={faFilm} className="mr-4 text-green-500" />
             <span className="font-medium text-gray-700">Phim đã đánh giá</span>
-          </li>
-          <li className="px-6 py-4 flex items-center hover:bg-green-300 transition">
+          </li> */}
+          {/* <li className="px-6 py-4 flex items-center hover:bg-green-300 transition">
             <FontAwesomeIcon icon={faTheaterMasks} className="mr-4 text-red-500" />
             <span className="font-medium text-gray-700">Rạp chiếu đã đánh giá</span>
-          </li>
+          </li> */}
           <li className="px-6 py-4 flex items-center hover:bg-green-300 transition">
             <FontAwesomeIcon icon={faPen} className="mr-4 text-yellow-500" />
-            <span className="font-medium text-gray-700">Bài viết đã đăng</span>
+            <span className="font-medium text-gray-700">Đổi mật khẩu</span>
           </li>
           <li
             className="px-6 py-4 flex items-center cursor-pointer hover:bg-green-300 transition"

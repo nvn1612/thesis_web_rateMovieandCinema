@@ -5,6 +5,7 @@ import { faTrash, faPenToSquare, faPlus } from '@fortawesome/free-solid-svg-icon
 import { useNavigate } from "react-router-dom";
 import { SearchInput } from "../../../components/search-input/SearchInput";
 import { UserSelect } from "../../../components/select-box/UserSelect";
+import { ActiveAccountSelect } from "../../../components/select-box/ActiveAccountSelect";
 import noAvatarUser from "../../../assets/images/no_user_avatar.jpg";
 
 export const UserList = () => {
@@ -41,6 +42,7 @@ export const UserList = () => {
                 <span className="inline-block h-3 w-3 rounded-full bg-green-200 ml-4 mr-2"></span>
                 <span>Đã kích hoạt</span>
               </div>
+              <ActiveAccountSelect/>
               <SearchInput contentSearch="Tìm kiếm người dùng" />
               <UserSelect />
               <button onClick={() => navigate('/admin/user/add')} className="p-2 border text-white bg-green-400 rounded-lg hover:bg-green-500 transition">

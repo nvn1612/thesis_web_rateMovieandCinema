@@ -16,6 +16,9 @@ import { MovieRatingList } from "./movie/MovieRatingList";
 import { TheaterRatingList } from "./theater/TheaterRatingList";
 import { FakeRatingMovie } from "./movie/FakeRatingMovie";
 import { CommentMovie } from "./movie/CommentMovie";
+import { PostList } from "./post/PostList";
+import { CommentPostList } from "./post/CommentPostList";
+import { ContentPost } from "./post/ContentPost";
 export const AdminPage = () => {
   return (
     <div className="flex w-full h-screen overflow-hidden">
@@ -54,7 +57,7 @@ export const AdminPage = () => {
               Quản lý rạp chiếu
             </Link>
             <Link
-              to="#"
+              to="/admin/posts"
               className="block py-2.5 px-4 rounded transition duration-200 hover:bg-green-700"
             >
               Quản lý bài viết
@@ -85,6 +88,9 @@ export const AdminPage = () => {
           <Route path="theaters/ratings/:theaterId" element={<TheaterRatingList />} />
           <Route path="movies/fake-rating" element={<FakeRatingMovie />} />
           <Route path="movies/rating-comment/:movie_rating_id" element={<CommentMovie />} />
+          <Route path="posts" element={<PostList />} />
+          <Route path="posts/comments/:postId" element={<CommentPostList />} />
+          <Route path="posts/content/:postId" element={<ContentPost/>} />
         </Routes>
       </div>
     </div>
