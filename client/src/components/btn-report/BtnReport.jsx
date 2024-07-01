@@ -4,12 +4,12 @@ import { faQuestion } from "@fortawesome/free-solid-svg-icons";
 import axios from 'axios';
 import { ReportSuccessModal } from "../Completed-modal/ReportSuccessModal";
 
-export const BtnReport = ({ id }) => {
+export const BtnReport = ({ id, type}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const reportRating = async (id) => {
+  const reportRating = async (id, type) => {
     try {
-      const response = await axios.put(`http://localhost:8000/movie-rating/report-rating/${id}`);
+      const response = await axios.put(`/${type}/report-rating/${id}`);
       console.log('Rating reported successfully:', response.data);
       setIsModalOpen(true); 
     } catch (error) {
@@ -23,7 +23,7 @@ export const BtnReport = ({ id }) => {
 
   return (
     <>
-      <button className="flex space-x-2 items-center group" onClick={() => reportRating(id)}>
+      <button className="flex space-x-2 items-center group" onClick={() => reportRating(id,type)}>
         <p className="hidden group-hover:block text-red-500">
           Tố cáo đánh giá giả mạo
         </p>

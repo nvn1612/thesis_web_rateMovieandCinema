@@ -14,7 +14,7 @@ export const UserList = () => {
   
   useEffect(() => {
     const fetchUsers = async () => {
-      const response = await axios.get("http://localhost:8000/user/getalluser");
+      const response = await axios.get("/user/getalluser");
       setGetUsers(response.data);
     };
     fetchUsers();
@@ -22,7 +22,7 @@ export const UserList = () => {
   
   const deleteUser = async (userID) => {
     try {
-      const response = await axios.delete(`http://localhost:8000/user/deleteuser/${userID}`);
+      const response = await axios.delete(`/user/deleteuser/${userID}`);
       console.log(response.data);
       setGetUsers(getUsers.filter(user => user.user_id !== userID));
     } catch (error) {
@@ -49,6 +49,9 @@ export const UserList = () => {
                 Thêm người dùng
                 <FontAwesomeIcon className="ml-2" icon={faPlus} />
               </button>
+            </div>
+            <div>
+                <button className="ml-2 pt-1 pb-1 pr-1 pl-1 mb-2 bg-black text-white hover:bg-green-500 transition rounded-lg" onClick={()=>navigate('/admin/users/suspicion-lever')}>Kiểm tra người dùng có mức độ nghi ngờ cao</button>
             </div>
             <div className="flex-grow overflow-y-auto">
               <table className="min-w-full divide-y divide-gray-200">

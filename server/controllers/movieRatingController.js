@@ -154,9 +154,9 @@ const getMovieRatings = async (req, res) => {
         movie_id: movieIdInt,
         fake_rating: false 
       },
-      include: {
-        users: true
-      }
+      // include: {
+      //   users: true
+      // }
     });
     const userRatings = ratings.filter(rating => !rating.is_expert_rating);
     const expertRatings = ratings.filter(rating => rating.is_expert_rating);
@@ -197,6 +197,8 @@ const getMovieRatings = async (req, res) => {
     const averageExpertEntertainmentRating = totalExpertRatingsCount > 0 ? parseFloat((totalExpertEntertainmentRatingSum / totalExpertRatingsCount).toFixed(2)) : 0;
     const averageExpertRating = totalExpertRatingsCount > 0 ? parseFloat((totalExpertRatingSum / totalExpertRatingsCount).toFixed(2)) : 0;
 
+    const totalAverageRating = (averageExpertRating + averageUserRating) / 2;
+
     return res.status(200).json({
       userRatings,
       expertRatings,
@@ -216,6 +218,7 @@ const getMovieRatings = async (req, res) => {
       averageExpertEntertainmentRating,
       averageExpertRating,
       totalExpertRatingsCount,
+      totalAverageRating
     });
   } catch (error) {
     console.error(error);
@@ -305,6 +308,100 @@ const getMovieRatingById = async (req, res) => {
   }
 };
   
+const getLeverMovieRating = async (req, res) => {
+  try {
+    const movieRatings = await prisma.movie_rating.groupBy({
+      by: ['movie_id'],
+      _avg: {
+        total_rating: true,
+      },
+      where: {
+        fake_rating: false,
+        reported: false,
+      },
+    });
+
+    const highRatedMovieIds = movieRatings
+      .filter(movie => movie._avg.total_rating >= 8)
+      .map(movie => movie.movie_id);
+
+    const mediumRatedMovieIds = movieRatings
+      .filter(movie => movie._avg.total_rating >= 5 && movie._avg.total_rating < 8)
+      .map(movie => movie.movie_id);
+
+    const lowRatedMovieIds = movieRatings
+      .filter(movie => movie._avg.total_rating < 5)
+      .map(movie => movie.movie_id);
+
+    const highRatedMovies = await prisma.movies.findMany({
+      where: {
+        movie_id: {
+          in: highRatedMovieIds,
+        },
+      },
+    });
+
+    const mediumRatedMovies = await prisma.movies.findMany({
+      where: {
+        movie_id: {
+          in: mediumRatedMovieIds,
+        },
+      },
+    });
+
+    const lowRatedMovies = await prisma.movies.findMany({
+      where: {
+        movie_id: {
+          in: lowRatedMovieIds,
+        },
+      },
+    });
+
+    return res.status(200).json({
+      highRatedMovies,
+      mediumRatedMovies,
+      lowRatedMovies,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'An error occurred while retrieving the movie ratings.' });
+  }
+};
+
+const deleteMovieRatingAndIncreaseSuspicion = async (req, res) => {
+  const { movie_rating_id } = req.params;
+
+  try {
+    const deletedRating = await prisma.movie_rating.delete({
+      where: { movie_rating_id: parseInt(movie_rating_id) },
+    });
+
+    await prisma.users.update({
+      where: { user_id: deletedRating.user_id },
+      data: { suspicion_level: { increment: 1 } },
+    });
+
+    return res.status(200).json({ message: 'Rating deleted successfully and suspicion level increased', deletedRating });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'An error occurred while deleting the rating and updating suspicion level.' });
+  }
+};
+
+const getMovieRatingsForAdmin = async (req, res) => {
+  try {
+    const ratings = await prisma.movie_rating.findMany({
+      where: {
+        fake_rating: false,
+      },
+    });
+
+    return res.status(200).json(ratings);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'An error occurred while retrieving movie ratings.' });
+  }
+};
 
 
   module.exports = {
@@ -314,6 +411,9 @@ const getMovieRatingById = async (req, res) => {
     getFakeOrReportedMovieRatings,
     updateFakeandReportRating,
     reportMovieRating,
-    getMovieRatingById
+    getMovieRatingById,
+    getLeverMovieRating,
+    deleteMovieRatingAndIncreaseSuspicion,
+    getMovieRatingsForAdmin
   };
 

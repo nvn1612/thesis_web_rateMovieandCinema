@@ -302,6 +302,22 @@ const updateUser = async (req, res) => {
 
 };
 
+const getSuspiciousUsers = async (req, res) => {
+  try {
+    const suspiciousUsers = await prisma.users.findMany({
+      where: {
+        suspicion_level: {
+          gte: 2,
+        },
+      },
+    });
+    res.status(200).json(suspiciousUsers);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 module.exports = {
   registerUser,
   activateUser,
@@ -311,5 +327,6 @@ module.exports = {
   getUser,
   createUser,
   deleteUser,
-  updateUser
+  updateUser,
+  getSuspiciousUsers
 };

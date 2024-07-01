@@ -7,7 +7,7 @@ import axios from "axios";
 import UserContext from "../../../context/UserContext"; 
 
 
-export const ModalRateCinema = ({ isOpen, onClose, theaterId, theaterName, theaterImageUrl }) => {
+export const ModalRateCinema = ({ isOpen, onClose, theaterId, theaterName, theaterImageUrl,onCompleted }) => {
   const { user } = useContext(UserContext);
   const initialRatings = {
     image_quality_rating: 0,
@@ -36,7 +36,7 @@ export const ModalRateCinema = ({ isOpen, onClose, theaterId, theaterName, theat
 
   const handleSubmit = async () => {
     try {
-      const response = await axios.post('http://localhost:8000/theater-rating/add-theater-rating', {
+      const response = await axios.post('/theater-rating/add-theater-rating', {
         user_id: user.user_id,
         theater_id: theaterId,
         image_quality_rating: ratings.image_quality_rating,
@@ -49,7 +49,8 @@ export const ModalRateCinema = ({ isOpen, onClose, theaterId, theaterName, theat
         is_expert_rating: user.is_expert,
       });
       console.log('Rating added:', response.data);
-      onClose();
+      onCompleted(); 
+      onClose()
     } catch (error) {
       console.error('Error adding rating:', error);
     }
@@ -62,7 +63,7 @@ export const ModalRateCinema = ({ isOpen, onClose, theaterId, theaterName, theat
       className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
       onClick={handleOverlayClick}
     >
-      <div className="relative w-full max-w-3xl bg-white rounded-lg">
+      <div className="relative w-[950px] bg-white rounded-lg">
         <div className="p-3 bg-slate-400 flex space-x-1 items-center justify-between">
           <div className="flex space-x-1">
             <p className="font-bold">Đánh giá rạp chiếu phim</p>

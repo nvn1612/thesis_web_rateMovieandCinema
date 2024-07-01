@@ -13,7 +13,7 @@ export const FakeRatingMovie = () => {
   useEffect(() => {
     const fetchFakeRatings = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/movie-rating/fake-reported-rating');
+        const response = await axios.get('/movie-rating/fake-reported-rating');
         setFakeRatings(response.data);
       } catch (error) {
         console.error('Error fetching fake ratings:', error);
@@ -26,7 +26,7 @@ export const FakeRatingMovie = () => {
   const fetchUser = async (userId) => {
     if (!users[userId]) {
       try {
-        const response = await axios.get(`http://localhost:8000/user/getuser/${userId}`);
+        const response = await axios.get(`/user/getuser/${userId}`);
         setUsers((prevUsers) => ({ ...prevUsers, [userId]: response.data }));
       } catch (error) {
         console.error('Error fetching user:', error);
@@ -37,7 +37,7 @@ export const FakeRatingMovie = () => {
   const fetchMovie = async (movieId) => {
     if (!movies[movieId]) {
       try {
-        const response = await axios.get(`http://localhost:8000/movie/getmovie/${movieId}`);
+        const response = await axios.get(`/movie/getmovie/${movieId}`);
         setMovies((prevMovies) => ({ ...prevMovies, [movieId]: response.data }));
       } catch (error) {
         console.error('Error fetching movie:', error);
@@ -47,7 +47,7 @@ export const FakeRatingMovie = () => {
 
   const handleDeleteRating = async (movieRatingId) => {
     try {
-      await axios.delete(`http://localhost:8000/movie-rating/delete-movie-rating/${movieRatingId}`);
+      await axios.delete(`/movie-rating/delete-movie-rating-increase-suspicion/${movieRatingId}`);
       setFakeRatings((prevRatings) => prevRatings.filter(rating => rating.movie_rating_id !== movieRatingId));
     } catch (error) {
       console.error('Error deleting rating:', error);
@@ -56,9 +56,9 @@ export const FakeRatingMovie = () => {
 
   const handleUpdateFakeRating = async (movieRatingId) => {
     try {
-      await axios.put(`http://localhost:8000/movie-rating/update-fake-reported-rating/${movieRatingId}`);
+      await axios.put(`/movie-rating/update-fake-reported-rating/${movieRatingId}`);
       
-      const updatedResponse = await axios.get('http://localhost:8000/movie-rating/fake-reported-rating');
+      const updatedResponse = await axios.get('/movie-rating/fake-reported-rating');
       setFakeRatings(updatedResponse.data);
     } catch (error) {
       console.error('Error updating fake rating:', error);

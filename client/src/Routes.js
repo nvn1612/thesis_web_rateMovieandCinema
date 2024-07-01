@@ -4,7 +4,6 @@ import { Login } from "./pages/login/Login";
 import { Signup } from "./pages/signup/Signup";
 import { VerifySignup } from "./pages/verification-page/VerifySignup";
 import { NotifySuccess } from "./pages/verification-page/NotifySuccess";
-import { Home } from "./pages/home/Home";
 import { ForgotPassword } from "./pages/forgot-password/ForgotPassword";
 import { AdminPage } from "./pages/admin-page/AdminPage"; 
 import { MovieDisplay } from "./pages/movie-pages/MovieDisplay";
@@ -18,6 +17,7 @@ import { ModalCompletedRate } from "./components/modal-completed-rate/ModalCompl
 import { ModalAddPost } from "./components/modal-add-post/ModalAddPost";
 import { CommentPostList } from "./pages/admin-page/post/CommentPostList";
 import { PostDetail } from "./pages/community-page/PostDetail";
+import {Home} from "./pages/home/Home";
 const AppRoutes = () => {
   return (
     <Routes>
@@ -30,10 +30,10 @@ const AppRoutes = () => {
 
 
         <Route path="/" element={<Home />} />
-        <Route path="/page" element={<MovieDisplay />} />
-        <Route path="page/movie/detail/:id" element={<MovieDetail />} />
-        <Route path="/theater" element={<TheaterDisplay />} />
-        <Route path="theater/detail/:id" element={<TheaterDetail />} />
+        <Route path="/movies" element={<MovieDisplay />} />
+        <Route path="movies/movie/detail/:id" element={<MovieDetail />} />
+        <Route path="/theaters" element={<TheaterDisplay />} />
+        <Route path="theaters/detail/:id" element={<TheaterDetail />} />
         <Route path="/community" element={<PostDisplay />} />
         <Route path="/profile" element={<UserProfile />} />
         <Route path="/test" element={<ModalCompletedRate />} />

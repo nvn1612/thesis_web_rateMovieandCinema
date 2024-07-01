@@ -12,7 +12,7 @@ export const TheaterList = () => {
   useEffect(() => {
     const fetchTheaters = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/movie-theater/getalltheaters');
+        const response = await axios.get('/movie-theater/getalltheaters');
         setTheaters(response.data);
       } catch (error) {
         console.error('Error fetching theaters:', error);
@@ -24,7 +24,7 @@ export const TheaterList = () => {
 
   const handleDeleteTheater = async (theater_id) => {
     try {
-      await axios.delete(`http://localhost:8000/movie-theater/deletetheater/${theater_id}`);
+      await axios.delete(`/movie-theater/deletetheater/${theater_id}`);
       setTheaters(theaters.filter(theater => theater.theater_id !== theater_id));
     } catch (error) {
       console.error('Có lỗi khi xóa rạp chiếu:', error);
@@ -49,6 +49,8 @@ export const TheaterList = () => {
                 <FontAwesomeIcon className="ml-2" icon={faPlus} />
               </button>
               <SearchInput contentSearch="Tìm kiếm rạp chiếu"/>
+              <button className="pt-2 pb-2 pr-3 pl-3 bg-black text-white rounded-full hover:bg-green-500 transition"onClick={()=>navigate(`/admin/theaters/fake-rating`)}>Kiểm tra đánh giá nghi ngờ giả mạo</button>
+
             </div>
             <div className="flex-grow overflow-y-auto">
               <table className="min-w-full divide-y divide-gray-200">

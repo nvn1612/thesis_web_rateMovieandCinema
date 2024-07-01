@@ -16,14 +16,14 @@ export const FormLogin = () => {
     event.preventDefault();
 
     try {
-      const response = await axios.post('http://localhost:8000/user/login', {
+      const response = await axios.post('/user/login', {
         username: username,
         password: password,
       });
 
       if (response.data.token) {
         // Lưu token vào localStorage
-        localStorage.setItem('token', response.data.token);
+        // localStorage.setItem('token', response.data.token);
 
         // Lưu thông tin người dùng và gọi hàm login từ context
         login(response.data.user);
@@ -32,7 +32,7 @@ export const FormLogin = () => {
         if (is_Admin) {
           navigate('/admin');
         } else {
-          navigate('/page');
+          navigate('/');
         }
       } else {
         setMessage('Login failed. Please try again.');

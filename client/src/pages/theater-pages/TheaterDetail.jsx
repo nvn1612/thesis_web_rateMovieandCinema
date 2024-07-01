@@ -1,18 +1,24 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Header } from '../../layouts/header/Header';
 import { BtnRate } from '../../components/btn-rate/BtnRate';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMap } from '@fortawesome/free-solid-svg-icons';
+import { faMap,faThumbsUp } from '@fortawesome/free-solid-svg-icons';
 import { ModalRateCinema } from '../modal-rate/modal-rate-cinema/ModalRateCinema';
 import noAvatarUser from '../../assets/images/no_user_avatar.jpg';
 import { ProgressBarGroup } from '../../layouts/progress-bar-group/ProgressBarGroup';
 import { TotalRate } from '../../components/total-rate/TotalRate';
 import { CountRate } from '../../components/count-rate/CountRate';
 import { DetailRateUser } from '../../components/detail-rate-user/DetailRateUser';
+import { ModalCompletedRate } from "../../components/modal-completed-rate/ModalCompletedRate";
+import { BtnReport } from "../../components/btn-report/BtnReport";
+import UserContext from "../../context/UserContext"; 
+
 
 export const TheaterDetail = () => {
+  const { user } = useContext(UserContext);
+
   const { id } = useParams();
   const [theater, setTheater] = useState(null);
   const [isRateModalOpen, setIsRateModalOpen] = useState(false);
@@ -24,12 +30,14 @@ export const TheaterDetail = () => {
   const [totalExpertRatingsCount, setTotalExpertRatingsCount] = useState(0);
   const [isUserRatings, setIsUserRatings] = useState(true);
   const [users, setUsers] = useState({});
-  const [visibleRatingsCount, setVisibleRatingsCount] = useState(5); // Số lượng đánh giá hiển thị ban đầu
+  const [isCompletedModalOpen, setIsCompletedModalOpen] = useState(false);
+  const [visibleRatingsCount, setVisibleRatingsCount] = useState(5);
+  const [totalRating, setTotalRating] = useState(0);
 
   useEffect(() => {
     const fetchTheater = async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/movie-theater/gettheater/${id}`);
+        const response = await axios.get(`/movie-theater/gettheater/${id}`);
         setTheater(response.data);
       } catch (error) {
         console.error('Có lỗi xảy ra', error);
@@ -38,7 +46,7 @@ export const TheaterDetail = () => {
 
     const fetchRatings = async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/theater-rating/ratings/${id}`);
+        const response = await axios.get(`/theater-rating/ratings/${id}`);
         const ratingsData = response.data;
 
         setUserRatings(ratingsData.userRatings);
@@ -66,12 +74,13 @@ export const TheaterDetail = () => {
 
         setTotalUserRatingsCount(ratingsData.totalUserRatingsCount);
         setTotalExpertRatingsCount(ratingsData.totalExpertRatingsCount);
+        setTotalRating(ratingsData.totalAverageRating)
 
         const usersData = {};
         await Promise.all(
           ratingsData.userRatings.concat(ratingsData.expertRatings).map(async (rating) => {
             if (!usersData[rating.user_id]) {
-              const userResponse = await axios.get(`http://localhost:8000/user/getuser/${rating.user_id}`);
+              const userResponse = await axios.get(`/user/getuser/${rating.user_id}`);
               usersData[rating.user_id] = userResponse.data;
             }
           })
@@ -84,11 +93,11 @@ export const TheaterDetail = () => {
 
     fetchTheater();
     fetchRatings();
-  }, [id]);
+  }, [id, isCompletedModalOpen]); 
 
   const handleToggleRatings = (isUser) => {
     setIsUserRatings(isUser);
-    setVisibleRatingsCount(5); // Đặt lại số lượng đánh giá hiển thị khi chuyển đổi giữa người dùng và chuyên gia
+    setVisibleRatingsCount(5);
   };
 
   const handleOpenRateModal = () => {
@@ -103,6 +112,14 @@ export const TheaterDetail = () => {
     setVisibleRatingsCount((prevCount) => prevCount + 5);
   };
 
+  const handleOpenCompletedModal = () => {
+    setIsCompletedModalOpen(true);
+  };
+
+  const handleCloseCompletedModal = () => {
+    setIsCompletedModalOpen(false);
+  };
+
   if (!theater) {
     return <div>Loading...</div>;
   }
@@ -114,23 +131,34 @@ export const TheaterDetail = () => {
   return (
     <>
       <Header />
-      <div className="h-96 bg-slate-300">
+      <div className="h-[400px] bg-slate-300">
         <div className="flex h-full">
           <div className="w-2/5 h-full">
             <div className="flex justify-center items-center h-full">
               <img
-                src={`http://localhost:8000/${theater.theater_logo}`}
+                src={`/${theater.theater_logo}`}
                 alt={theater.theater_name}
                 className="border rounded-full w-64 h-64"
               />
             </div>
           </div>
-          <div className="flex flex-col mt-4 space-y-3 w-3/5">
+          <div className="flex flex-col mt-4 space-y-3 w-3/5 h-full">
             <div className="flex space-x-2 items-center">
               <p className="text-4xl font-bold uppercase">{theater.theater_name}</p>
               <p className="bg-gray-400 p-2 text-white rounded-full">{theater.region}</p>
             </div>
-            <BtnRate onClick={handleOpenRateModal} />
+            <div className="flex space-x-5">
+               <BtnRate onClick={handleOpenRateModal} />
+                <div className="flex flex-col">
+                  <div className="flex items-center space-x-1">
+                      <p>Tổng đánh giá</p>
+                      <FontAwesomeIcon icon={faThumbsUp} />
+                  </div>
+                  <div className="flex justify-center font-bold">
+                    <p>{Math.round((totalRating)/10*100)} %</p>
+                  </div>
+                </div>
+            </div>
             <div className="flex space-x-2 items-center">
               <FontAwesomeIcon icon={faMap} />
               <p>{theater.address}</p>
@@ -141,12 +169,12 @@ export const TheaterDetail = () => {
             <div className="flex space-x-9">
               <img
                 className="w-48 h-36 rounded-lg"
-                src={`http://localhost:8000/${theater.theater_image_1}`}
+                src={`/${theater.theater_image_1}`}
                 alt="theater image 1"
               />
               <img
                 className="w-48 h-36 rounded-lg"
-                src={`http://localhost:8000/${theater.theater_image_2}`}
+                src={`/${theater.theater_image_2}`}
                 alt="theater image 2"
               />
             </div>
@@ -176,16 +204,16 @@ export const TheaterDetail = () => {
                 label_4={"Không gian rạp"}
                 label_5={"Dịch vụ khách hàng"}
                 label_6={"Giá vé"}
-                average1={Math.round(((currentAverageRatings.averageImageQualityRating) / 5) * 100)}
-                average2={Math.round(((currentAverageRatings.averageSoundQualityRating) / 5) * 100)}
-                average3={Math.round(((currentAverageRatings.averageSeatingRating) / 5) * 100)}
-                average4={Math.round(((currentAverageRatings.averageTheaterSpaceRating) / 5) * 100)}
-                average5={Math.round(((currentAverageRatings.averageCustomerServiceRating) / 5) * 100)}
-                average6={Math.round(((currentAverageRatings.averageTicketPriceRating) / 5) * 100)}
+                average1={Math.round(((currentAverageRatings.averageImageQualityRating) / 10) * 100)}
+                average2={Math.round(((currentAverageRatings.averageSoundQualityRating) / 10) * 100)}
+                average3={Math.round(((currentAverageRatings.averageSeatingRating) / 10) * 100)}
+                average4={Math.round(((currentAverageRatings.averageTheaterSpaceRating) / 10) * 100)}
+                average5={Math.round(((currentAverageRatings.averageCustomerServiceRating) / 10) * 100)}
+                average6={Math.round(((currentAverageRatings.averageTicketPriceRating) / 10) * 100)}
               />
               <div className="flex space-x-1 ">
                 <TotalRate
-                  totalPercent={Math.round(((currentAverageRatings.averageRating) / 5) * 100)}
+                  totalPercent={Math.round(((currentAverageRatings.averageRating) / 10) * 100)}
                 />
                 <CountRate
                   name={theater.theater_name}
@@ -206,9 +234,10 @@ export const TheaterDetail = () => {
                     key={rating.theater_rating_id}
                     className="flex flex-col p-2 border rounded-md bg-slate-200 space-y-2"
                   >
+                    <div className="flex justify-between items-center">
                     <div className="flex space-x-4">
                       <img
-                        className="w-12 h-12 rounded-full"
+                        className="w-12 h-12 rounded-full object-cover"
                         src={
                           users[rating.user_id]?.avatar
                             ? `http://localhost:8000/${users[rating.user_id].avatar}`
@@ -218,16 +247,28 @@ export const TheaterDetail = () => {
                       />
                       <div className="flex flex-col">
                         <div className="flex space-x-2">
-                          <p>{users[rating.user_id]?.name || "Unknown User"}</p>
+                          <p>{users[rating.user_id]?.username || "Unknown User"}</p>
                           <p>
-                            {(rating.total_rating).toFixed(1)}/5
+                            {(rating.total_rating).toFixed(1)}/10
                           </p>
                         </div>
                         <div className="text-gray-400">
                           {new Date(rating.created_at).toLocaleDateString()}
                         </div>
-                      </div>
+                      </div>     
                     </div>
+                    <div>
+                        {isUserRatings && (
+                          <div>
+                            {user.is_expert && (
+                              <BtnReport id={rating.theater_rating_id} 
+                              type="theater-rating"
+                              />
+                            )}
+                          </div>
+                        )}
+                    </div>
+                  </div>
                     <DetailRateUser
                       score1={rating.image_quality_rating}
                       score2={rating.sound_quality_rating}
@@ -257,8 +298,13 @@ export const TheaterDetail = () => {
       <ModalRateCinema
         isOpen={isRateModalOpen}
         onClose={handleCloseRateModal}
+        onCompleted={handleOpenCompletedModal}
         theaterId={theater.theater_id}
         theaterImageUrl={`http://localhost:8000/${theater.theater_logo}`}
+      />
+       <ModalCompletedRate
+        isOpen={isCompletedModalOpen} 
+        onClose={handleCloseCompletedModal} 
       />
     </>
   );

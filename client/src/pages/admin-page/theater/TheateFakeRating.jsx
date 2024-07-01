@@ -1,81 +1,78 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash, faArrowRight } from '@fortawesome/free-solid-svg-icons';
-import { SearchInput } from "../../../components/search-input/SearchInput";
-import { UserRatingSelect } from "../../../components/select-box/UserRatingSelect";
-import { useParams } from 'react-router-dom';
-import { useNavigate } from "react-router-dom";
+import { faTrash, faCheck, faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { SearchInput } from '../../../components/search-input/SearchInput';
+import { useNavigate } from 'react-router-dom';
 
-export const TheaterRatingList = () => {
-  const [ratings, setRatings] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedUser, setSelectedUser] = useState('Đánh giá từ người dùng');
+export const TheaterFakeRating = () => {
+  const [fakeRatings, setFakeRatings] = useState([]);
   const [users, setUsers] = useState({});
   const [theaters, setTheaters] = useState({});
-  const { theaterId } = useParams();
   const navigate = useNavigate();
 
-  const fetchRatingsForAdmin = async () => {
-    setLoading(true);
+  useEffect(() => {
+    const fetchFakeRatings = async () => {
+      try {
+        const response = await axios.get('/theater-rating/fake-reported-rating');
+        setFakeRatings(response.data);
+      } catch (error) {
+        console.error('Error fetching fake ratings:', error);
+      }
+    };
+
+    fetchFakeRatings();
+  }, []);
+
+  const fetchUser = async (userId) => {
+    if (!users[userId]) {
+      try {
+        const response = await axios.get(`/user/getuser/${userId}`);
+        setUsers((prevUsers) => ({ ...prevUsers, [userId]: response.data }));
+      } catch (error) {
+        console.error('Error fetching user:', error);
+      }
+    }
+  };
+
+  const fetchTheater = async (theaterId) => {
+    if (!theaters[theaterId]) {
+      try {
+        const response = await axios.get(`/movie-theater/gettheater/${theaterId}`);
+        setTheaters((prevTheaters) => ({ ...prevTheaters, [theaterId]: response.data }));
+      } catch (error) {
+        console.error('Error fetching theater:', error);
+      }
+    }
+  };
+
+  const handleDeleteRating = async (theaterRatingId) => {
     try {
-      const response = await axios.get('http://localhost:8000/theater-rating/get-theater-ratings-for-admin');
-      setRatings(response.data);
-
-      await Promise.all(response.data.map(async (rating) => {
-        await fetchUser(rating.user_id);
-        await fetchTheater(rating.theater_id);
-      }));
-
-      setLoading(false);
+      await axios.delete(`/theater-rating/delete-theater-rating-and-increase-suspicion/${theaterRatingId}`);
+      setFakeRatings((prevRatings) => prevRatings.filter(rating => rating.theater_rating_id !== theaterRatingId));
     } catch (error) {
-      console.error("Error fetching theater ratings:", error);
-      setLoading(false);
+      console.error('Error deleting rating:', error);
     }
   };
 
-  const fetchUser = async (user_id) => {
-    if (!users[user_id]) {
-      try {
-        const response = await axios.get(`http://localhost:8000/user/getuser/${user_id}`);
-        setUsers((prevUsers) => ({ ...prevUsers, [user_id]: response.data }));
-      } catch (error) {
-        console.error("Error fetching user:", error);
-      }
-    }
-  };
-
-  const fetchTheater = async (theater_id) => {
-    if (!theaters[theater_id]) {
-      try {
-        const response = await axios.get(`http://localhost:8000/movie-theater/gettheater/${theater_id}`);
-        setTheaters((prevTheaters) => ({ ...prevTheaters, [theater_id]: response.data }));
-      } catch (error) {
-        console.error("Error fetching theater:", error);
-      }
+  const handleUpdateFakeRating = async (theaterRatingId) => {
+    try {
+      await axios.put(`/theater-rating/update-fake-reported-rating/${theaterRatingId}`);
+      
+      const updatedResponse = await axios.get('/theater-rating/fake-reported-rating');
+      setFakeRatings(updatedResponse.data);
+    } catch (error) {
+      console.error('Error updating fake rating:', error);
     }
   };
 
   useEffect(() => {
-    fetchRatingsForAdmin();
-  }, [theaterId]);
-
-  const handleUserChange = (user) => {
-    setSelectedUser(user);
-  };
-
-  const handleDeleteRating = async (theater_rating_id) => {
-    try {
-      await axios.delete(`http://localhost:8000/theater-rating/delete-theater-rating/${theater_rating_id}`);
-      setRatings((prevRatings) => prevRatings.filter(rating => rating.theater_rating_id !== theater_rating_id));
-    } catch (error) {
-      console.error("Error deleting rating:", error);
-    }
-  };
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+    fakeRatings.forEach((rating) => {
+      fetchUser(rating.user_id);
+      fetchTheater(rating.theater_id);
+    });
+  }, [fakeRatings]);
+  
 
   return (
     <div className="flex flex-col w-full h-screen">
@@ -84,10 +81,15 @@ export const TheaterRatingList = () => {
           <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg h-full flex flex-col">
             <div className="flex items-center mb-4 justify-between m-2">
               <SearchInput contentSearch="Tìm kiếm người dùng"/>
-              {ratings.length > 0 && (
-                <p className="font-bold">Tên rạp chiếu : {theaters[ratings[0].theater_id]?.theater_name}</p>
+              <p className="font-bold text-red-500">Danh sách các đánh giá nghi ngờ giả mạo</p>
+              {fakeRatings.length > 0 && (
+                <p className="font-bold">Tên rạp chiếu : {theaters[fakeRatings[0].theater_id]?.theater_name}</p>
               )}
-              <UserRatingSelect selectedUser={selectedUser} onUserChange={handleUserChange} />
+              <div>
+               
+                <span className="inline-block h-3 w-3 rounded-full bg-red-200 mr-2"></span>
+                <span>Đáng giá bị tố cáo giả mạo</span>
+              </div>
             </div>
             <div className="flex-grow overflow-y-auto">
               <table className="min-w-full divide-y divide-gray-200">
@@ -97,18 +99,17 @@ export const TheaterRatingList = () => {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tài khoản</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Chất lượng hình ảnh</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Chất lượng âm thanh</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Chất lượng Ghế ngồi</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Đánh giá chỗ ngồi</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Không gian rạp</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Dịch vụ khách hàng</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Chất lượng giá vé</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Chát lượng giá vé</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tổng điểm</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Khác</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Chức năng</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {ratings.map((rating, index) => (
-                    <tr key={index}>
+                  {fakeRatings.map((rating, index) => (
+                    <tr key={index} className={rating.reported ? "bg-red-100" : ""}>
                       <td className="px-6 py-4 whitespace-nowrap">{index + 1}</td>
                       <td className="px-6 py-4 whitespace-nowrap">{users[rating.user_id]?.username || 'Unknown User'}</td>
                       <td className="px-6 py-4 whitespace-nowrap">{rating.image_quality_rating.toFixed(2)}</td>
@@ -118,11 +119,13 @@ export const TheaterRatingList = () => {
                       <td className="px-6 py-4 whitespace-nowrap">{rating.customer_service_rating.toFixed(2)}</td>
                       <td className="px-6 py-4 whitespace-nowrap">{rating.ticket_price_rating.toFixed(2)}</td>
                       <td className="px-6 py-4 whitespace-nowrap">{rating.total_rating.toFixed(2)}</td>
-                      <td className="px-6 py-4 whitespace-nowrap"><button className="text-blue-400 hover:text-blue-500 transition" onClick={() => navigate(`/admin/theaters/rating-comment/${rating.theater_rating_id}`)}><FontAwesomeIcon icon={faArrowRight}/></button></td>
                       <td className="px-6 py-4 whitespace-nowrap space-x-3">
-                        <button className="hover:text-red-500 transition" onClick={() => handleDeleteRating(rating.theater_rating_id)}>
+                        <button className="hover:text-green-500 text-green-400 transition" onClick={() => handleUpdateFakeRating(rating.theater_rating_id)}>
+                          <FontAwesomeIcon icon={faCheck} />
+                        </button>
+                        <button className="hover:text-red-500 text-red-400 transition" onClick={() => handleDeleteRating(rating.theater_rating_id)}>
                           <FontAwesomeIcon icon={faTrash} />
-                        </button>   
+                        </button>
                       </td>
                     </tr>
                   ))}

@@ -18,7 +18,7 @@ export const ModalAddPost = ({ isOpen, onClose }) => {
     e.preventDefault();
 
     const formData = new FormData();
-    formData.append('user_id', user.user_id); // Assuming `user.user_id` is available in your context
+    formData.append('user_id', user.user_id); 
     formData.append('title', title);
     formData.append('content', content);
     formData.append('is_movie_related', isMovieRelated);

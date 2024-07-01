@@ -29,6 +29,8 @@ const addTheaterRating = async (req, res) => {
       return res.status(400).json({ error: 'User has already rated this theater.' });
     }
 
+    let fake_rating = false;
+
     if (!is_expert_rating) {
       const expertRatings = await prisma.theater_rating.findMany({
         where: {
@@ -38,9 +40,10 @@ const addTheaterRating = async (req, res) => {
       });
 
       if (expertRatings.length > 0) {
-        const differenceThreshold = 1; 
-        let isAnyRatingValid = false; 
-      
+        const differenceThreshold = 1;
+
+        let isAnyRatingValid = false;
+
         for (const expertRating of expertRatings) {
           const imageQualityDifference = Math.abs(image_quality_rating - expertRating.image_quality_rating);
           const soundQualityDifference = Math.abs(sound_quality_rating - expertRating.sound_quality_rating);
@@ -57,13 +60,13 @@ const addTheaterRating = async (req, res) => {
             customerServiceDifference <= differenceThreshold &&
             ticketPriceDifference <= differenceThreshold
           ) {
-            isAnyRatingValid = true; 
-            break; 
+            isAnyRatingValid = true;
+            break;
           }
         }
-      
+
         if (!isAnyRatingValid) {
-          return res.status(400).json({ error: 'Người dùng có dấu hiệu đánh giá giả mạo!' });
+          fake_rating = true;
         }
       }
     }
@@ -89,7 +92,8 @@ const addTheaterRating = async (req, res) => {
         ticket_price_rating,
         total_rating: totalRating,
         comment,
-        is_expert_rating: is_expert_rating || false
+        is_expert_rating: is_expert_rating || false,
+        fake_rating
       },
     });
 
@@ -115,6 +119,7 @@ const deleteTheaterRating = async (req, res) => {
   }
 };
 
+
 const getTheaterRatings = async (req, res) => {
     const { theater_id } = req.params;
     try {
@@ -124,7 +129,10 @@ const getTheaterRatings = async (req, res) => {
       }
       
       const ratings = await prisma.theater_rating.findMany({
-        where: { theater_id: theaterIdInt },
+        where: { theater_id: theaterIdInt,
+          fake_rating: false 
+         },
+        
       });
   
   
@@ -166,6 +174,8 @@ const getTheaterRatings = async (req, res) => {
       const averageExpertCustomerServiceRating = totalExpertRatingsCount > 0 ? parseFloat((totalExpertCustomerServiceRatingSum / totalExpertRatingsCount).toFixed(2)) : 0;
       const averageExpertTicketPriceRating = totalExpertRatingsCount > 0 ? parseFloat((totalExpertTicketPriceRatingSum / totalExpertRatingsCount).toFixed(2)) : 0;
       const averageExpertRating = totalExpertRatingsCount > 0 ? parseFloat((totalExpertRatingSum / totalExpertRatingsCount).toFixed(2)) : 0;
+
+      const totalAverageRating = (averageExpertRating + averageUserRating) / 2;
   
       return res.status(200).json({
         userRatings,
@@ -186,15 +196,142 @@ const getTheaterRatings = async (req, res) => {
         averageExpertTicketPriceRating,
         averageExpertRating,
         totalExpertRatingsCount,
+        totalAverageRating
       });
     } catch (error) {
       console.error(error);
       return res.status(500).json({ error: 'An error occurred while retrieving the ratings.' });
     }
   };
+
+  const getTheaterRatingById = async (req, res) => {
+    const { theater_rating_id } = req.params;
+    try {
+      const theaterRatingIdInt = parseInt(theater_rating_id, 10);
+      if (isNaN(theaterRatingIdInt)) {
+        return res.status(400).json({ error: 'Invalid theater_rating_id parameter.' });
+      }
+      const rating = await prisma.theater_rating.findUnique({
+        where: { 
+          theater_rating_id: theaterRatingIdInt
+        },
+        include: {
+          users: true,
+          movie_theaters: true
+        }
+      });
+      
+      if (!rating) {
+        return res.status(404).json({ error: 'Rating not found.' });
+      }
+  
+      return res.status(200).json(rating);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: 'An error occurred while retrieving the rating.' });
+    }
+  };
+  const getFakeOrReportedTheaterRatings = async (req, res) => {
+    try {
+      const ratings = await prisma.theater_rating.findMany({
+        where: {
+          OR: [
+            { fake_rating: true },
+            { reported: true }
+          ]
+        },
+        include: {
+          users: true  
+        }
+      });
+  
+      return res.status(200).json(ratings);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: 'An error occurred while retrieving fake or reported ratings.' });
+    }
+  };
+  const getTheaterRatingsForAdmin = async (req, res) => {
+    try {
+      const ratings = await prisma.theater_rating.findMany({
+        where: {
+          fake_rating: false,
+        },
+      });
+  
+      return res.status(200).json(ratings);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: 'An error occurred while retrieving theater ratings.' });
+    }
+  };
+  const deleteTheaterRatingAndIncreaseSuspicion = async (req, res) => {
+    const { theater_rating_id } = req.params;
+  
+    try {
+      const deletedRating = await prisma.theater_rating.delete({
+        where: { theater_rating_id: parseInt(theater_rating_id) },
+      });
+  
+      await prisma.users.update({
+        where: { user_id: deletedRating.user_id },
+        data: { suspicion_level: { increment: 1 } },
+      });
+  
+      return res.status(200).json({ message: 'Rating deleted successfully and suspicion level increased', deletedRating });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: 'An error occurred while deleting the rating and updating suspicion level.' });
+    }
+  };
+
+  const reportTheaterRating = async (req, res) => {
+    const { theater_rating_id } = req.params;
+  
+    try {
+      const updatedRating = await prisma.theater_rating.update({
+        where: { theater_rating_id: parseInt(theater_rating_id) },
+        data: { reported: true },
+      });
+  
+      return res.status(200).json(updatedRating);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: 'An error occurred while reporting the rating.' });
+    }
+  };
+
+  const updateFakeandReportRating = async (req, res) => {
+    const { theater_rating_id } = req.params;
+  
+    try {
+      const updatedRating = await prisma.theater_rating.update({
+        where: { theater_rating_id: parseInt(theater_rating_id) },
+        data: { 
+          fake_rating: false,
+          reported: false,
+        },
+      });
+  
+      return res.status(200).json(updatedRating);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: 'An error occurred while updating the rating.' });
+    }
+  };
+
+
+  
+
   
 module.exports = {
   addTheaterRating,
   getTheaterRatings,
-  deleteTheaterRating
+  deleteTheaterRating,
+  getTheaterRatingById,
+  getFakeOrReportedTheaterRatings,
+  getTheaterRatingsForAdmin,
+  deleteTheaterRatingAndIncreaseSuspicion,
+  reportTheaterRating,
+  updateFakeandReportRating
 };

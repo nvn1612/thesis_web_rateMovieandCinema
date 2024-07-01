@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../../assets/images/logo.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { useUser } from "../../context/UserContext";
-import { useNavigate } from "react-router-dom";
 import noAvatarUser from "../../assets/images/no_user_avatar.jpg";
 
 export const Header = () => {
@@ -46,18 +46,18 @@ export const Header = () => {
         </p>
       </div>
       <nav className="flex items-center space-x-4">
-        <a href="#" className="mx-2 font-bold hover:text-green-500 transition">
+        <Link to="/" className="mx-2 font-bold hover:text-blue-500 transition">
           Trang chủ
-        </a>
-        <a href="/page" className="mx-2 font-bold hover:text-green-500 transition">
+        </Link>
+        <Link to="/movies" className="mx-2 font-bold hover:text-green-500 transition">
           Phim
-        </a>
-        <a href="/theater" className="mx-2 font-bold hover:text-green-500 transition">
+        </Link>
+        <Link to="/theaters" className="mx-2 font-bold hover:text-gray-500 transition">
           Rạp chiếu
-        </a>
-        <a href="/community" className="mx-2 font-bold hover:text-green-500 transition">
+        </Link>
+        <Link to="/community" className="mx-2 font-bold hover:text-yellow-500 transition">
           Cộng đồng
-        </a>
+        </Link>
         {user ? (
           <div className="relative" ref={dropdownRef}>
             <button onClick={toggleDropdown}>
@@ -69,11 +69,11 @@ export const Header = () => {
             </button>
             {dropdownVisible && (
               <div className="absolute right-0 mt-2 w-48 bg-white text-black rounded-md shadow-lg z-10">
-                <a href="/profile" className="block px-4 py-2 hover:bg-green-200 hover:rounded-md text-sm transition">Trang cá nhân</a>
-                <a href="/rated-theaters" className="block px-4 py-2 hover:bg-green-200 text-sm transition">Các đánh giá rạp chiếu</a>
-                <a href="/rated-theaters" className="block px-4 py-2 hover:bg-green-200 text-sm transition">Các đánh giá Phim</a>
-                <a href="/posts" className="block px-4 py-2 hover:bg-green-200 text-sm transition">Bài viết đã đăng</a>
-                <a href="/rated-movies" className="block px-4 py-2 hover:bg-green-200 text-sm transition">Đổi mật khẩu</a>
+                <Link to="/profile" className="block px-4 py-2 hover:bg-green-200 hover:rounded-md text-sm transition">Trang cá nhân</Link>
+                <Link to="/rated-theaters" className="block px-4 py-2 hover:bg-green-200 text-sm transition">Các đánh giá rạp chiếu</Link>
+                <Link to="/rated-theaters" className="block px-4 py-2 hover:bg-green-200 text-sm transition">Các đánh giá Phim</Link>
+                <Link to="/posts" className="block px-4 py-2 hover:bg-green-200 text-sm transition">Bài viết đã đăng</Link>
+                <Link to="/rated-movies" className="block px-4 py-2 hover:bg-green-200 text-sm transition">Đổi mật khẩu</Link>
                 <button 
                   onClick={handleLogout} 
                   className="block w-full text-left px-4 py-2 hover:bg-green-200 text-sm hover:rounded-md transition">

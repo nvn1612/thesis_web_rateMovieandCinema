@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash,faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { faTrash, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { SearchInput } from "../../../components/search-input/SearchInput";
 import { UserRatingSelect } from "../../../components/select-box/UserRatingSelect";
 import { useParams } from 'react-router-dom';
@@ -16,10 +16,29 @@ export const MovieRatingList = () => {
   const { movieId } = useParams();
   const navigate = useNavigate();
 
+  const fetchRatings = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`/movie-rating/get-movie-ratings-for-admin`);
+      setRatings(response.data);
+
+     
+      await Promise.all(response.data.map(async (rating) => {
+        await fetchUser(rating.user_id);
+        await fetchMovie(rating.movie_id);
+      }));
+
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching movie ratings:", error);
+      setLoading(false);
+    }
+  };
+
   const fetchUser = async (user_id) => {
     if (!users[user_id]) {
       try {
-        const response = await axios.get(`http://localhost:8000/user/getuser/${user_id}`);
+        const response = await axios.get(`/user/getuser/${user_id}`);
         setUsers((prevUsers) => ({ ...prevUsers, [user_id]: response.data }));
       } catch (error) {
         console.error("Error fetching user:", error);
@@ -30,7 +49,7 @@ export const MovieRatingList = () => {
   const fetchMovie = async (movie_id) => {
     if (!movies[movie_id]) {
       try {
-        const response = await axios.get(`http://localhost:8000/movie/getmovie/${movie_id}`);
+        const response = await axios.get(`/movie/getmovie/${movie_id}`);
         setMovies((prevMovies) => ({ ...prevMovies, [movie_id]: response.data }));
       } catch (error) {
         console.error("Error fetching movie:", error);
@@ -38,28 +57,9 @@ export const MovieRatingList = () => {
     }
   };
 
-  const fetchRatings = async (user) => {
-    setLoading(true);
-    try {
-      const response = await axios.get(`http://localhost:8000/movie-rating/ratings/${movieId}`);
-      const fetchedRatings = user === 'Đánh giá từ người dùng' ? response.data.userRatings : response.data.expertRatings;
-
-      await Promise.all(fetchedRatings.map(async (rating) => {
-        await fetchUser(rating.user_id);
-        await fetchMovie(rating.movie_id);
-      }));
-
-      setRatings(fetchedRatings);
-      setLoading(false);
-    } catch (error) {
-      console.error("Error fetching movie ratings:", error);
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchRatings(selectedUser);
-  }, [selectedUser, movieId]);
+    fetchRatings();
+  }, []);
 
   const handleUserChange = (user) => {
     setSelectedUser(user);
@@ -67,7 +67,7 @@ export const MovieRatingList = () => {
 
   const handleDeleteRating = async (movie_rating_id) => {
     try {
-      await axios.delete(`http://localhost:8000/movie-rating/delete-movie-rating/${movie_rating_id}`);
+      await axios.delete(`/movie-rating/delete-movie-rating/${movie_rating_id}`);
       setRatings((prevRatings) => prevRatings.filter(rating => rating.movie_rating_id !== movie_rating_id));
     } catch (error) {
       console.error("Error deleting rating:", error);

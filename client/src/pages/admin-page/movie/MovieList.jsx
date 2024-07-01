@@ -71,7 +71,7 @@ export const MovieList = () => {
                     <tr key={index}>
                       <td className="px-6 py-4 whitespace-nowrap">{index + 1}</td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <img src={`http://localhost:8000/${movie.poster_image}`} alt="Không có ảnh" className="w-12 h-12 object-cover " />
+                        <img src={`/${movie.poster_image}`} alt="Không có ảnh" className="w-12 h-12 object-cover " />
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">{movie.name_movie}</td>
                       <td className="px-6 py-4 whitespace-nowrap">{movie.country}</td>

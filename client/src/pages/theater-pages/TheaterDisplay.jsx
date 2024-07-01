@@ -19,7 +19,7 @@ export const TheaterDisplay = () => {
 
   const fetchTheaters = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/movie-theater/getalltheaters');
+      const response = await axios.get('/movie-theater/getalltheaters');
       setTheaters(response.data);
     } catch (error) {
       console.error('Có lỗi xảy ra khi lấy danh sách rạp chiếu phim:', error);
@@ -37,7 +37,7 @@ export const TheaterDisplay = () => {
     }
 
     try {
-      const response = await axios.get(`http://localhost:8000/movie-theater/search/theaters?name=${searchTerm}`);
+      const response = await axios.get(`/movie-theater/search/theaters?name=${searchTerm}`);
       setTheaters(response.data);
     } catch (error) {
       console.error('Có lỗi xảy ra khi tìm kiếm rạp chiếu phim:', error);
@@ -49,9 +49,9 @@ export const TheaterDisplay = () => {
     const currentTheaters = theaters.slice(startIndex, startIndex + theatersPerPage);
 
     return currentTheaters.map(theater => (
-      <div className="p-4 border rounded-lg mb-4 cursor-pointer" key={theater.theater_id} onClick={() => navigate(`/theater/detail/${theater.theater_id}`)}>
+      <div className="p-4 border rounded-lg mb-4 cursor-pointer" key={theater.theater_id} onClick={() => navigate(`/theaters/detail/${theater.theater_id}`)}>
         <div className="flex space-x-4 items-center">
-          <img src={`http://localhost:8000/${theater.theater_logo}`} className="w-28 h-28 border rounded-full" alt={theater.theater_name} />
+          <img src={`/${theater.theater_logo}`} className="w-28 h-28 border rounded-full" alt={theater.theater_name} />
           <div className="flex flex-col space-y-2">
             <div className="flex space-x-4 items-center">
               <p>{theater.theater_name}</p>

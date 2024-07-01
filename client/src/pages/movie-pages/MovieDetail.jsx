@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { Header } from "../../layouts/header/Header";
 import { Footer } from "../../layouts/footer/Footer";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faClock,faCalendarWeek } from "@fortawesome/free-solid-svg-icons";
+import { faClock,faCalendarWeek,faThumbsUp } from "@fortawesome/free-solid-svg-icons";
 import { BtnRate } from "../../components/btn-rate/BtnRate";
 import { TrailerModal } from "../../components/trailer-modal/TrailerModal";
 import { ModalRateMovie } from "../modal-rate/modal-rate-movie/ModalRateMovie";
@@ -15,8 +15,11 @@ import { CountRate } from "../../components/count-rate/CountRate";
 import { DetailRateUser } from "../../components/detail-rate-user/DetailRateUser";
 import { ModalCompletedRate } from "../../components/modal-completed-rate/ModalCompletedRate";
 import { BtnReport } from "../../components/btn-report/BtnReport";
+import UserContext from "../../context/UserContext"; 
 
 export const MovieDetail = () => {
+
+  const { user } = useContext(UserContext);
   const [isTrailerOpen, setIsTrailerOpen] = useState(false);
   const [isRateModalOpen, setIsRateModalOpen] = useState(false);
   const [movie, setMovie] = useState(null);
@@ -26,6 +29,7 @@ export const MovieDetail = () => {
   const [averageExpertRatings, setAverageExpertRatings] = useState({});
   const [totalUserRatingsCount, setTotalUserRatingsCount] = useState(0);
   const [totalExpertRatingsCount, setTotalExpertRatingsCount] = useState(0);
+  const [totalRating, setTotalRating] = useState(0);
   const [isUserRatings, setIsUserRatings] = useState(true);
   const [users, setUsers] = useState({});
   const [visibleUserRatingsCount, setVisibleUserRatingsCount] = useState(5);
@@ -35,7 +39,7 @@ export const MovieDetail = () => {
   useEffect(() => {
     const fetchMovie = async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/movie/getmovie/${id}`);
+        const response = await axios.get(`/movie/getmovie/${id}`);
         setMovie(response.data);
       } catch (error) {
         console.error("Có lỗi xảy ra", error);
@@ -44,7 +48,7 @@ export const MovieDetail = () => {
 
     const fetchRatings = async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/movie-rating/ratings/${id}`);
+        const response = await axios.get(`/movie-rating/ratings/${id}`);
         const ratingsData = response.data;
 
         setUserRatings(ratingsData.userRatings);
@@ -72,12 +76,13 @@ export const MovieDetail = () => {
 
         setTotalUserRatingsCount(ratingsData.totalUserRatingsCount);
         setTotalExpertRatingsCount(ratingsData.totalExpertRatingsCount);
+        setTotalRating(ratingsData.totalAverageRating)
 
         const usersData = {};
         await Promise.all(
           ratingsData.userRatings.concat(ratingsData.expertRatings).map(async (rating) => {
             if (!usersData[rating.user_id]) {
-              const userResponse = await axios.get(`http://localhost:8000/user/getuser/${rating.user_id}`);
+              const userResponse = await axios.get(`/user/getuser/${rating.user_id}`);
               usersData[rating.user_id] = userResponse.data;
             }
           })
@@ -136,19 +141,19 @@ export const MovieDetail = () => {
   return (
     <>
       <Header />
-      <div className="main-content min-h-96 relative">
+      <div className="min-h-96 relative">
         <img
-          src={`http://localhost:8000/${movie.backdrop_image}`}
+          src={`/${movie.backdrop_image}`}
           alt="Movie Poster"
           className="absolute inset-0 w-full h-full object-fill"
         />
         <div className="absolute inset-0 bg-black opacity-70"></div>
-        <div className="image-wrapper flex absolute inset-0">
+        <div className="flex absolute inset-0">
           <div className="w-1/3 flex justify-center items-center">
             <div className="w-52 h-72">
               <img
-                className="image-poster w-full h-full border-2 rounded-3xl"
-                src={`http://localhost:8000/${movie.poster_image}`}
+                className="w-full h-full border-2 rounded-3xl"
+                src={`/${movie.poster_image}`}
                 alt="Poster"
               />
             </div>
@@ -210,6 +215,15 @@ export const MovieDetail = () => {
                   </div>
                   <div className="flex justify-center">
                     <p className="text-white">{movie.duration} phút</p>
+                  </div>
+                </div>
+                <div className="flex flex-col">
+                  <div className="flex space-x-2 items-center">
+                    <FontAwesomeIcon className="text-white" icon={faThumbsUp} />
+                    <p className="text-white">Tổng đánh giá</p>
+                  </div>
+                  <div className="flex justify-center">
+                    <p className="text-white">{Math.round((totalRating)/10*100)} %</p>
                   </div>
                 </div>
               </div>
@@ -295,13 +309,17 @@ export const MovieDetail = () => {
                       </div>     
                     </div>
                     <div>
-                      {isUserRatings && (
-                         <BtnReport id={rating.movie_rating_id}/>
-                         
-                      )}
+                        {isUserRatings && (
+                          <div>
+                            {user.is_expert && (
+                              <BtnReport id={rating.movie_rating_id}
+                                type="movie-rating"
+                              />
+                            )}
+                          </div>
+                        )}
                     </div>
                   </div>
-                  
                   <DetailRateUser
                     score1={rating.content_rating}
                     score2={rating.acting_rating}
@@ -340,7 +358,7 @@ export const MovieDetail = () => {
         onCompleted={handleOpenCompletedModal}
         movieId={movie.movie_id}
         movieName={movie.title}
-        posterUrl={`http://localhost:8000/${movie.poster_image}`}
+        posterUrl={`/${movie.poster_image}`}
       />
       <ModalCompletedRate
         isOpen={isCompletedModalOpen} 

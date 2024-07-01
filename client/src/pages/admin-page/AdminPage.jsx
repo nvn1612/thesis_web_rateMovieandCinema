@@ -19,6 +19,9 @@ import { CommentMovie } from "./movie/CommentMovie";
 import { PostList } from "./post/PostList";
 import { CommentPostList } from "./post/CommentPostList";
 import { ContentPost } from "./post/ContentPost";
+import { UserSuspicionLever } from "./user/UserSuspicionLever";
+import { TheaterCommentRating } from "./theater/TheaterCommentRating";
+import { TheaterFakeRating } from "./theater/TheateFakeRating";
 export const AdminPage = () => {
   return (
     <div className="flex w-full h-screen overflow-hidden">
@@ -87,10 +90,15 @@ export const AdminPage = () => {
           <Route path="movies/ratings/:movieId" element={<MovieRatingList />} />
           <Route path="theaters/ratings/:theaterId" element={<TheaterRatingList />} />
           <Route path="movies/fake-rating" element={<FakeRatingMovie />} />
+          <Route path="theaters/fake-rating" element={<TheaterFakeRating />} />
+
           <Route path="movies/rating-comment/:movie_rating_id" element={<CommentMovie />} />
+          <Route path="theaters/rating-comment/:theater_rating_id" element={<TheaterCommentRating />} />
+
           <Route path="posts" element={<PostList />} />
           <Route path="posts/comments/:postId" element={<CommentPostList />} />
           <Route path="posts/content/:postId" element={<ContentPost/>} />
+          <Route path="users/suspicion-lever" element={<UserSuspicionLever/>} />
         </Routes>
       </div>
     </div>
