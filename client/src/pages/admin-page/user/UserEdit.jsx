@@ -13,14 +13,14 @@ export const UserEdit = () => {
   let { userId } = useParams();
 
   useEffect(() => {
-    axios.get(`http://localhost:8000/user/getuser/${userId}`)
+    axios.get(`/user/getuser/${userId}`)
       .then((response) => {
         const data = response.data;
         setName(data.name);
         setIsActive(data.is_active);
         setIsAdmin(data.is_Admin);
         setIsExpert(data.is_expert);
-        setImagePreviewUrl(`http://localhost:8000/${data.avatar}`);
+        setImagePreviewUrl(`/${data.avatar}`);
       })
       .catch((error) => {
         console.error("There was an error fetching the user data!", error);
@@ -53,7 +53,7 @@ export const UserEdit = () => {
     data.append('avatar', selectedFile);
 
     try {
-      const response = await axios.put(`http://localhost:8000/user/updateuser/${userId}`, data);
+      const response = await axios.put(`/user/updateuser/${userId}`, data);
       console.log("User updated successfully", response.data);
       alert("User updated successfully");
     } catch (error) {

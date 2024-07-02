@@ -127,8 +127,8 @@ export const PostDetail = () => {
                   <div className="bg-gray-400">
                     <div className="flex m-2">
                       <img
-                        src={`http://localhost:8000/${comment.users.avatar}`} 
-                        className="h-12 w-12 rounded-full"
+                        src={`/${comment.users.avatar}`} 
+                        className="h-12 w-12 rounded-full object-cover"
                         alt=""
                       />
                       <div className="flex flex-col ml-1">

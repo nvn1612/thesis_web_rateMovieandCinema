@@ -35,7 +35,7 @@ const AppRoutes = () => {
         <Route path="/theaters" element={<TheaterDisplay />} />
         <Route path="theaters/detail/:id" element={<TheaterDetail />} />
         <Route path="/community" element={<PostDisplay />} />
-        <Route path="/profile" element={<UserProfile />} />
+        <Route path="/profile/*" element={<UserProfile />} />
         <Route path="/test" element={<ModalCompletedRate />} />
         <Route path="/community/post-detail/:postId" element={<PostDetail />} />
     </Routes>

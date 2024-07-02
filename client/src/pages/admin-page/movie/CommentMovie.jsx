@@ -12,7 +12,7 @@ export const CommentMovie = () => {
   useEffect(() => {
     const fetchRatingData = async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/movie-rating/get-movie-rating/${movie_rating_id}`);
+        const response = await axios.get(`/movie-rating/get-movie-rating/${movie_rating_id}`);
         setRatingData(response.data);
       } catch (err) {
         setError(err);

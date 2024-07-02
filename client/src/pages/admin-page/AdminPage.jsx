@@ -1,8 +1,7 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import logo from "../../assets/images/logo.png";
 
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route,Link } from "react-router-dom";
 import { UserList } from "./user/UserList";
 import { UserCreate } from "./user/UserCreate";
 import { UserEdit } from "./user/UserEdit";
@@ -36,7 +35,7 @@ export const AdminPage = () => {
           <hr />
           <nav>
             <Link
-              to="/"
+              to=""
               className="block py-2.5 px-4 rounded transition duration-200 hover:bg-green-700"
             >
               Thống kê

@@ -318,6 +318,36 @@ const getSuspiciousUsers = async (req, res) => {
   }
 };
 
+const getUserRatings = async (req, res) => {
+  const { user_id } = req.params;
+  
+  try {
+    const userIdInt = parseInt(user_id, 10);
+    if (isNaN(userIdInt)) {
+      return res.status(400).json({ error: 'Invalid user_id parameter.' });
+    }
+
+    const movieRatings = await prisma.movie_rating.findMany({
+      where: { user_id: userIdInt },
+      include: {
+        movies: true, 
+      },
+    });
+
+    const theaterRatings = await prisma.theater_rating.findMany({
+      where: { user_id: userIdInt },
+      include: {
+        movie_theaters: true, 
+      },
+    });
+
+    return res.status(200).json({ movieRatings, theaterRatings });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'An error occurred while retrieving the user ratings.' });
+  }
+};
+
 module.exports = {
   registerUser,
   activateUser,
@@ -328,5 +358,6 @@ module.exports = {
   createUser,
   deleteUser,
   updateUser,
-  getSuspiciousUsers
+  getSuspiciousUsers,
+  getUserRatings
 };

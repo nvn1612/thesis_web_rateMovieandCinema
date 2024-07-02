@@ -293,7 +293,8 @@ const getMovieRatingById = async (req, res) => {
         movie_rating_id: movieRatingIdInt
       },
       include: {
-        users: true
+        users: true,
+        movies: true
       }
     });
     
