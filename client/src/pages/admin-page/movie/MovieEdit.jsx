@@ -19,38 +19,51 @@ export const MovieEdit = () => {
   const [posterImageUrl, setPosterImageUrl] = useState('');
   const [backdropImage, setBackdropImage] = useState(null);
   const [backdropImageUrl, setBackdropImageUrl] = useState('');
+  const [countries, setCountries] = useState([]);
+
 
   const { movieId } = useParams();
 
   useEffect(() => {
-    axios.get(`http://localhost:8000/movie/getmovie/${movieId}`)
+    axios.get(`/movie/getmovie/${movieId}`)
       .then(response => {
         const movie = response.data;
         setFormData({
           name_movie: movie.name_movie,
           trailer_link: movie.trailer_link,
-          country: movie.country,
+          country: movie.country_id,
           description: movie.description,
           director: movie.director,
           release_date: movie.release_date ? movie.release_date.split('T')[0] : '',
           duration: movie.duration,
           genre: movie.movie_genres.map(g => g.genre_id)
         });
-        setPosterImageUrl(`http://localhost:8000/${movie.poster_image}`);
-        setBackdropImageUrl(`http://localhost:8000/${movie.backdrop_image}`);
+        setPosterImageUrl(`/${movie.poster_image}`);
+        setBackdropImageUrl(`/${movie.backdrop_image}`);
       })
       .catch(error => {
         console.error('There was an error fetching the movie data!', error);
       });
 
-    axios.get('http://localhost:8000/movie/genres')
+    axios.get('/movie/getgenres')
       .then(response => {
         setGenres(response.data);
       })
       .catch(error => {
         console.error('There was an error fetching the genres data!', error);
       });
+
+      axios.get('/movie/getallcountries')
+      .then(response => {
+        setCountries(response.data);
+      })
+      .catch(error => {
+        console.error('There was an error fetching the genres data!', error);
+      });
+
   }, [movieId]);
+
+   
 
   const handleChange = (e) => {
     const { id, value } = e.target;
@@ -59,7 +72,7 @@ export const MovieEdit = () => {
       [id]: value
     }));
   };
-
+  
   const handleGenreChange = (e) => {
     const options = e.target.options;
     const selectedGenres = [];
@@ -98,7 +111,7 @@ export const MovieEdit = () => {
     if (backdropImage) formDataToSend.append('backdrop_image', backdropImage);
 
     try {
-      const response = await axios.put(`http://localhost:8000/movie/updatemovie/${movieId}`, formDataToSend, {
+      const response = await axios.put(`/movie/updatemovie/${movieId}`, formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -110,7 +123,6 @@ export const MovieEdit = () => {
       console.error('There was an error updating the movie!', error);
     }
   };
-
   return (
     <div className="flex justify-center items-center min-h-screen">
       <form className="w-full max-w-lg" onSubmit={handleSubmit}>
@@ -173,14 +185,19 @@ export const MovieEdit = () => {
             >
               Quốc gia
             </label>
-            <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-              id="country"
-              type="text"
-              placeholder="Quốc gia"
-              value={formData.country}
-              onChange={handleChange}
-            />
+            <select
+                className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                id="country"
+                value={formData.country}
+                onChange={handleChange}
+              >
+                <option value="">Chọn quốc gia</option>
+                {countries.map((country) => (
+                  <option key={country.country_id} value={country.country_id}>
+                    {country.name}
+                  </option>
+                ))}
+            </select>
           </div>
           <div className="w-full md:w-1/2 px-3">
             <label

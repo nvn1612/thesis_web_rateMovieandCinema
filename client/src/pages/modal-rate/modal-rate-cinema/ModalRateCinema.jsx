@@ -1,4 +1,3 @@
-
 import React, { useState, useContext, useEffect } from "react";
 import { ImageContent } from "../../../components/image-content/ImageContent";
 import { ContentModalRate } from "../../../layouts/content-modal-rate/ContentModalRate";
@@ -6,8 +5,7 @@ import { BtnConfirm } from "../../../components/btn-confirm/BtnConfirm";
 import axios from "axios";
 import UserContext from "../../../context/UserContext"; 
 
-
-export const ModalRateCinema = ({ isOpen, onClose, theaterId, theaterName, theaterImageUrl,onCompleted }) => {
+export const ModalRateCinema = ({ isOpen, onClose, theaterId, theaterName, theaterImageUrl, onCompleted }) => {
   const { user } = useContext(UserContext);
   const initialRatings = {
     image_quality_rating: 0,
@@ -20,6 +18,7 @@ export const ModalRateCinema = ({ isOpen, onClose, theaterId, theaterName, theat
 
   const [ratings, setRatings] = useState(initialRatings);
   const [comment, setComment] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     if (isOpen) {
@@ -52,7 +51,14 @@ export const ModalRateCinema = ({ isOpen, onClose, theaterId, theaterName, theat
       onCompleted(); 
       onClose()
     } catch (error) {
-      console.error('Error adding rating:', error);
+      console.error("Error adding rating:", error);
+      if (error.response && error.response.status === 400) {
+        setErrorMessage(
+          "Bạn đã đánh giá bộ phim này rồi."
+        );
+      } else {
+        setErrorMessage("Đã xảy ra lỗi khi đánh giá rạp chiếu này rồi.");
+      }
     }
   };
 
@@ -74,26 +80,39 @@ export const ModalRateCinema = ({ isOpen, onClose, theaterId, theaterName, theat
           </button>
         </div>
         <div className="flex p-4">
-          <div className="w-2/4 flex justify-center">
-            <ImageContent
-              width="w-[200px]"
-              height="h-[290px]"
-              size_rounded="xl"
-              image={theaterImageUrl}
-            />
-          </div>
-          <div className="w-2/4">
-            <ContentModalRate 
-              ratings={ratings} 
-              setRatings={setRatings} 
-              comment={comment}
-              setComment={setComment}
-              isMovieRating={false} 
-            />
-          </div>
-        </div>
-        <div className="flex justify-center mt-2 mb-4">
-          <BtnConfirm label="Hoàn tất đánh giá" onClick={handleSubmit} />
+          {user ? (
+            <>
+              <div className="w-2/4 flex justify-center">
+                <ImageContent
+                  width="w-[200px]"
+                  height="h-[290px]"
+                  size_rounded="xl"
+                  image={theaterImageUrl}
+                />
+              </div>
+              <div className="w-2/4">
+                <ContentModalRate 
+                  ratings={ratings} 
+                  setRatings={setRatings} 
+                  comment={comment}
+                  setComment={setComment}
+                  isMovieRating={false} 
+                />
+                <div className="flex justify-center mt-2 mb-4">
+                  <BtnConfirm label="Hoàn tất đánh giá" onClick={handleSubmit} />
+                </div>
+                {errorMessage && (
+                  <div className="flex justify-center mt-2 mb-4">
+                    <p className="text-red-500">{errorMessage}</p>
+                  </div>
+                )}
+              </div>
+            </>
+          ) : (
+            <div className="flex justify-center w-full">
+                  <p className="text-red-500">Bạn phải đăng nhập để đánh giá rạp chiếu.</p>
+            </div>  
+          )}
         </div>
       </div>
     </div>

@@ -48,19 +48,14 @@ const getAllPosts = async (req, res) => {
         return res.status(400).json({ error: 'Error uploading files.' });
       }
   
-      const { user_id, title, content, is_movie_related } = req.body;
+      const { user_id, title, content, is_movie_related, is_expert } = req.body;
       const imagePostPath = req.file ? req.file.path : null;
   
       try {
-        const user = await prisma.users.findUnique({
-          where: { user_id: parseInt(user_id) },
-        });
-  
-        if (!user) {
-          return res.status(404).json({ error: 'User not found' });
-        }
-  
-        const isExpertPost = user.is_expert; 
+
+        const isExpertPost = is_expert === 'true' || is_expert === true;
+        const isModerated = isExpertPost;
+        // const isPostByExpert = isExpertPost
   
         const newPost = await prisma.posts.create({
           data: {
@@ -70,7 +65,7 @@ const getAllPosts = async (req, res) => {
             image_post: imagePostPath,
             is_movie_related: is_movie_related === 'true',
             is_expert_post: isExpertPost,
-            is_moderated: !isExpertPost,
+            is_moderated: isModerated,
             created_at: new Date(),
             updated_at: new Date(),
           },
@@ -239,6 +234,24 @@ const createComment = async (req, res) => {
     res.status(500).json({ error: 'Could not create comment' });
   }
 };
+const getModeratedPostsByUser = async (req, res) => {
+  const { userId } = req.params;
+  try {
+    const posts = await prisma.posts.findMany({
+      where: {
+        user_id: Number(userId),
+        is_moderated: true,
+      },
+      include: {
+        users: true, 
+      },
+    });
+    res.json(posts);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Could not retrieve moderated posts' });
+  }
+};
 module.exports = {
     getAllPosts,
     getMoviePosts,
@@ -251,5 +264,6 @@ module.exports = {
     deleteComment,
     getPostById,
     moderatePost,
-    createComment
+    createComment,
+    getModeratedPostsByUser
 };

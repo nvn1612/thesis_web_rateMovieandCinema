@@ -37,14 +37,14 @@ export const Header = () => {
 
   return (
     <header className="bg-gray-800 text-white text-lg py-4 px-4 flex justify-between items-center">
-      <div className="left-header-content flex space-x-5 items-center">
-        <img className="mx-auto h-12 w-auto" src={logo} alt="Logo" />
-        <p className="font-bold uppercase flex items-center">
-          <span className="text-yellow-500">vi</span>
-          <span className="text-gray-400">ci</span>
-          <span className="text-green-500">mo</span>
-        </p>
-      </div>
+      <Link className="left-header-content flex space-x-5 items-center cursor-pointer" to="/">
+          <img className="mx-auto h-12 w-auto" src={logo} alt="Logo" />
+          <p className="font-bold uppercase flex items-center">
+            <span className="text-yellow-500">vi</span>
+            <span className="text-gray-400">ci</span>
+            <span className="text-green-500">mo</span>
+          </p>
+      </Link>
       <nav className="flex items-center space-x-4">
         <Link to="/" className="mx-2 font-bold hover:text-blue-500 transition">
           Trang chủ
@@ -69,10 +69,10 @@ export const Header = () => {
             </button>
             {dropdownVisible && (
               <div className="absolute right-0 mt-2 w-48 bg-white text-black rounded-md shadow-lg z-10">
-                <Link to="/profile" className="block px-4 py-2 hover:bg-green-200 hover:rounded-md text-sm transition">Trang cá nhân</Link>
+                <Link to="/profile/detail" className="block px-4 py-2 hover:bg-green-200 hover:rounded-md text-sm transition">Trang cá nhân</Link>
                 <Link to="/rated-theaters" className="block px-4 py-2 hover:bg-green-200 text-sm transition">Các đánh giá rạp chiếu</Link>
                 <Link to="/rated-theaters" className="block px-4 py-2 hover:bg-green-200 text-sm transition">Các đánh giá Phim</Link>
-                <Link to="/posts" className="block px-4 py-2 hover:bg-green-200 text-sm transition">Bài viết đã đăng</Link>
+
                 <Link to="/rated-movies" className="block px-4 py-2 hover:bg-green-200 text-sm transition">Đổi mật khẩu</Link>
                 <button 
                   onClick={handleLogout} 

@@ -1,12 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
-export const GenreSelect = () => {
+export const GenreSelect = ({ onGenreSelect }) => {
   const [selectedGenre, setSelectedGenre] = useState('');
+  const [genres, setGenres] = useState([]);
 
-  const genres = ['Hành động', 'Phưu lưu', 'Hài kịch', 'Kinh dị', 'Lãng mạn', 'Hoạt hình', 'Khoa học viễn tưởng', 'Gia đình', 'Lịch sử', 'Chiến tranh'];
+  useEffect(() => {
+    
+    const fetchGenres = async () => {
+      try {
+        const response = await axios.get('/movie/getgenres');
+        setGenres(response.data);
+      } catch (error) {
+        console.error("Có lỗi xảy ra khi lấy thể loại", error);
+      }
+    };
+
+    fetchGenres();
+  }, []);
 
   const handleChange = (event) => {
-    setSelectedGenre(event.target.value);
+    const selectedValue = event.target.value;
+    setSelectedGenre(selectedValue);
+    onGenreSelect(selectedValue);
   };
 
   return (
@@ -20,9 +36,9 @@ export const GenreSelect = () => {
           Thể loại
         </option>
         <option value="Tất cả">Tất cả</option>
-        {genres.map((genre, index) => (
-          <option key={index} value={genre}>
-            {genre}
+        {genres.map((genre) => (
+          <option key={genre.genre_id} value={genre.genre_id}>
+            {genre.name}
           </option>
         ))}
       </select>

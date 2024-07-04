@@ -24,7 +24,7 @@ export const MovieList = () => {
 
   const handleDeleteMovie = async (id) => {
     try {
-      const response = await axios.delete(`http://localhost:8000/movie/deletemovie/${id}`);
+      const response = await axios.delete(`/movie/deletemovie/${id}`);
       if (response.status === 200) {
         const updatedMovies = movies.filter(movie => movie.movie_id !== id);
         setMovies(updatedMovies);
@@ -59,7 +59,7 @@ export const MovieList = () => {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ảnh</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tên phim</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quốc gia</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Đạo diễn</th>
+                    {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Đạo diễn</th> */}
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày phát hành</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thời lượng</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Đáng giá</th>
@@ -74,8 +74,8 @@ export const MovieList = () => {
                         <img src={`/${movie.poster_image}`} alt="Không có ảnh" className="w-12 h-12 object-cover " />
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">{movie.name_movie}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">{movie.country}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">{movie.director}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">{movie.countries ? movie.countries.name : 'Không có thông tin'}</td>
+                      {/* <td className="px-6 py-4 whitespace-nowrap">{movie.director}</td> */}
                       <td className="px-6 py-4 whitespace-nowrap">{new Date(movie.release_date).toLocaleDateString()}</td>
                       <td className="px-6 py-4 whitespace-nowrap">{movie.duration} phút</td>
                       <td className="px-6 py-4 whitespace-nowrap"><button className="hover:text-orange-500 transition" onClick={() => handleViewMovieRatings(movie.movie_id)}>Xem chi tiết</button></td>

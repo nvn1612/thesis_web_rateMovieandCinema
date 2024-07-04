@@ -5,6 +5,7 @@ import { faTrash, faCheck } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 import { UserPostSelect } from '../../../components/select-box/UserPostSelect';
 import { SearchInput } from '../../../components/search-input/SearchInput';
+import { ModeratePostSelect } from '../../../components/select-box/ModeratePostSelect';
 
 export const PostList = () => {
   const [posts, setPosts] = useState([]);
@@ -55,10 +56,11 @@ export const PostList = () => {
           <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg h-full flex flex-col">
             <div className="flex items-center mb-4 justify-between m-2">
               <SearchInput contentSearch="Tìm kiếm bài viết" />
-              <div>
-                <span className="inline-block h-3 w-3 rounded-full bg-red-200 mr-2"></span>
-                <span>Chưa kiểm duyệt</span>
-              </div>
+                <ModeratePostSelect/>
+                <div>
+                  <span className="inline-block h-3 w-3 rounded-full bg-red-200 mr-2"></span>
+                  <span>Chưa kiểm duyệt</span>
+                </div>  
               <UserPostSelect />
             </div>
             <div className="flex-grow overflow-y-auto">

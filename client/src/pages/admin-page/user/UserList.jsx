@@ -32,7 +32,7 @@ export const UserList = () => {
 
   return (
     <div className="flex flex-col w-full h-screen">
-      <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8 h-full">
+      <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8 h-full max-w-full">
         <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8 h-full">
           <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg h-full flex flex-col">
             <div className="flex items-center mb-4 justify-between m-2">
@@ -53,7 +53,7 @@ export const UserList = () => {
             <div>
                 <button className="ml-2 pt-1 pb-1 pr-1 pl-1 mb-2 bg-black text-white hover:bg-green-500 transition rounded-lg" onClick={()=>navigate('/admin/users/suspicion-lever')}>Kiểm tra người dùng có mức độ nghi ngờ cao</button>
             </div>
-            <div className="flex-grow overflow-y-auto">
+            <div className="flex-grow overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50 sticky top-0 z-10">
                   <tr>

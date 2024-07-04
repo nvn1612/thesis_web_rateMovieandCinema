@@ -40,7 +40,7 @@ const addTheaterRating = async (req, res) => {
       });
 
       if (expertRatings.length > 0) {
-        const differenceThreshold = 1;
+        const differenceThreshold = 2;
 
         let isAnyRatingValid = false;
 
@@ -176,7 +176,7 @@ const getTheaterRatings = async (req, res) => {
       const averageExpertRating = totalExpertRatingsCount > 0 ? parseFloat((totalExpertRatingSum / totalExpertRatingsCount).toFixed(2)) : 0;
 
       const totalAverageRating = (averageExpertRating + averageUserRating) / 2;
-  
+      const totalNumberRating= totalExpertRatingsCount + totalUserRatingsCount;
       return res.status(200).json({
         userRatings,
         expertRatings,
@@ -196,7 +196,8 @@ const getTheaterRatings = async (req, res) => {
         averageExpertTicketPriceRating,
         averageExpertRating,
         totalExpertRatingsCount,
-        totalAverageRating
+        totalAverageRating,
+        totalNumberRating
       });
     } catch (error) {
       console.error(error);

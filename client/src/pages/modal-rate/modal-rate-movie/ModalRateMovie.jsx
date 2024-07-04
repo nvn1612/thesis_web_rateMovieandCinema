@@ -3,26 +3,35 @@ import { ImageContent } from "../../../components/image-content/ImageContent";
 import { ContentModalRate } from "../../../layouts/content-modal-rate/ContentModalRate";
 import { BtnConfirm } from "../../../components/btn-confirm/BtnConfirm";
 import axios from "axios";
-import UserContext from "../../../context/UserContext"; 
+import UserContext from "../../../context/UserContext";
 
-export const ModalRateMovie = ({ isOpen, onClose, onCompleted, movieId, movieName, posterUrl }) => {
+export const ModalRateMovie = ({
+  isOpen,
+  onClose,
+  onCompleted,
+  movieId,
+  movieName,
+  posterUrl,
+}) => {
   const { user } = useContext(UserContext);
   const initialRatings = {
     content_rating: 0,
     acting_rating: 0,
     visual_effects_rating: 0,
-    sound_rating: 0,  
+    sound_rating: 0,
     directing_rating: 0,
     entertainment_rating: 0,
   };
-  
+
   const [ratings, setRatings] = useState(initialRatings);
   const [comment, setComment] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     if (isOpen) {
       setRatings(initialRatings);
       setComment("");
+      setErrorMessage("");
     }
   }, [isOpen]);
 
@@ -34,7 +43,7 @@ export const ModalRateMovie = ({ isOpen, onClose, onCompleted, movieId, movieNam
 
   const handleSubmit = async () => {
     try {
-      const response = await axios.post('/movie-rating/add-rating', {
+      const response = await axios.post("/movie-rating/add-rating", {
         user_id: user.user_id,
         movie_id: movieId,
         content_rating: ratings.content_rating,
@@ -44,17 +53,50 @@ export const ModalRateMovie = ({ isOpen, onClose, onCompleted, movieId, movieNam
         directing_rating: ratings.directing_rating,
         entertainment_rating: ratings.entertainment_rating,
         comment,
-        is_expert_rating: user.is_expert
+        is_expert_rating: user.is_expert,
       });
-      console.log('Rating added:', response.data);
-      onCompleted(); 
+      console.log("Rating added:", response.data);
+      onCompleted();
       onClose();
     } catch (error) {
-      console.error('Error adding rating:', error);
+      console.error("Error adding rating:", error);
+      if (error.response && error.response.status === 400) {
+        setErrorMessage(
+          "Bạn đã đánh giá bộ phim này rồi."
+        );
+      } else {
+        setErrorMessage("Đã xảy ra lỗi khi đánh giá phim.");
+      }
     }
   };
 
   if (!isOpen) return null;
+
+  if (!user) {
+    return (
+      <div
+        className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
+        onClick={handleOverlayClick}
+      >
+        <div className="relative w-full max-w-4xl bg-white rounded-lg">
+          <div className="p-3 bg-slate-400 flex space-x-1 items-center justify-between">
+            <div className="flex space-x-1">
+              <p className="font-bold">Đánh Giá Phim</p>
+              <p className="font-bold text-red-600">{movieName}</p>
+            </div>
+            <button onClick={onClose} className="text-black text-2xl">
+              &times;
+            </button>
+          </div>
+          <div className="flex p-4 justify-center">
+            <p className="text-red-500">
+              Bạn phải đăng nhập để đánh giá phim.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -81,18 +123,24 @@ export const ModalRateMovie = ({ isOpen, onClose, onCompleted, movieId, movieNam
             />
           </div>
           <div className="w-3/5">
-            <ContentModalRate 
-              ratings={ratings} 
-              setRatings={setRatings} 
+            <ContentModalRate
+              ratings={ratings}
+              setRatings={setRatings}
               comment={comment}
               setComment={setComment}
               isMovieRating={true}
             />
           </div>
         </div>
+       
         <div className="flex justify-center mt-2 mb-4">
           <BtnConfirm label="Hoàn tất đánh giá" onClick={handleSubmit} />
         </div>
+        {errorMessage && (
+          <div className="flex justify-center mt-2 mb-4">
+            <p className="text-red-500">{errorMessage}</p>
+          </div>
+        )}
       </div>
     </div>
   );

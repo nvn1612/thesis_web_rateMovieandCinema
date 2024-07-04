@@ -16,8 +16,6 @@ model users {
   name                  String?          @db.VarChar(255)
   phone_number          String?          @unique(map: "phone_number") @db.VarChar(20)
   address               String?          @db.VarChar(255)
-  activation_token      String?          @unique(map: "activation_token") @db.VarChar(255)
-  forgot_password_token String?          @unique(map: "forgot_password_token") @db.VarChar(255)
   is_active             Boolean          @default(false)
   is_Admin              Boolean          @default(false)
   is_expert             Boolean          @default(false)
@@ -34,6 +32,8 @@ model genres {
   movie_genres movie_genres[]
 }
 
+
+
 model movie_genres {
   movie_id Int
   genre_id Int
@@ -44,13 +44,19 @@ model movie_genres {
   @@index([genre_id], map: "genre_id")
 }
 
+model countries {
+  country_id Int    @id @default(autoincrement())
+  name       String @db.VarChar(255)
+  movies     movies[]
+}
+
 model movies {
   movie_id       Int            @id @default(autoincrement())
   name_movie     String         @db.VarChar(255)
   trailer_link   String?        @db.VarChar(255)
   poster_image   String?        @db.VarChar(255)
   backdrop_image String?        @db.VarChar(255)
-  country        String?        @db.VarChar(255)
+  country_id     Int?
   description    String         @db.Text
   director       String?        @db.VarChar(255)
   release_date   DateTime?      @db.Date
@@ -59,7 +65,9 @@ model movies {
   updated_at     DateTime?      @default(now()) @db.Timestamp(0)
   movie_genres   movie_genres[]
   movie_rating   movie_rating[]
+  countries      countries?     @relation(fields: [country_id], references: [country_id])
 }
+
 
 model movie_rating {
   movie_rating_id       Int       @id @default(autoincrement())

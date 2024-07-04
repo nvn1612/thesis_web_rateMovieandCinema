@@ -10,6 +10,7 @@ export const PostDetail = () => {
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const [newComment, setNewComment] = useState('');
+  const [error, setError] = useState(null);
   const { user } = useContext(UserContext);
   const { postId } = useParams();
 
@@ -29,8 +30,13 @@ export const PostDetail = () => {
   }, [postId]); 
 
   const handleCommentSubmit = async () => {
+    if (!user) {
+      setError('Bạn cần đăng nhập để thực hiện chức năng này.');
+      return;
+    }
+    
     try {
-      const response = await axios.post("http://localhost:8000/post/createcomment", {
+      const response = await axios.post("/post/createcomment", {
         postId: post.post_id,
         userId: user.user_id,
         content: newComment,
@@ -38,14 +44,13 @@ export const PostDetail = () => {
 
       const createdComment = response.data;
 
-     
       setPost((prevPost) => ({
         ...prevPost,
         post_comments: [...prevPost.post_comments, createdComment],
       }));
 
-      
       setNewComment('');
+      setError(null);
     } catch (error) {
       console.error("Error creating comment:", error);
     }
@@ -68,8 +73,8 @@ export const PostDetail = () => {
             <div className="flex">
               <div className="flex flex-col space-y-2 m-2 flex-shrink-0">
                 <img
-                  src={`http://localhost:8000/${post.users.avatar}`} 
-                  className="h-48 w-48 rounded-full"
+                  src={`/${post.users.avatar}`} 
+                  className="h-48 w-48 rounded-full object-cover"
                   alt=""
                 />
                 <div className="flex space-x-2 justify-center">
@@ -97,20 +102,21 @@ export const PostDetail = () => {
                 </div>
                 {post.image_post && (
                   <div className="mt-4">
-                    <img src={`http://localhost:8000/${post.image_post}`} alt="" className="h-48" />
+                    <img src={`/${post.image_post}`} alt="" className="h-48" />
                   </div>
                 )}
                 <div className="flex justify-end mt-5 mb-3 space-x-2">
-                  <button className="pl-2 pr-2 pt-1 pb-1 bg-green-500 text-white hover:bg-green-600 transition rounded-lg" onClick={handleCommentSubmit}>
-                    <FontAwesomeIcon icon={faComment} className="mr-1" />
-                    Bình luận
-                  </button>
                   <textarea
                     className="border border-black rounded-md p-2 w-96"
                     value={newComment}
                     onChange={(e) => setNewComment(e.target.value)}
                   ></textarea>
+                  <button className="pl-2 pr-2 pt-1 pb-1 bg-green-500 text-white hover:bg-green-600 transition rounded-lg" onClick={handleCommentSubmit}>
+                    <FontAwesomeIcon icon={faComment} className="mr-1" />
+                    Bình luận
+                  </button>
                 </div>
+                {error && <p className="text-red-500 mt-2">{error}</p>}
               </div>
             </div>
           </div>

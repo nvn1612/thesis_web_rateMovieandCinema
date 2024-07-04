@@ -3,6 +3,7 @@ import axios from "axios";
 
 export const MovieCreate = () => {
   const [genres, setGenres] = useState([]);
+  const [countries, setCountries] = useState([]);
   const [posterImage, setPosterImage] = useState(null);
   const [backdropImage, setBackdropImage] = useState(null);
   const [formData, setFormData] = useState({
@@ -18,10 +19,16 @@ export const MovieCreate = () => {
 
   useEffect(() => {
     const fetchGenres = async () => {
-      const response = await axios.get("/movie/genres");
+      const response = await axios.get("/movie/getgenres");
       setGenres(response.data);
     };
     fetchGenres();
+
+    const fetchCountries = async () => {
+      const response = await axios.get("/movie/getallcountries");
+      setCountries(response.data);
+    };
+    fetchCountries();
   }, []);
 
   const handleChange = (e) => {
@@ -66,7 +73,7 @@ export const MovieCreate = () => {
     if (backdropImage) data.append("backdrop_image", backdropImage);
 
     try {
-      const response = await axios.post("http://localhost:8000/movie/createmovie", data, {
+      const response = await axios.post("/movie/createmovie", data, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -142,14 +149,19 @@ export const MovieCreate = () => {
             >
               Quốc gia
             </label>
-            <input
+            <select
               className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
               id="country"
-              type="text"
-              placeholder="Quốc gia"
               value={formData.country}
               onChange={handleChange}
-            />
+            >
+              <option value="">Chọn quốc gia</option>
+              {countries.map((country) => (
+                <option key={country.country_id} value={country.country_id}>
+                  {country.name}
+                </option>
+              ))}
+            </select>
           </div>
           <div className="w-full md:w-1/2 px-3">
             <label

@@ -4,7 +4,7 @@ import axios from "axios";
 import { Header } from "../../layouts/header/Header";
 import { Footer } from "../../layouts/footer/Footer";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faClock,faCalendarWeek,faThumbsUp } from "@fortawesome/free-solid-svg-icons";
+import { faClock,faCalendarWeek,faThumbsUp,faFaceSmile,faCalculator } from "@fortawesome/free-solid-svg-icons";
 import { BtnRate } from "../../components/btn-rate/BtnRate";
 import { TrailerModal } from "../../components/trailer-modal/TrailerModal";
 import { ModalRateMovie } from "../modal-rate/modal-rate-movie/ModalRateMovie";
@@ -30,6 +30,8 @@ export const MovieDetail = () => {
   const [totalUserRatingsCount, setTotalUserRatingsCount] = useState(0);
   const [totalExpertRatingsCount, setTotalExpertRatingsCount] = useState(0);
   const [totalRating, setTotalRating] = useState(0);
+  const [totalNumberRating, settotalNumberRating] = useState(0);
+
   const [isUserRatings, setIsUserRatings] = useState(true);
   const [users, setUsers] = useState({});
   const [visibleUserRatingsCount, setVisibleUserRatingsCount] = useState(5);
@@ -76,7 +78,8 @@ export const MovieDetail = () => {
 
         setTotalUserRatingsCount(ratingsData.totalUserRatingsCount);
         setTotalExpertRatingsCount(ratingsData.totalExpertRatingsCount);
-        setTotalRating(ratingsData.totalAverageRating)
+        setTotalRating(ratingsData.totalAverageRating);
+        settotalNumberRating(ratingsData.totalNumberRating)
 
         const usersData = {};
         await Promise.all(
@@ -190,7 +193,7 @@ export const MovieDetail = () => {
                 </div>
                 <div className="flex flex-col">
                   <p className="text-white">Quốc gia</p>
-                  <p className="text-red-600">{movie.country}</p>
+                  <p className="text-red-600">{movie.countries ? movie.countries.name : 'Không có thông tin'}</p>
                 </div>
               </div>
               <div className="flex space-x-6">
@@ -224,6 +227,30 @@ export const MovieDetail = () => {
                   </div>
                   <div className="flex justify-center">
                     <p className="text-white">{Math.round((totalRating)/10*100)} %</p>
+                  </div>
+                </div>
+                <div className="flex flex-col">
+                  <div className="flex space-x-2 items-center">
+                    <FontAwesomeIcon className="text-white" icon={faCalculator} />
+                    <p className="text-white">Số lượng đánh giá</p>
+                  </div>
+                  <div className="flex justify-center">
+                    <p className="text-white">{totalNumberRating}</p>
+                  </div>
+                </div>
+                <div className="flex flex-col">
+                  <div className="flex space-x-2 items-center">
+                    <FontAwesomeIcon className="text-white" icon={faFaceSmile} />
+                    <p className="text-white">Xếp hạng</p>
+                  </div>
+                  <div className="flex justify-center">
+                    <p className="text-white">{totalRating >= 8 ? (
+                          <p className="text-green-500">Cao</p>
+                        ) : totalRating >= 5 ? (
+                          <p className="text-orange-500">Trung bình</p>
+                        ) : (
+                          <p className="text-red-500">Kém</p>
+                        )}</p>
                   </div>
                 </div>
               </div>
@@ -291,7 +318,7 @@ export const MovieDetail = () => {
                         className="w-12 h-12 rounded-full object-cover"
                         src={
                           users[rating.user_id]?.avatar
-                            ? `http://localhost:8000/${users[rating.user_id].avatar}`
+                            ? `/${users[rating.user_id].avatar}`
                             : noAvatarUser
                         }
                         alt="User Avatar"
@@ -309,7 +336,7 @@ export const MovieDetail = () => {
                       </div>     
                     </div>
                     <div>
-                        {isUserRatings && (
+                        {/* {isUserRatings && (
                           <div>
                             {user.is_expert && (
                               <BtnReport id={rating.movie_rating_id}
@@ -317,7 +344,7 @@ export const MovieDetail = () => {
                               />
                             )}
                           </div>
-                        )}
+                        )} */}
                     </div>
                   </div>
                   <DetailRateUser

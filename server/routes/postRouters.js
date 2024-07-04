@@ -1,6 +1,6 @@
 const express = require('express');
 const { getAllPosts,getMoviePosts,getTheaterPosts,createPost,getCommentCountByPostId,
-    getEarliestPosts,getCommentsByPostId,deletePost,deleteComment,getPostById,moderatePost,createComment
+    getEarliestPosts,getCommentsByPostId,deletePost,deleteComment,getPostById,moderatePost,createComment,getModeratedPostsByUser
 }
 
 = require('../controllers/postControllers');
@@ -18,4 +18,5 @@ router.delete('/deletecomment/:commentId',deleteComment);
 router.get('/getpost/:postId',getPostById);
 router.put('/moderatepost/:postId',moderatePost);
 router.post('/createcomment',createComment);
+router.get('/getmoderatedposts/:userId',getModeratedPostsByUser);
 module.exports = router;

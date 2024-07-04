@@ -38,7 +38,7 @@ export const FormLogin = () => {
         setMessage('Login failed. Please try again.');
       }
     } catch (error) {
-      setMessage(error.message);
+      setMessage("Tên tài khoản hoặc mật khẩu không đúng vui lòng thử lại !");
     }
   };
 

@@ -4,9 +4,9 @@ import { faStar } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import UserContext from "../../context/UserContext";
 
-export const UserRatedMovies = () => {
+export const UserRatedTheaters = () => {
   const [ratings, setRatings] = useState({
-    movieRatings: [],
+    theaterRatings: [],
   });
   const [loading, setLoading] = useState(true);
   const [selectedRating, setSelectedRating] = useState(null);
@@ -32,11 +32,11 @@ export const UserRatedMovies = () => {
     fetchRatings();
   }, [userId]);
 
-  const fetchRatingDetails = async (movie_rating_id) => {
+  const fetchRatingDetails = async (theater_rating_id) => {
     setDetailLoading(true);
     try {
       const response = await axios.get(
-        `/movie-rating/get-movie-rating/${movie_rating_id}`
+        `/theater-rating/get-theater-rating/${theater_rating_id}`
       );
       setSelectedRating(response.data);
     } catch (error) {
@@ -46,14 +46,14 @@ export const UserRatedMovies = () => {
     }
   };
 
-  const handleRowClick = (movie_rating_id) => {
-    fetchRatingDetails(movie_rating_id);
+  const handleRowClick = (theater_rating_id) => {
+    fetchRatingDetails(theater_rating_id);
   };
 
 
-  const handleDeleteRating = async (movie_rating_id) => {
+  const handleDeleteRating = async (theater_rating_id) => {
     try {
-      await axios.delete(`/movie-rating/delete-movie-rating/${movie_rating_id}`);
+      await axios.delete(`/theater-rating/delete-theater-rating/${theater_rating_id}`);
  
       setLoading(true);
       const response = await axios.get(`/user/user-ratings/${userId}`);
@@ -83,7 +83,7 @@ export const UserRatedMovies = () => {
             <div>
               <div className="flex flex-col space-y-2">
                 <img
-                  src={selectedRating.movies.poster_image ? `/${selectedRating.movies.poster_image}` : null}
+                  src={selectedRating.movie_theaters.theater_logo ? `/${selectedRating.movie_theaters.theater_logo}` : null}
                   className="h-72 rounded"
                 ></img>
                 <div className="flex flex-col space-x-2">
@@ -93,12 +93,12 @@ export const UserRatedMovies = () => {
               </div>
             </div>
             <div className="flex flex-col space-y-4">
-              <div className="flex space-x-1 items-center">
-                <p>Nội dung phim</p>
+              <div className="flex items-center">
+                <p>Chất lượng hình ảnh</p>
                 <input
-                  className="border border-black rounded-sm w-5 bg-slate-300"
+                  className="border border-black rounded-sm w-5 ml-2  bg-slate-300"
                   disabled
-                  value={selectedRating.content_rating || 0}
+                  value={selectedRating.image_quality_rating || 0}
                 ></input>
                 <FontAwesomeIcon
                   icon={faStar}
@@ -106,11 +106,11 @@ export const UserRatedMovies = () => {
                 ></FontAwesomeIcon>
               </div>
               <div className="flex items-center">
-                <p>Diễn xuất</p>
+                <p>Chất lượng âm thanh</p>
                 <input
-                  className="border border-black rounded-sm w-5 bg-slate-300 ml-11"
+                  className="border border-black rounded-sm w-5 bg-slate-300 ml-1"
                   disabled
-                  value={selectedRating.acting_rating || 0}
+                  value={selectedRating.sound_quality_rating || 0}
                 ></input>
                 <FontAwesomeIcon
                   icon={faStar}
@@ -118,11 +118,11 @@ export const UserRatedMovies = () => {
                 ></FontAwesomeIcon>
               </div>
               <div className="flex items-center">
-                <p>Kỹ xảo</p>
+                <p>Ghế ngồi</p>
                 <input
-                  className="border border-black rounded-sm w-5 bg-slate-300 ml-16"
+                  className="border border-black rounded-sm w-5 bg-slate-300 ml-[91px]"
                   disabled
-                  value={selectedRating.effects_rating || 0}
+                  value={selectedRating.seating_rating || 0}
                 ></input>
                 <FontAwesomeIcon
                   icon={faStar}
@@ -130,11 +130,11 @@ export const UserRatedMovies = () => {
                 ></FontAwesomeIcon>
               </div>
               <div className="flex items-center">
-                <p>Âm thanh</p>
+                <p>Không gian rạp</p>
                 <input
-                  className="border border-black rounded-sm w-5 bg-slate-300 ml-10"
+                  className="border border-black rounded-sm w-5 bg-slate-300 ml-12"
                   disabled
-                  value={selectedRating.sound_rating || 0}
+                  value={selectedRating.theater_space_rating || 0}
                 ></input>
                 <FontAwesomeIcon
                   icon={faStar}
@@ -142,11 +142,11 @@ export const UserRatedMovies = () => {
                 ></FontAwesomeIcon>
               </div>
               <div className="flex items-center">
-                <p>Đạo diễn</p>
+                <p>Dịch vụ khách hàng</p>
                 <input
-                  className="border border-black rounded-sm w-5 bg-slate-300 ml-11"
+                  className="border border-black rounded-sm w-5 bg-slate-300 ml-4"
                   disabled
-                  value={selectedRating.direction_rating || 0}
+                  value={selectedRating.customer_service_rating || 0}
                 ></input>
                 <FontAwesomeIcon
                   icon={faStar}
@@ -154,11 +154,11 @@ export const UserRatedMovies = () => {
                 ></FontAwesomeIcon>
               </div>
               <div className="flex items-center">
-                <p>Tính giải trí</p>
+                <p>Giá vé</p>
                 <input
-                  className="border border-black rounded-sm w-5 bg-slate-300 ml-7"
+                  className="border border-black rounded-sm w-5 bg-slate-300 ml-28"
                   disabled
-                  value={selectedRating.entertainment_rating || 0}
+                  value={selectedRating.ticket_price_rating || 0}
                 ></input>
                 <FontAwesomeIcon
                   icon={faStar}
@@ -167,7 +167,7 @@ export const UserRatedMovies = () => {
               </div>
               <div className="flex justify-center">
                   <button className="text-white pt-1 pr-2 pl-2 pb-1 bg-red-500 rounded-lg hover:bg-red-600 transition"
-                    onClick={()=>handleDeleteRating(selectedRating.movie_rating_id)}>
+                    onClick={()=>handleDeleteRating(selectedRating.theater_rating_id)}>
                     Xóa đánh giá
                   </button>
                 </div>
@@ -213,10 +213,10 @@ export const UserRatedMovies = () => {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {ratings.movieRatings.map((rating, index) => (
+                    {ratings.theaterRatings.map((rating, index) => (
                       <tr
                         key={rating.id}
-                        onClick={() => handleRowClick(rating.movie_rating_id)}
+                        onClick={() => handleRowClick(rating.theater_rating_id)}
                       >
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm text-gray-900">
@@ -225,7 +225,7 @@ export const UserRatedMovies = () => {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm text-gray-900">
-                            {rating.movies.name_movie}
+                            {rating.movie_theaters.theater_name}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">

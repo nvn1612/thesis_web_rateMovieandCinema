@@ -19,7 +19,6 @@ const registerUser = async (req, res) => {
         email,
         username,
         password: hashedPassword,
-        activation_token,
       },
     });
 
@@ -51,6 +50,7 @@ const registerUser = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
+
 const activateUser = async (req, res) => {
   const { token } = req.params;
 
@@ -63,10 +63,12 @@ const activateUser = async (req, res) => {
           return res.status(400).json({ error: "Incorrect or Expired link." });
         }
         const { email } = decodedToken;
-        const user = await prisma.users.update({
+
+        await prisma.users.update({
           where: { email: email },
           data: { is_active: true },
         });
+
         return res.redirect("http://localhost:3000/notify-success");
       }
     );
@@ -74,6 +76,8 @@ const activateUser = async (req, res) => {
     return res.json({ error: "Error activating account." });
   }
 };
+
+module.exports = { registerUser, activateUser };
 
 const loginUser = async (req, res) => {
     const { username, password } = req.body;
@@ -107,45 +111,80 @@ const loginUser = async (req, res) => {
     }
   };
 
-const forgotPassword = async (req, res) => {
-  const { username } = req.body;
-
-  const user = await prisma.users.findUnique({ where: { username } });
-
-  if (!user) {
-    return res.status(400).json({ error: 'No user found with that username.' });
-  }
-
-  const resetPasswordToken = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
-    expiresIn: '1h',
-  });
-
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: process.env.EMAIL_USERNAME,
-      pass: process.env.EMAIL_PASSWORD,
-    },
-  });
-
-  const mailOptions = {
-    from: process.env.EMAIL_USERNAME,
-    to: user.email,
-    subject: 'Password Reset',
-    text: `Please click on the following link, or paste this into your browser to complete the process within one hour of receiving it:\n\nhttp://${req.headers.host}/reset-password/${resetPasswordToken}\n\nIf you did not request this, please ignore this email and your password will remain unchanged.\n`,
-  };
-
-  transporter.sendMail(mailOptions, function (error, info) {
-    if (error) {
-      console.log(error);
-    } else {
-      console.log('Email sent: ' + info.response);
+  const forgotPassword = async (req, res) => {
+    const { username } = req.body;
+  
+    const user = await prisma.users.findUnique({ where: { username } });
+  
+    if (!user) {
+      return res.status(400).json({ error: 'No user found with that username.' });
     }
-  });
-
-  res.status(200).json({ message: 'A password reset email has been sent.' });
-};
-
+  
+    const resetPasswordToken = jwt.sign({ id: user.user_id }, process.env.JWT_SECRET, {
+      expiresIn: '1h',
+    });
+  
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.EMAIL_USERNAME,
+        pass: process.env.EMAIL_PASSWORD,
+      },
+    });
+  
+    const mailOptions = {
+      from: process.env.EMAIL_USERNAME,
+      to: user.email,
+      subject: 'Đặt lại mật khẩu',
+      text: `Please click on the following link, or paste this into your browser to complete the process within one hour of receiving it:\n\nhttp://localhost:3000/reset-password/${resetPasswordToken}\n\nIf you did not request this, please ignore this email and your password will remain unchanged.\n`,
+    };
+  
+    transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log('Email sent: ' + info.response);
+      }
+    });
+  
+    res.status(200).json({ message: 'Vui lòng vào email của bạn để thay đổi mật khẩu !' });
+  };
+  
+  
+  const resetPassword = async (req, res) => {
+    const { token } = req.params;
+    console.log('Received token:', token);
+    const { newPassword } = req.body;
+  
+    if (!token) {
+      return res.status(400).json({ error: "Invalid or expired token." });
+    }
+  
+    try {
+   
+      console.log('JWT_SECRET:', process.env.JWT_SECRET);
+      const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+      console.log('Decoded token:', decodedToken);
+  
+      const userId = decodedToken.id;
+      if (!userId) {
+        return res.status(400).json({ error: "Invalid token payload." });
+      }
+  
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+  
+      await prisma.users.update({
+        where: { user_id: userId },
+        data: { password: hashedPassword },
+      });
+  
+      res.status(200).json({ message: "Mật khẩu đã được thay đổi thành công." });
+    } catch (error) {
+      console.error('Error during token verification or password update:', error);
+      res.status(400).json({ error: "Có lỗi xảy ra!." });
+    }
+  };
+  
 
 const getUsers = async (req, res) => {
   const users = await prisma.users.findMany();
@@ -353,6 +392,7 @@ module.exports = {
   activateUser,
   loginUser,
   forgotPassword,
+  resetPassword,
   getUsers,
   getUser,
   createUser,

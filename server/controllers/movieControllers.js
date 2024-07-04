@@ -28,21 +28,48 @@ const prisma = new PrismaClient();
     }
   };
 
+  const getMoviesByGenre = async (req, res) => {
+    const { genre_id } = req.params;
+    try {
+      const movies = await prisma.movies.findMany({
+        where: {
+          movie_genres: {
+            some: {
+              genre_id: parseInt(genre_id),
+            }
+          }
+        },
+        include: {
+          movie_genres: {
+            include: {
+              genres: true,
+            }
+          }
+        }
+      });
+      res.json(movies);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ error: 'Có lỗi xảy ra' });
+    }
+  };
 
 
-const getAllMovies = async (req, res) => {
-  try {
-    const movies = await prisma.movies.findMany({
-      include: {
-        movie_genres: true,
-      }
-    });
-    res.json(movies);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: 'Có lỗi xảy ra' });
-  }
-};
+
+  const getAllMovies = async (req, res) => {
+    try {
+      const movies = await prisma.movies.findMany({
+        include: {
+          movie_genres: true,
+          countries: true 
+        }
+      });
+      res.json(movies);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ error: 'Có lỗi xảy ra' });
+    }
+  };
 
 const getMovieById = async (req, res) => {
   const { id } = req.params;
@@ -54,7 +81,8 @@ const getMovieById = async (req, res) => {
           include: {
             genres: true
           }
-        }
+        },
+        countries: true
       }
     });
     res.json(movie);
@@ -84,7 +112,7 @@ const createMovie = async (req, res) => {
           trailer_link,
           poster_image: posterImagePath,
           backdrop_image: backdropImagePath,
-          country,
+          country_id: parseInt(country),
           description,
           director,
           release_date: release_date ? new Date(release_date) : null,
@@ -129,6 +157,16 @@ const getGenres = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: 'Có lỗi xảy ra' });
+  }
+};
+
+const getAllCountries = async (req, res) => {
+  try {
+    const countries = await prisma.countries.findMany();
+    res.json(countries);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Có lỗi xảy ra khi lấy danh sách quốc gia' });
   }
 };
 
@@ -226,4 +264,8 @@ const updateMovie = async (req, res) => {
 };
 
 
-module.exports = { createMovie, getGenres, getAllMovies, getMovieById, deleteMovie, updateMovie, searchMoviesByName  };
+module.exports = { 
+  createMovie, getGenres, getAllMovies, 
+  getMovieById, deleteMovie, updateMovie,
+  searchMoviesByName, getMoviesByGenre, getAllCountries
+};

@@ -4,7 +4,7 @@ import axios from 'axios';
 import { Header } from '../../layouts/header/Header';
 import { BtnRate } from '../../components/btn-rate/BtnRate';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMap,faThumbsUp } from '@fortawesome/free-solid-svg-icons';
+import { faMap,faThumbsUp,faFaceSmile,faCalculator } from '@fortawesome/free-solid-svg-icons';
 import { ModalRateCinema } from '../modal-rate/modal-rate-cinema/ModalRateCinema';
 import noAvatarUser from '../../assets/images/no_user_avatar.jpg';
 import { ProgressBarGroup } from '../../layouts/progress-bar-group/ProgressBarGroup';
@@ -33,6 +33,7 @@ export const TheaterDetail = () => {
   const [isCompletedModalOpen, setIsCompletedModalOpen] = useState(false);
   const [visibleRatingsCount, setVisibleRatingsCount] = useState(5);
   const [totalRating, setTotalRating] = useState(0);
+  const [totalNumberRating, setTotalNumberRating] = useState(0);
 
   useEffect(() => {
     const fetchTheater = async () => {
@@ -74,7 +75,8 @@ export const TheaterDetail = () => {
 
         setTotalUserRatingsCount(ratingsData.totalUserRatingsCount);
         setTotalExpertRatingsCount(ratingsData.totalExpertRatingsCount);
-        setTotalRating(ratingsData.totalAverageRating)
+        setTotalRating(ratingsData.totalAverageRating);
+        setTotalNumberRating(ratingsData.totalNumberRating);
 
         const usersData = {};
         await Promise.all(
@@ -156,6 +158,30 @@ export const TheaterDetail = () => {
                   </div>
                   <div className="flex justify-center font-bold">
                     <p>{Math.round((totalRating)/10*100)} %</p>
+                  </div>
+                </div>
+                <div className="flex flex-col">
+                  <div className="flex space-x-2 items-center">
+                    <FontAwesomeIcon className="text-black" icon={faCalculator} />
+                    <p className="text-black">Số lượng đánh giá</p>
+                  </div>
+                  <div className="flex justify-center">
+                    <p className="text-black">{totalNumberRating}</p>
+                  </div>
+                </div>
+                <div className="flex flex-col">
+                  <div className="flex space-x-2 items-center">
+                    <FontAwesomeIcon className="text-black" icon={faFaceSmile} />
+                    <p className="text-black">Xếp hạng</p>
+                  </div>
+                  <div className="flex justify-center">
+                    <p className="text-white">{totalRating >= 8 ? (
+                          <p className="text-green-500">Cao</p>
+                        ) : totalRating >= 5 ? (
+                          <p className="text-orange-500">Trung bình</p>
+                        ) : (
+                          <p className="text-red-500">Kém</p>
+                        )}</p>
                   </div>
                 </div>
             </div>
@@ -258,7 +284,7 @@ export const TheaterDetail = () => {
                       </div>     
                     </div>
                     <div>
-                        {isUserRatings && (
+                        {/* {isUserRatings && (
                           <div>
                             {user.is_expert && (
                               <BtnReport id={rating.theater_rating_id} 
@@ -266,7 +292,7 @@ export const TheaterDetail = () => {
                               />
                             )}
                           </div>
-                        )}
+                        )} */}
                     </div>
                   </div>
                     <DetailRateUser

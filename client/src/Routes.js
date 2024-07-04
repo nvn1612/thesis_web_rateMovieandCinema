@@ -18,6 +18,7 @@ import { ModalAddPost } from "./components/modal-add-post/ModalAddPost";
 import { CommentPostList } from "./pages/admin-page/post/CommentPostList";
 import { PostDetail } from "./pages/community-page/PostDetail";
 import {Home} from "./pages/home/Home";
+import {ResetPassword} from "./pages/forgot-password/ResetPassword";
 const AppRoutes = () => {
   return (
     <Routes>
@@ -28,7 +29,7 @@ const AppRoutes = () => {
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/admin/*" element={<AdminPage />} />
 
-
+        <Route path="/admin/comment-post" element={<CommentPostList />} />
         <Route path="/" element={<Home />} />
         <Route path="/movies" element={<MovieDisplay />} />
         <Route path="movies/movie/detail/:id" element={<MovieDetail />} />
@@ -38,6 +39,7 @@ const AppRoutes = () => {
         <Route path="/profile/*" element={<UserProfile />} />
         <Route path="/test" element={<ModalCompletedRate />} />
         <Route path="/community/post-detail/:postId" element={<PostDetail />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
     </Routes>
   );
 };

@@ -10,7 +10,7 @@ export const ModalCompletedRate = ({ isOpen, onClose }) => {
         <div className="flex items-center space-x-2 justify-center">
           <img src={confirmRateBg} alt="confirm" className="w-24" />
           <p className="text-green-500 text-2xl font-bold">
-            Hệ thống đã ghi nhận lại đánh giá của bạn. Cảm ơn bạn đã tham gia đánh giá!
+             Cảm ơn bạn đã tham gia đánh giá!
           </p>
         </div>
         <div className="flex justify-center">   

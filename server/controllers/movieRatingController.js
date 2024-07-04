@@ -41,7 +41,7 @@ const addMovieRating = async (req, res) => {
       });
 
       if (expertRatings.length > 0) {
-        const differenceThreshold = 1;
+        const differenceThreshold = 2;
 
         let isAnyRatingValid = false;
 
@@ -52,24 +52,6 @@ const addMovieRating = async (req, res) => {
           const soundRatingDifference = Math.abs(sound_rating - expertRating.sound_rating);
           const directingRatingDifference = Math.abs(directing_rating - expertRating.directing_rating);
           const entertainmentRatingDifference = Math.abs(entertainment_rating - expertRating.entertainment_rating);
-
-          console.log('Đánh giá của Chuyên gia:', expertRating);
-          console.log('Đánh giá của Người dùng:', {
-            content_rating,
-            acting_rating,
-            visual_effects_rating,
-            sound_rating,
-            directing_rating,
-            entertainment_rating,
-          });
-          console.log('Sự khác biệt:', {
-            contentRatingDifference,
-            actingRatingDifference,
-            visualEffectsRatingDifference,
-            soundRatingDifference,
-            directingRatingDifference,
-            entertainmentRatingDifference,
-          });
 
           if (
             contentRatingDifference <= differenceThreshold &&
@@ -198,7 +180,7 @@ const getMovieRatings = async (req, res) => {
     const averageExpertRating = totalExpertRatingsCount > 0 ? parseFloat((totalExpertRatingSum / totalExpertRatingsCount).toFixed(2)) : 0;
 
     const totalAverageRating = (averageExpertRating + averageUserRating) / 2;
-
+    const totalNumberRating=totalExpertRatingsCount+totalUserRatingsCount;
     return res.status(200).json({
       userRatings,
       expertRatings,
@@ -218,7 +200,8 @@ const getMovieRatings = async (req, res) => {
       averageExpertEntertainmentRating,
       averageExpertRating,
       totalExpertRatingsCount,
-      totalAverageRating
+      totalAverageRating,
+      totalNumberRating
     });
   } catch (error) {
     console.error(error);

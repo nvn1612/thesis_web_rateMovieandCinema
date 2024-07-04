@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Header } from "../../layouts/header/Header";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {faCalendarWeek} from "@fortawesome/free-solid-svg-icons";
 import { BgTop } from "../../components/bg-top/BgTop";
 import { Footer } from "../../layouts/footer/Footer";
 import { useNavigate } from "react-router-dom";
 import movieBG from "../../assets/images/bgmovie.jpg";
 import { GenreSelect } from "../../components/select-box/GenreSelect";
 import { CountrySelect } from "../../components/select-box/CountrySelect";
-import { MovieLeverSelect } from "../../components/select-box/MovieLeverSelect";
 import { SearchInput } from "../../components/search-input/SearchInput";
 
 export const MovieDisplay = () => {
@@ -16,9 +17,10 @@ export const MovieDisplay = () => {
   const moviesPerPage = 16;
   const navigate = useNavigate();
 
-  const fetchMovies = async () => {
+  const fetchMovies = async (genreId = '') => {
     try {
-      const response = await axios.get("/movie/getallmovies");
+      const endpoint = genreId ? `/movie/getmoviesbygenre/${genreId}` : '/movie/getallmovies';
+      const response = await axios.get(endpoint);
       setMovies(response.data);
     } catch (error) {
       console.error("Có lỗi xảy ra", error);
@@ -43,6 +45,14 @@ export const MovieDisplay = () => {
     fetchMovies();
   }, []);
 
+  const handleGenreSelect = (genreId) => {
+    if (genreId === 'Tất cả') {
+      fetchMovies();
+    } else {
+      fetchMovies(genreId);
+    }
+  };
+
   const renderMovies = () => {
     const startIndex = (currentPage - 1) * moviesPerPage;
     const currentMovies = movies.slice(startIndex, startIndex + moviesPerPage);
@@ -58,7 +68,7 @@ export const MovieDisplay = () => {
               onClick={() => navigate(`movie/detail/${movie.movie_id}`)}
             >
               <img
-                src={`http://localhost:8000/${movie.poster_image}`}
+                src={`/${movie.poster_image}`}
                 alt={movie.name_movie}
                 className="h-4/5 w-full border rounded-lg object-fill"
               />
@@ -66,7 +76,10 @@ export const MovieDisplay = () => {
                 <p className="overflow-hidden text-ellipsis whitespace-nowrap font-bold">
                   {movie.name_movie}
                 </p>
-                <p>{new Date(movie.release_date).toLocaleDateString()}</p>
+                <div className="flex items-center space-x-2">
+                  <FontAwesomeIcon icon={faCalendarWeek} className="text-gray-400" />
+                  <p className="text-gray-400">{new Date(movie.release_date).toLocaleDateString()}</p>
+                </div>
               </div>
             </div>
           ))}
@@ -115,9 +128,8 @@ export const MovieDisplay = () => {
                 <SearchInput contentSearch={"Tìm kiếm theo tên phim"} onSearch={searchMovies} />
               </div>
               <div className="flex space-x-3 ml-2">
-                <GenreSelect />
+                <GenreSelect onGenreSelect={handleGenreSelect} />
                 <CountrySelect />
-                <MovieLeverSelect />
               </div>
             </div>
             <div className="column flex flex-col space-y-10 mt-4 ml-16 mb-4">

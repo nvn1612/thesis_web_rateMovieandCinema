@@ -42,6 +42,7 @@ export const UserSuspicionLever = () => {
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tên</th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Số điện thoại</th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Địa chỉ</th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mức độ nghi ngờ</th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Chức năng</th>
           </tr>
         </thead>
@@ -61,6 +62,7 @@ export const UserSuspicionLever = () => {
               <td className="px-6 py-4 whitespace-nowrap">{user.name}</td>
               <td className="px-6 py-4 whitespace-nowrap">{user.phone_number}</td>
               <td className="px-6 py-4 whitespace-nowrap">{user.address}</td>
+              <td className="px-6 py-4 whitespace-nowrap">{user.suspicion_level}</td>
               <td className="px-6 py-4 whitespace-nowrap space-x-3">
                 <button className="text-red-400 hover:text-red-500 transition">
                   <FontAwesomeIcon icon={faTrash} onClick={() => deleteUser(user.user_id)} />
