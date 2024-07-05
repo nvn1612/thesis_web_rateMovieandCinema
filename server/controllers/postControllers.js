@@ -4,108 +4,149 @@ const { uploadPostImage } = require('../uploadMiddleware');
 
 const getAllPosts = async (req, res) => {
   try {
-      const posts = await prisma.posts.findMany({
-          include: {
-              users: true, 
-          },
-      });
-      res.json(posts);
+    const posts = await prisma.posts.findMany({
+      include: {
+        users: true,
+      },
+    });
+    res.json(posts);
   } catch (error) {
-      res.status(500).json({ error: 'Could not retrieve posts' });
+    res.status(500).json({ error: 'Could not retrieve posts' });
   }
 };
 
-  const getMoviePosts = async (req, res) => {
-    try {
-      const moviePosts = await prisma.posts.findMany({
-        where: {
-            is_movie_related: true, 
+const searchPostsByTitle = async (req, res) => {
+  const { title } = req.query;
+  try {
+    const posts = await prisma.posts.findMany({
+      where: {
+        title: {
+          contains: title,
         },
-      });
-      res.json(moviePosts);
-    } catch (error) {
-      res.status(500).json({ error: 'Could not retrieve movie posts' });
-    }
-  };
-
-  const getTheaterPosts = async (req, res) => {
-    try {
-      const theaterPosts = await prisma.posts.findMany({
-        where: {
-            is_movie_related: false, 
-        },
-      });
-      res.json(theaterPosts);
-    } catch (error) {
-      res.status(500).json({ error: 'Could not retrieve theater posts' });
-    }
-  };
-
-  const createPost = async (req, res) => {
-    uploadPostImage(req, res, async (err) => {
-      if (err) {
-        console.log(err);
-        return res.status(400).json({ error: 'Error uploading files.' });
-      }
-  
-      const { user_id, title, content, is_movie_related, is_expert } = req.body;
-      const imagePostPath = req.file ? req.file.path : null;
-  
-      try {
-
-        const isExpertPost = is_expert === 'true' || is_expert === true;
-        const isModerated = isExpertPost;
-        // const isPostByExpert = isExpertPost
-  
-        const newPost = await prisma.posts.create({
-          data: {
-            user_id: user_id ? parseInt(user_id) : null,
-            title,
-            content,
-            image_post: imagePostPath,
-            is_movie_related: is_movie_related === 'true',
-            is_expert_post: isExpertPost,
-            is_moderated: isModerated,
-            created_at: new Date(),
-            updated_at: new Date(),
-          },
-        });
-  
-        res.status(201).json(newPost);
-      } catch (error) {
-        console.log(error);
-  
-        if (imagePostPath) {
-          fs.unlinkSync(imagePostPath);
-          console.log(`Deleted file: ${imagePostPath}`);
-        }
-  
-        res.status(500).json({ error: 'Có lỗi xảy ra' });
-      }
+      },
+      include: {
+        users: true,
+      },
     });
-  };
-
-  
-
-  const getCommentCountByPostId = async (req, res) => {
-    const { post_id } = req.params;
-    try {
-        const count = await prisma.post_comments.count({
-            where: { post_id: parseInt(post_id) },
-        });
-        res.json({ count });
-    } catch (error) {
-        console.error(error); 
-        res.status(500).json({ error: 'Could not retrieve comment count' });
-    }
+    res.json(posts);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Could not search posts' });
+  }
 };
 
+const getMoviePosts = async (req, res) => {
+  try {
+    const moviePosts = await prisma.posts.findMany({
+      where: {
+        is_movie_related: true,
+      },
+    });
+    res.json(moviePosts);
+  } catch (error) {
+    res.status(500).json({ error: 'Could not retrieve movie posts' });
+  }
+};
+
+const getTheaterPosts = async (req, res) => {
+  try {
+    const theaterPosts = await prisma.posts.findMany({
+      where: {
+        is_movie_related: false,
+      },
+    });
+    res.json(theaterPosts);
+  } catch (error) {
+    res.status(500).json({ error: 'Could not retrieve theater posts' });
+  }
+};
+
+const getExpertPosts = async (req, res) => {
+  try {
+    const expertPosts = await prisma.posts.findMany({
+      where: {
+        is_expert_post: true,
+      },
+    });
+    res.json(expertPosts);
+  } catch (error) {
+    res.status(500).json({ error: 'Could not retrieve expert posts' });
+  }
+};
+
+const getAudPosts = async (req, res) => {
+  try {
+    const expertPosts = await prisma.posts.findMany({
+      where: {
+        is_expert_post: false,
+      },
+    });
+    res.json(expertPosts);
+  } catch (error) {
+    res.status(500).json({ error: 'Could not retrieve expert posts' });
+  }
+};
+
+const createPost = async (req, res) => {
+  uploadPostImage(req, res, async (err) => {
+    if (err) {
+      console.log(err);
+      return res.status(400).json({ error: 'Error uploading files.' });
+    }
+
+    const { user_id, title, content, is_movie_related, is_expert } = req.body;
+    const imagePostPath = req.file ? req.file.path : null;
+
+    try {
+      const isExpertPost = is_expert === 'true' || is_expert === true;
+      const isModerated = isExpertPost;
+
+      const newPost = await prisma.posts.create({
+        data: {
+          user_id: user_id ? parseInt(user_id) : null,
+          title,
+          content,
+          image_post: imagePostPath,
+          is_movie_related: is_movie_related === 'true',
+          is_expert_post: isExpertPost,
+          is_moderated: isModerated,
+          created_at: new Date(),
+          updated_at: new Date(),
+        },
+      });
+
+      res.status(201).json(newPost);
+    } catch (error) {
+      console.log(error);
+
+      if (imagePostPath) {
+        fs.unlinkSync(imagePostPath);
+        console.log(`Deleted file: ${imagePostPath}`);
+      }
+
+      res.status(500).json({ error: 'Có lỗi xảy ra' });
+    }
+  });
+};
+
+const getCommentCountByPostId = async (req, res) => {
+  const { post_id } = req.params;
+  try {
+    const count = await prisma.post_comments.count({
+      where: { post_id: parseInt(post_id) },
+    });
+    res.json({ count });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Could not retrieve comment count' });
+  }
+};
 
 const getEarliestPosts = async (req, res) => {
   try {
     const earliestPosts = await prisma.posts.findMany({
       orderBy: {
-        created_at: 'asc',
+        created_at: 'desc',
       },
       take: 3,
     });
@@ -121,7 +162,7 @@ const getCommentsByPostId = async (req, res) => {
     const comments = await prisma.post_comments.findMany({
       where: { post_id: Number(postId) },
       include: {
-        users: true, 
+        users: true,
       },
     });
     res.json(comments);
@@ -141,7 +182,6 @@ const deletePost = async (req, res) => {
     res.status(500).json({ error: 'Could not delete post' });
   }
 };
-
 
 const deleteComment = async (req, res) => {
   const { commentId } = req.params;
@@ -180,7 +220,6 @@ const getPostById = async (req, res) => {
   }
 };
 
-
 const moderatePost = async (req, res) => {
   const { postId } = req.params;
   try {
@@ -195,7 +234,6 @@ const moderatePost = async (req, res) => {
     res.status(500).json({ error: 'Could not moderate post' });
   }
 };
-
 
 const createComment = async (req, res) => {
   const { postId, userId, content } = req.body;
@@ -234,6 +272,7 @@ const createComment = async (req, res) => {
     res.status(500).json({ error: 'Could not create comment' });
   }
 };
+
 const getModeratedPostsByUser = async (req, res) => {
   const { userId } = req.params;
   try {
@@ -243,7 +282,7 @@ const getModeratedPostsByUser = async (req, res) => {
         is_moderated: true,
       },
       include: {
-        users: true, 
+        users: true,
       },
     });
     res.json(posts);
@@ -252,18 +291,22 @@ const getModeratedPostsByUser = async (req, res) => {
     res.status(500).json({ error: 'Could not retrieve moderated posts' });
   }
 };
+
 module.exports = {
-    getAllPosts,
-    getMoviePosts,
-    getTheaterPosts,
-    createPost,
-    getCommentCountByPostId,
-    getEarliestPosts,
-    getCommentsByPostId,
-    deletePost,
-    deleteComment,
-    getPostById,
-    moderatePost,
-    createComment,
-    getModeratedPostsByUser
+  getAllPosts,
+  getMoviePosts,
+  getTheaterPosts,
+  getExpertPosts, 
+  createPost,
+  getCommentCountByPostId,
+  getEarliestPosts,
+  getCommentsByPostId,
+  deletePost,
+  deleteComment,
+  getPostById,
+  moderatePost,
+  createComment,
+  getModeratedPostsByUser,
+  searchPostsByTitle,
+  getAudPosts
 };

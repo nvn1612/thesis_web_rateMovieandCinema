@@ -1,12 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
-export const CountrySelect = () => {
+export const CountrySelect = ({ onCountrySelect }) => {
+  const [countries, setCountries] = useState([]);
   const [selectedCountry, setSelectedCountry] = useState('');
 
-  const countries = ['Việt Nam', 'Trung Quốc', 'Mỹ', 'Nhật Bản', 'Hàn Quốc', 'Pháp', 'Đức', 'Tây Ban Nha'];
+  useEffect(() => {
+    const fetchCountries = async () => {
+      try {
+        const response = await axios.get('movie/getallcountries');
+        setCountries(response.data);
+      } catch (error) {
+        console.error('Có lỗi xảy ra khi lấy danh sách quốc gia', error);
+      }
+    };
+
+    fetchCountries();
+  }, []);
 
   const handleChange = (event) => {
-    setSelectedCountry(event.target.value);
+    const countryId = event.target.value;
+    setSelectedCountry(countryId);
+    onCountrySelect(countryId);
   };
 
   return (
@@ -20,9 +35,9 @@ export const CountrySelect = () => {
           Quốc gia
         </option>
         <option value="Tất cả">Tất cả</option>
-        {countries.map((country, index) => (
-          <option key={index} value={country}>
-            {country}
+        {countries.map((country) => (
+          <option key={country.country_id} value={country.country_id}>
+            {country.name}
           </option>
         ))}
       </select>

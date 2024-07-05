@@ -26,6 +26,15 @@ export const TheaterDisplay = () => {
     }
   };
 
+  const fetchTheatersByRegion = async (region) => {
+    try {
+      const response = await axios.get(`/movie-theater/gettheatersbyregion/${region}`);
+      setTheaters(response.data);
+    } catch (error) {
+      console.error('Có lỗi xảy ra khi lấy danh sách rạp chiếu phim theo khu vực:', error);
+    }
+  };
+
   useEffect(() => {
     fetchTheaters();
   }, []);
@@ -41,6 +50,14 @@ export const TheaterDisplay = () => {
       setTheaters(response.data);
     } catch (error) {
       console.error('Có lỗi xảy ra khi tìm kiếm rạp chiếu phim:', error);
+    }
+  };
+
+  const handleRegionChange = (region) => {
+    if (region === 'Tất cả') {
+      fetchTheaters();
+    } else {
+      fetchTheatersByRegion(region);
     }
   };
 
@@ -100,7 +117,7 @@ export const TheaterDisplay = () => {
             <div className="flex space-x-3 mt-2 ml-2">
                 <SearchInput onSearch={handleSearchTheaters} contentSearch={"Tìm kiếm theo tên rạp chiếu"}/>
                 <TheaterLeverSelect/>
-                <RegionSelect/>
+                <RegionSelect onRegionChange={handleRegionChange}/>
             </div>
             <div className="flex flex-col m-4">
               {renderTheaters()}

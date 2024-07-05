@@ -7,11 +7,16 @@ export const ForgotPassword = () => {
   const [message, setMessage] = useState("");
 
   const handleForgotPassword = async () => {
+    if (!username.trim()) {
+      setMessage("Vui lòng nhập tài khoản !");
+      return;
+    }
+
     try {
       const response = await axios.post("/user/forgot-password", { username });
       setMessage(response.data.message);
     } catch (error) {
-      setMessage(error.response?.data?.error || "Something went wrong. Please try again.");
+      setMessage(error.response?.data?.error || "Có vấn đề xảy ra, vui lòng thử lại.");
     }
   };
 

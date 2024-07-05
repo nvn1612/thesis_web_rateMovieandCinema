@@ -19,7 +19,7 @@ model users {
   is_active             Boolean          @default(false)
   is_Admin              Boolean          @default(false)
   is_expert             Boolean          @default(false)
-  suspicion_level       Int              @default(0)
+  occupation            String?          @db.VarChar(255)
   movie_rating          movie_rating[]
   post_comments         post_comments[]
   posts                 posts[]

@@ -54,7 +54,24 @@ const prisma = new PrismaClient();
     }
   };
 
-
+  const getMoviesByCountry = async (req, res) => {
+    const { country_id } = req.params;
+    try {
+      const movies = await prisma.movies.findMany({
+        where: {
+          country_id: parseInt(country_id),
+        },
+        include: {
+          movie_genres: true,
+          countries: true
+        }
+      });
+      res.json(movies);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ error: 'Có lỗi xảy ra' });
+    }
+  };
 
   const getAllMovies = async (req, res) => {
     try {
@@ -227,7 +244,7 @@ const updateMovie = async (req, res) => {
           trailer_link,
           poster_image: posterImagePath || existingMovie.poster_image,
           backdrop_image: backdropImagePath || existingMovie.backdrop_image,
-          country,
+          country_id: parseInt(country),
           description,
           director,
           release_date: release_date ? new Date(release_date) : existingMovie.release_date,
@@ -263,9 +280,9 @@ const updateMovie = async (req, res) => {
   });
 };
 
-
 module.exports = { 
   createMovie, getGenres, getAllMovies, 
   getMovieById, deleteMovie, updateMovie,
-  searchMoviesByName, getMoviesByGenre, getAllCountries
+  searchMoviesByName, getMoviesByGenre, getAllCountries,
+  getMoviesByCountry
 };

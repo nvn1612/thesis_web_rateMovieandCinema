@@ -49,7 +49,6 @@ export const TheaterList = () => {
                 <FontAwesomeIcon className="ml-2" icon={faPlus} />
               </button>
               <SearchInput contentSearch="Tìm kiếm rạp chiếu"/>
-              <button className="pt-2 pb-2 pr-3 pl-3 bg-black text-white rounded-full hover:bg-green-500 transition"onClick={()=>navigate(`/admin/theaters/fake-rating`)}>Kiểm tra đánh giá nghi ngờ giả mạo</button>
 
             </div>
             <div className="flex-grow overflow-y-auto">

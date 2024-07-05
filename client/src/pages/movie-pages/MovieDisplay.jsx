@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Header } from "../../layouts/header/Header";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faCalendarWeek} from "@fortawesome/free-solid-svg-icons";
+import { faCalendarWeek } from "@fortawesome/free-solid-svg-icons";
 import { BgTop } from "../../components/bg-top/BgTop";
 import { Footer } from "../../layouts/footer/Footer";
 import { useNavigate } from "react-router-dom";
@@ -17,9 +17,14 @@ export const MovieDisplay = () => {
   const moviesPerPage = 16;
   const navigate = useNavigate();
 
-  const fetchMovies = async (genreId = '') => {
+  const fetchMovies = async (genreId = '', countryId = '') => {
     try {
-      const endpoint = genreId ? `/movie/getmoviesbygenre/${genreId}` : '/movie/getallmovies';
+      let endpoint = '/movie/getallmovies';
+      if (genreId) {  
+        endpoint = `/movie/getmoviesbygenre/${genreId}`;
+      } else if (countryId && countryId !== 'Tất cả') {
+        endpoint = `/movie/getmoviesbycountry/${countryId}`;
+      }
       const response = await axios.get(endpoint);
       setMovies(response.data);
     } catch (error) {
@@ -50,6 +55,14 @@ export const MovieDisplay = () => {
       fetchMovies();
     } else {
       fetchMovies(genreId);
+    }
+  };
+
+  const handleCountrySelect = (countryId) => {
+    if (countryId === 'Tất cả') {
+      fetchMovies();
+    } else {
+      fetchMovies('', countryId);
     }
   };
 
@@ -129,7 +142,7 @@ export const MovieDisplay = () => {
               </div>
               <div className="flex space-x-3 ml-2">
                 <GenreSelect onGenreSelect={handleGenreSelect} />
-                <CountrySelect />
+                <CountrySelect onCountrySelect={handleCountrySelect} />
               </div>
             </div>
             <div className="column flex flex-col space-y-10 mt-4 ml-16 mb-4">

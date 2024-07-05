@@ -1,7 +1,7 @@
 import React from 'react';
 import confirmRateBg from "../../assets/images/confirmRateBG.png";
 
-export const ReportSuccessModal = ({ isOpen, onClose }) => {
+export const PostSuccessModal = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
@@ -10,7 +10,7 @@ export const ReportSuccessModal = ({ isOpen, onClose }) => {
         <div className="flex items-center space-x-2 justify-center">
           <img src={confirmRateBg} alt="confirm" className="w-24" />
           <p className="text-green-500 text-xl font-bold">
-              Cảm ơn bạn đã báo cáo đánh giá giả mạo. Hệ thống sẽ kiểm tra đáng giá này !
+              Đăng bài viết thành công, bài viết đang trong quá trình kiểm duyệt !
           </p>
         </div>
         <div className="flex justify-center">   

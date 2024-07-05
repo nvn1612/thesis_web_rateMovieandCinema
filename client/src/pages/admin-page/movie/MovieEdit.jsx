@@ -20,8 +20,6 @@ export const MovieEdit = () => {
   const [backdropImage, setBackdropImage] = useState(null);
   const [backdropImageUrl, setBackdropImageUrl] = useState('');
   const [countries, setCountries] = useState([]);
-
-
   const { movieId } = useParams();
 
   useEffect(() => {
@@ -53,17 +51,14 @@ export const MovieEdit = () => {
         console.error('There was an error fetching the genres data!', error);
       });
 
-      axios.get('/movie/getallcountries')
+    axios.get('/movie/getallcountries')
       .then(response => {
         setCountries(response.data);
       })
       .catch(error => {
         console.error('There was an error fetching the genres data!', error);
       });
-
   }, [movieId]);
-
-   
 
   const handleChange = (e) => {
     const { id, value } = e.target;
@@ -72,7 +67,7 @@ export const MovieEdit = () => {
       [id]: value
     }));
   };
-  
+
   const handleGenreChange = (e) => {
     const options = e.target.options;
     const selectedGenres = [];
@@ -123,6 +118,7 @@ export const MovieEdit = () => {
       console.error('There was an error updating the movie!', error);
     }
   };
+
   return (
     <div className="flex justify-center items-center min-h-screen">
       <form className="w-full max-w-lg" onSubmit={handleSubmit}>
@@ -186,17 +182,17 @@ export const MovieEdit = () => {
               Quốc gia
             </label>
             <select
-                className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-                id="country"
-                value={formData.country}
-                onChange={handleChange}
-              >
-                <option value="">Chọn quốc gia</option>
-                {countries.map((country) => (
-                  <option key={country.country_id} value={country.country_id}>
-                    {country.name}
-                  </option>
-                ))}
+              className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              id="country"
+              value={formData.country}
+              onChange={handleChange}
+            >
+              <option value="">Chọn quốc gia</option>
+              {countries.map((country) => (
+                <option key={country.country_id} value={country.country_id}>
+                  {country.name}
+                </option>
+              ))}
             </select>
           </div>
           <div className="w-full md:w-1/2 px-3">

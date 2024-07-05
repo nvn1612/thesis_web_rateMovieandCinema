@@ -14,12 +14,9 @@ import { ProgressBarGroup } from "../../layouts/progress-bar-group/ProgressBarGr
 import { CountRate } from "../../components/count-rate/CountRate";
 import { DetailRateUser } from "../../components/detail-rate-user/DetailRateUser";
 import { ModalCompletedRate } from "../../components/modal-completed-rate/ModalCompletedRate";
-import { BtnReport } from "../../components/btn-report/BtnReport";
-import UserContext from "../../context/UserContext"; 
 
 export const MovieDetail = () => {
 
-  const { user } = useContext(UserContext);
   const [isTrailerOpen, setIsTrailerOpen] = useState(false);
   const [isRateModalOpen, setIsRateModalOpen] = useState(false);
   const [movie, setMovie] = useState(null);
@@ -241,7 +238,7 @@ export const MovieDetail = () => {
                 <div className="flex flex-col">
                   <div className="flex space-x-2 items-center">
                     <FontAwesomeIcon className="text-white" icon={faFaceSmile} />
-                    <p className="text-white">Xếp hạng</p>
+                    <p className="text-white">Mức đánh giá</p>
                   </div>
                   <div className="flex justify-center">
                     <p className="text-white">{totalRating >= 8 ? (
@@ -335,19 +332,15 @@ export const MovieDetail = () => {
                         </div>
                       </div>     
                     </div>
-                    <div>
-                        {/* {isUserRatings && (
-                          <div>
-                            {user.is_expert && (
-                              <BtnReport id={rating.movie_rating_id}
-                                type="movie-rating"
-                              />
-                            )}
-                          </div>
-                        )} */}
-                    </div>
+                
                   </div>
                   <DetailRateUser
+                    label1="Nội dung phim"
+                    label2="Diễn xuất"
+                    label3="Kỹ xảo"
+                    label4="Âm thanh"
+                    label5="Đạo diễn"
+                    label6="Tính giải trí"
                     score1={rating.content_rating}
                     score2={rating.acting_rating}
                     score3={rating.visual_effects_rating}

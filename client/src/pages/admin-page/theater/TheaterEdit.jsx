@@ -23,7 +23,7 @@ export const TheaterEdit = () => {
   useEffect(() => {
     const fetchTheater = async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/movie-theater/gettheater/${theaterId}`);
+        const response = await axios.get(`/movie-theater/gettheater/${theaterId}`);
         const theater = response.data;
         setFormData({
           theater_name: theater.theater_name,

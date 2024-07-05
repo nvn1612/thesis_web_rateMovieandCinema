@@ -28,7 +28,6 @@ const searchTheatersByName = async (req, res) => {
   }
 };
 
-
 const getAllTheaters = async (req, res) => {
   try {
     const theaters = await prisma.movie_theaters.findMany();
@@ -36,6 +35,30 @@ const getAllTheaters = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: 'An error occurred while fetching movie theaters.' });
+  }
+};
+
+const getTheatersByRegion = async (req, res) => {
+  const { region } = req.params;
+
+  if (!region) {
+    return res.status(400).json({ error: 'Khu vực không được bỏ trống' });
+  }
+
+  try {
+    const theaters = await prisma.movie_theaters.findMany({
+      where: {
+        region: region,
+        
+      },
+      include: {
+        theater_rating: true,
+      },
+    });
+    res.json(theaters);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Có lỗi xảy ra khi lấy danh sách rạp chiếu phim.' });
   }
 };
 
@@ -174,5 +197,6 @@ module.exports = {
   createTheater,
   updateTheater,
   deleteTheater,
-  searchTheatersByName
+  searchTheatersByName,
+  getTheatersByRegion
 };

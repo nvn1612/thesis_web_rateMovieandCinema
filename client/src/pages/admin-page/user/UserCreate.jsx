@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import axios from 'axios';
+import { CompletedModal } from "../../../components/Completed-modal/CompletedModal";
+import { useNavigate } from "react-router-dom"; 
 
 export const UserCreate = () => {
   const [imagePreviewUrl, setImagePreviewUrl] = useState(null);
@@ -12,8 +14,11 @@ export const UserCreate = () => {
     address: '',
     is_Admin: false,
     is_expert: false,
+    occupation: '',
     profile_picture: null
   });
+  const [isCompletedModalOpen, setIsCompletedModalOpen] = useState(false); 
+  const navigate = useNavigate(); 
 
   const handleChange = (e) => {
     const { id, value, type, checked } = e.target;
@@ -52,15 +57,18 @@ export const UserCreate = () => {
     if (formData.profile_picture) {
       data.append('avatar', formData.profile_picture);
     }
+    if (formData.is_expert) {
+      data.append('occupation', formData.occupation);
+    }
 
     try {
-      const response = await axios.post('http://localhost:8000/user/createuser', data, {
+      const response = await axios.post('/user/createuser', data, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
       });
       console.log('User created successfully', response.data);
-      alert('Thêm người dùng thành công !');
+      setIsCompletedModalOpen(true); 
     } catch (error) {
       console.error('Có lỗi khi tạo người dùng !', error);
       if (error.response && error.response.status === 400) {
@@ -69,6 +77,11 @@ export const UserCreate = () => {
         alert('Có lỗi khác trong việc tạo người dùng: ' + error.message);
       }
     }
+  };
+
+  const handleCloseModal = () => {
+    setIsCompletedModalOpen(false); 
+    navigate('/admin/users'); 
   };
 
   return (
@@ -83,7 +96,7 @@ export const UserCreate = () => {
               className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
               id="username"
               type="text"
-              placeholder="Username"
+              placeholder="Tài khoản"
               value={formData.username}
               onChange={handleChange}
             />
@@ -111,7 +124,7 @@ export const UserCreate = () => {
               className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
               id="password"
               type="password"
-              placeholder="Password"
+              placeholder="Mật khẩu"
               value={formData.password}
               onChange={handleChange}
             />
@@ -126,7 +139,7 @@ export const UserCreate = () => {
               className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
               id="name"
               type="text"
-              placeholder="Name"
+              placeholder="Tên người dùng"
               value={formData.name}
               onChange={handleChange}
             />
@@ -141,7 +154,7 @@ export const UserCreate = () => {
               className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
               id="phone_number"
               type="tel"
-              placeholder="Phone Number"
+              placeholder="Số điện thoại "
               value={formData.phone_number}
               onChange={handleChange}
             />
@@ -154,7 +167,7 @@ export const UserCreate = () => {
               className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
               id="address"
               type="text"
-              placeholder="Address"
+              placeholder="Địa chỉ"
               value={formData.address}
               onChange={handleChange}
             />
@@ -185,6 +198,21 @@ export const UserCreate = () => {
               onChange={handleChange}
             />
           </div>
+          {formData.is_expert && (
+            <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
+              <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="occupation">
+                Nghề nghiệp
+              </label>
+              <input
+                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                id="occupation"
+                type="text"
+                placeholder="Nghề nghiệp"
+                value={formData.occupation}
+                onChange={handleChange}
+              />
+            </div>
+          )}
         </div>
         <div className="flex flex-wrap -mx-3 mb-6 space-x-8">
           <div className="w-28 h-28">
@@ -200,27 +228,26 @@ export const UserCreate = () => {
           </div>
           <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
             <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="profile_picture">
-              Ảnh đại diện
+              Hình đại diện
             </label>
             <input
-              className="mt-1"
               type="file"
               id="profile_picture"
-              accept="image/png, image/jpeg"
               onChange={handleFileChange}
             />
           </div>
         </div>
-        <div className="md:flex md:items-center flex items-center justify-center">
+        <div className="flex justify-center mt-6">
           <button
             className="shadow bg-green-500 hover:bg-green-600 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded"
             type="button"
             onClick={handleSubmit}
           >
-            Create
+            Tạo người dùng
           </button>
         </div>
       </form>
+      <CompletedModal isOpen={isCompletedModalOpen} onClose={handleCloseModal} />
     </div>
   );
 };

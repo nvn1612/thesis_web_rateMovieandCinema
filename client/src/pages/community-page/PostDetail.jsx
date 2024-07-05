@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { Header } from "../../layouts/header/Header";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faComment } from '@fortawesome/free-solid-svg-icons';
+import { faComment, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useParams } from 'react-router-dom';
 import UserContext from "../../context/UserContext"; 
 
@@ -13,6 +13,8 @@ export const PostDetail = () => {
   const [error, setError] = useState(null);
   const { user } = useContext(UserContext);
   const { postId } = useParams();
+  const [currentPage, setCurrentPage] = useState(1);
+  const commentsPerPage = 5;
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -34,6 +36,11 @@ export const PostDetail = () => {
       setError('Bạn cần đăng nhập để thực hiện chức năng này.');
       return;
     }
+
+    if (!newComment.trim()) {
+      setError('Bạn chưa nhập bình luận.');
+      return;
+    }
     
     try {
       const response = await axios.post("/post/createcomment", {
@@ -51,8 +58,24 @@ export const PostDetail = () => {
 
       setNewComment('');
       setError(null);
+
+      // Calculate new current page based on the position of the new comment
+      const newCurrentPage = Math.ceil((post.post_comments.length + 1) / commentsPerPage);
+      setCurrentPage(newCurrentPage);
     } catch (error) {
       console.error("Error creating comment:", error);
+    }
+  };
+
+  const handleDeleteComment = async (commentId) => {
+    try {
+      await axios.delete(`/post/deletecomment/${commentId}`);
+      setPost((prevPost) => ({
+        ...prevPost,
+        post_comments: prevPost.post_comments.filter(comment => comment.comment_id !== commentId),
+      }));
+    } catch (error) {
+      console.error("Error deleting comment:", error);
     }
   };
 
@@ -64,12 +87,22 @@ export const PostDetail = () => {
     return <p>Post not found.</p>;
   }
 
+  // Calculate pagination
+  const totalComments = post.post_comments ? post.post_comments.length : 0;
+  const indexOfLastComment = currentPage * commentsPerPage;
+  const indexOfFirstComment = indexOfLastComment - commentsPerPage;
+  const currentComments = post.post_comments.slice(indexOfFirstComment, indexOfLastComment);
+
+  const paginate = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
   return (
     <>
       <Header />
       <div className="bg-slate-900 min-h-screen">
         <div className="flex justify-between">
-          <div className="bg-gray-300 w-[900px] rounded-lg m-5">
+          <div className="bg-gray-300 w-[900px] min-h-[900px] rounded-lg m-5">
             <div className="flex">
               <div className="flex flex-col space-y-2 m-2 flex-shrink-0">
                 <img
@@ -116,20 +149,29 @@ export const PostDetail = () => {
                     Bình luận
                   </button>
                 </div>
-                {error && <p className="text-red-500 mt-2">{error}</p>}
+                <div className="flex justify-center">
+                    {error && <p className="text-red-500 mt-2">{error}</p>}
+                </div>
               </div>
             </div>
           </div>
-          <div className="bg-white w-[500px] rounded-lg m-5">
+          <div className="bg-white w-[500px] rounded-lg m-5 min-h-[850px]">
             <div className="flex bg-slate-500 p-3 ">
               <p className="text-white">Bình luận đến từ mọi người</p>
             </div>
             <div className="flex flex-col">
-              {post.post_comments.map((comment) => (
+              {currentComments.map((comment) => (
                 <div className="flex flex-col m-2" key={comment.comment_id}>
-                  <p className="p-1 bg-blue-900 text-white">
-                    {new Date(comment.created_at).toLocaleDateString()}
-                  </p>
+                  <div className="flex justify-between bg-blue-900">
+                      <p className="p-1 text-white">
+                        {new Date(comment.created_at).toLocaleDateString()}
+                      </p>
+                      {user?.user_id === comment.users.user_id && (
+                      <button className="mr-2" onClick={() => handleDeleteComment(comment.comment_id)}>
+                        <FontAwesomeIcon icon={faTrash} className="text-red-500 hover:text-red-700 transition"/>
+                      </button>
+                    )}
+                  </div>
                   <div className="bg-gray-400">
                     <div className="flex m-2">
                       <img
@@ -138,11 +180,12 @@ export const PostDetail = () => {
                         alt=""
                       />
                       <div className="flex flex-col ml-1">
-                        <p className="font-bold">{comment.users.name}</p>
+                        <p className="font-bold">{comment.users.username}</p>
                         <p className="text-white text-xs p-1 bg-yellow-500 rounded-xl flex justify-center">
                           {comment.users.is_expert ? 'Chuyên gia điện ảnh' : 'Khán giả'}
                         </p>
                       </div>
+  
                     </div>
                   </div>
                   <div className="bg-gray-300">
@@ -152,7 +195,24 @@ export const PostDetail = () => {
                   </div>
                 </div>
               ))}
+              {/* If there are no comments to display */}
+              {totalComments === 0 && (
+                <p className="m-2">Không có bình luận nào.</p>
+              )}
             </div>
+            {totalComments > commentsPerPage && (
+              <div className="flex justify-center mt-4">
+                <ul className="flex list-none pb-3">
+                  {Array.from({ length: Math.ceil(totalComments / commentsPerPage) }, (_, index) => (
+                    <li key={index} className="mr-3">
+                      <button className={`bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-1 px-2 rounded-lg${currentPage === index + 1 ? ' bg-gray-400' : ''}`} onClick={() => paginate(index + 1)}>
+                        {index + 1}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         </div>
       </div>

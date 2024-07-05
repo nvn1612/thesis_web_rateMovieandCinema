@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 
-export const RegionSelect = () => {
+export const RegionSelect = ({ onRegionChange }) => {
   const [selectedRegion, setSelectedRegion] = useState('');
 
   const Regions = ['Miền bắc', 'Miền trung', 'Miền nam'];
 
   const handleChange = (event) => {
-    setSelectedRegion(event.target.value);
+    const region = event.target.value;
+    setSelectedRegion(region);
+    onRegionChange(region);
   };
 
   return (
@@ -20,9 +22,9 @@ export const RegionSelect = () => {
           Vùng miền
         </option>
         <option value="Tất cả">Tất cả</option>
-        {Regions.map((lever, index) => (
-          <option key={index} value={lever}>
-            {lever}
+        {Regions.map((region, index) => (
+          <option key={index} value={region}>
+            {region}
           </option>
         ))}
       </select>

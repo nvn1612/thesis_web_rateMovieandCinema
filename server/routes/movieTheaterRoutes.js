@@ -4,7 +4,8 @@ const { getAllTheaters,
     createTheater,
     updateTheater,
     deleteTheater,
-    searchTheatersByName
+    searchTheatersByName,
+    getTheatersByRegion
     } = require('../controllers/movieTheaterController');
 const router = express.Router();
 
@@ -14,5 +15,6 @@ router.post('/createtheater',createTheater);
 router.put('/updatetheater/:id',updateTheater);
 router.delete('/deletetheater/:id',deleteTheater);
 router.get('/search/theaters',searchTheatersByName);
+router.get('/gettheatersbyregion/:region',getTheatersByRegion)
 
 module.exports = router;

@@ -388,6 +388,36 @@ const getMovieRatingsForAdmin = async (req, res) => {
 };
 
 
+const getGlobalAverageRating = async () => {
+  const ratings = await prisma.movie_rating.findMany({
+    where: {
+      fake_rating: false,
+      reported: false
+    }
+  });
+  const totalRatingSum = ratings.reduce((sum, rating) => sum + rating.total_rating, 0);
+  const totalRatingsCount = ratings.length;
+  return totalRatingsCount > 0 ? totalRatingSum / totalRatingsCount : 0;
+};
+
+
+const getAverageRatingCountPerMovie = async () => {
+  const ratingsCount = await prisma.movie_rating.groupBy({
+    by: ['movie_id'],
+    _count: {
+      movie_id: true
+    },
+    where: {
+      fake_rating: false,
+      reported: false
+    }
+  });
+  const totalRatingsCount = ratingsCount.length;
+  const totalMoviesCount = await prisma.movies.count();
+  return totalMoviesCount > 0 ? totalRatingsCount / totalMoviesCount : 0;
+};
+
+
   module.exports = {
     addMovieRating,
     getMovieRatings,

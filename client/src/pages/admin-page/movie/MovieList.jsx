@@ -10,17 +10,30 @@ export const MovieList = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchMovies = async () => {
-      try {
-        const response = await axios.get('/movie/getallmovies');
-        setMovies(response.data);
-      } catch (error) {
-        console.error("Có lỗi xảy ra khi lấy dữ liệu phim:", error);
-      }
-    };
-
     fetchMovies();
   }, []);
+
+  const fetchMovies = async () => {
+    try {
+      const response = await axios.get('/movie/getallmovies');
+      setMovies(response.data);
+    } catch (error) {
+      console.error("Có lỗi xảy ra khi lấy dữ liệu phim:", error);
+    }
+  };
+
+  const handleSearchMovies = async (name) => {
+    if (name === '') {
+      fetchMovies();
+      return;
+    }
+    try {
+      const response = await axios.get(`/movie/search/movies?name=${name}`);
+      setMovies(response.data);
+    } catch (error) {
+      console.error("Có lỗi xảy ra khi tìm kiếm phim:", error);
+    }
+  };
 
   const handleDeleteMovie = async (id) => {
     try {
@@ -48,8 +61,7 @@ export const MovieList = () => {
                 Thêm phim
                 <FontAwesomeIcon className="ml-2" icon={faPlus} />
               </button>
-              <SearchInput contentSearch="Tìm kiếm phim"/>
-              <button className="pt-2 pb-2 pr-3 pl-3 bg-black text-white rounded-full hover:bg-green-500 transition"onClick={() => navigate('/admin/movies/fake-rating')}>Kiểm tra đánh giá nghi ngờ giả mạo</button>
+              <SearchInput contentSearch="Tìm kiếm phim" onSearch={handleSearchMovies} />
             </div>
             <div className="flex-grow overflow-y-auto">
               <table className="min-w-full divide-y divide-gray-200">

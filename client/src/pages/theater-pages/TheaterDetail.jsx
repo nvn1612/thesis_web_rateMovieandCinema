@@ -12,7 +12,6 @@ import { TotalRate } from '../../components/total-rate/TotalRate';
 import { CountRate } from '../../components/count-rate/CountRate';
 import { DetailRateUser } from '../../components/detail-rate-user/DetailRateUser';
 import { ModalCompletedRate } from "../../components/modal-completed-rate/ModalCompletedRate";
-import { BtnReport } from "../../components/btn-report/BtnReport";
 import UserContext from "../../context/UserContext"; 
 
 
@@ -172,7 +171,7 @@ export const TheaterDetail = () => {
                 <div className="flex flex-col">
                   <div className="flex space-x-2 items-center">
                     <FontAwesomeIcon className="text-black" icon={faFaceSmile} />
-                    <p className="text-black">Xếp hạng</p>
+                    <p className="text-black">Mức đánh giá</p>
                   </div>
                   <div className="flex justify-center">
                     <p className="text-white">{totalRating >= 8 ? (
@@ -283,19 +282,14 @@ export const TheaterDetail = () => {
                         </div>
                       </div>     
                     </div>
-                    <div>
-                        {/* {isUserRatings && (
-                          <div>
-                            {user.is_expert && (
-                              <BtnReport id={rating.theater_rating_id} 
-                              type="theater-rating"
-                              />
-                            )}
-                          </div>
-                        )} */}
-                    </div>
                   </div>
                     <DetailRateUser
+                      label1={"Chất lượng hình ảnh"}
+                      label2={"Chất lượng âm thanh"}
+                      label3={"Chỗ ngồi"}
+                      label4={"Không gian rạp"}
+                      label5={"Dịch vụ khách hàng"}
+                      label6={"Giá vé"}
                       score1={rating.image_quality_rating}
                       score2={rating.sound_quality_rating}
                       score3={rating.seating_rating}

@@ -1,7 +1,7 @@
 const express = require('express');
 const { createMovie, getGenres, getAllMovies, 
     getMovieById, deleteMovie, updateMovie,
-    searchMoviesByName, getMoviesByGenre, getAllCountries } = require('../controllers/movieControllers');
+    searchMoviesByName, getMoviesByGenre, getAllCountries,getMoviesByCountry } = require('../controllers/movieControllers');
 const router = express.Router();
 
 router.get('/getallmovies', getAllMovies);
@@ -13,5 +13,6 @@ router.put('/updatemovie/:id', updateMovie);
 router.get('/search/movies', searchMoviesByName);
 router.get('/getmoviesbygenre/:genre_id', getMoviesByGenre);
 router.get('/getallcountries', getAllCountries);
+router.get('/getmoviesbycountry/:country_id', getMoviesByCountry);
 
 module.exports = router;

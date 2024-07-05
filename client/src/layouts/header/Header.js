@@ -55,6 +55,7 @@ export const Header = () => {
         <Link to="/theaters" className="mx-2 font-bold hover:text-gray-500 transition">
           Rạp chiếu
         </Link>
+      
         <Link to="/community" className="mx-2 font-bold hover:text-yellow-500 transition">
           Cộng đồng
         </Link>
@@ -62,7 +63,7 @@ export const Header = () => {
           <div className="relative" ref={dropdownRef}>
             <button onClick={toggleDropdown}>
               <img
-                src={user.avatar ? `http://localhost:8000/${user.avatar}` : noAvatarUser}
+                src={user.avatar ? `/${user.avatar}` : noAvatarUser}
                 alt={user.username || "No Avatar"}
                 className="h-8 w-8 rounded-full object-cover"
               />

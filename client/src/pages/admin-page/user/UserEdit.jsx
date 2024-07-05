@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { CompletedModal } from "../../../components/Completed-modal/CompletedModal";
 import axios from "axios";
+import { useNavigate } from "react-router-dom"; 
+
 
 export const UserEdit = () => {
   const [name, setName] = useState("");
@@ -9,7 +12,8 @@ export const UserEdit = () => {
   const [isExpert, setIsExpert] = useState(false);
   const [imagePreviewUrl, setImagePreviewUrl] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
-
+  const [showCompletedModal, setShowCompletedModal] = useState(false);
+  const navigate = useNavigate();
   let { userId } = useParams();
 
   useEffect(() => {
@@ -39,10 +43,10 @@ export const UserEdit = () => {
 
     reader.onloadend = () => {
       setImagePreviewUrl(reader.result);
-    }
+    };
 
     reader.readAsDataURL(event.target.files[0]);
-  }
+  };
 
   const handleSubmit = async () => {
     const data = new FormData();
@@ -55,13 +59,16 @@ export const UserEdit = () => {
     try {
       const response = await axios.put(`/user/updateuser/${userId}`, data);
       console.log("User updated successfully", response.data);
-      alert("User updated successfully");
+      setShowCompletedModal(true); 
     } catch (error) {
       console.error("Error updating user", error);
       alert("There was an error updating user: " + error.message);
     }
   };
-
+  const handleCloseModal = () => {
+    setShowCompletedModal(false)
+    navigate('/admin/users'); 
+  };
   return (
     <div className="flex justify-center items-center min-h-screen">
       <form className="w-full max-w-lg">
@@ -123,7 +130,7 @@ export const UserEdit = () => {
             {imagePreviewUrl ? (
               <img
                 src={imagePreviewUrl}
-                alt="Profile Preview"
+                alt="chưa có ảnh"
                 className="object-cover w-full h-full rounded-full"
               />
             ) : (
@@ -150,11 +157,14 @@ export const UserEdit = () => {
               type="button"
               onClick={handleSubmit}
             >
-              Update
+              Sửa
             </button>
           </div>
         </div>
       </form>
+      {showCompletedModal && (
+        <CompletedModal isOpen={showCompletedModal} onClose={handleCloseModal} />
+      )}
     </div>
   );
 };

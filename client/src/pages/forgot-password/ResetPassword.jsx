@@ -23,10 +23,10 @@ const handleResetPassword = async () => {
     );
     setMessage(response.data.message);
     if (response.status === 200) {
-      navigate.push("/login");
+      navigate("/login");
     }
   } catch (error) {
-    setMessage(error.response?.data?.error || "Something went wrong. Please try again.");
+    setMessage(error.response?.data?.error);
   }
 };
   return (

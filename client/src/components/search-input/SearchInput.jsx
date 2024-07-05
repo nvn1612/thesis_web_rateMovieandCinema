@@ -7,6 +7,7 @@ export const SearchInput = ({ onSearch, contentSearch }) => {
 
   const handleSearch = () => {
     onSearch(searchTerm);
+    
   };
 
   return (
