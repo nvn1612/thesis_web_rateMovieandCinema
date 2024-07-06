@@ -46,8 +46,12 @@ export const UserProvider = ({ children }) => {
         localStorage.removeItem('user');
     };
 
+    const isAdmin = () => {
+        return user && user.is_admin; 
+    };
+
     return (
-        <UserContext.Provider value={{ user, setUser, login, logout }}>
+        <UserContext.Provider value={{ user, setUser, login, logout, isAdmin }}>
             {children}
         </UserContext.Provider>
     );

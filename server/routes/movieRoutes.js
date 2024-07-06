@@ -14,5 +14,4 @@ router.get('/search/movies', searchMoviesByName);
 router.get('/getmoviesbygenre/:genre_id', getMoviesByGenre);
 router.get('/getallcountries', getAllCountries);
 router.get('/getmoviesbycountry/:country_id', getMoviesByCountry);
-
 module.exports = router;

@@ -4,9 +4,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faPenToSquare, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from "react-router-dom";
 import { SearchInput } from "../../../components/search-input/SearchInput";
-
+import { CompletedModal } from '../../../components/Completed-modal/CompletedModal';
 export const MovieList = () => {
   const [movies, setMovies] = useState([]);
+  const [showCompletedModal, setShowCompletedModal] = useState(false);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -41,6 +43,7 @@ export const MovieList = () => {
       if (response.status === 200) {
         const updatedMovies = movies.filter(movie => movie.movie_id !== id);
         setMovies(updatedMovies);
+        setShowCompletedModal(true);
       }
     } catch (error) {
       console.error("Có lỗi xảy ra khi xóa phim:", error);
@@ -50,7 +53,10 @@ export const MovieList = () => {
   const handleViewMovieRatings = (movieId) => {
     navigate(`/admin/movies/ratings/${movieId}`);
   };
-
+  const closeModal = () => {
+    setShowCompletedModal(false);
+    navigate('/admin/movies');
+  };
   return (
     <div className="flex flex-col w-full h-screen">
       <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8 h-full">
@@ -61,6 +67,7 @@ export const MovieList = () => {
                 Thêm phim
                 <FontAwesomeIcon className="ml-2" icon={faPlus} />
               </button>
+              <button className="text-black bg-white p-1 rounded-lg border border-black hover:bg-black hover:text-white transition" onClick={() => navigate('/admin/movies/rank')}>Xếp hạng phim</button>
               <SearchInput contentSearch="Tìm kiếm phim" onSearch={handleSearchMovies} />
             </div>
             <div className="flex-grow overflow-y-auto">
@@ -107,6 +114,9 @@ export const MovieList = () => {
           </div>
         </div>
       </div>
+      {showCompletedModal && (
+          <CompletedModal isOpen={showCompletedModal} onClose={closeModal} />
+        )}
     </div>
   );
 };

@@ -30,48 +30,6 @@ const addMovieRating = async (req, res) => {
       return res.status(400).json({ error: 'User has already rated this movie.' });
     }
 
-    let fake_rating = false;
-
-    if (!is_expert_rating) {
-      const expertRatings = await prisma.movie_rating.findMany({
-        where: {
-          movie_id,
-          is_expert_rating: true,
-        },
-      });
-
-      if (expertRatings.length > 0) {
-        const differenceThreshold = 2;
-
-        let isAnyRatingValid = false;
-
-        for (const expertRating of expertRatings) {
-          const contentRatingDifference = Math.abs(content_rating - expertRating.content_rating);
-          const actingRatingDifference = Math.abs(acting_rating - expertRating.acting_rating);
-          const visualEffectsRatingDifference = Math.abs(visual_effects_rating - expertRating.visual_effects_rating);
-          const soundRatingDifference = Math.abs(sound_rating - expertRating.sound_rating);
-          const directingRatingDifference = Math.abs(directing_rating - expertRating.directing_rating);
-          const entertainmentRatingDifference = Math.abs(entertainment_rating - expertRating.entertainment_rating);
-
-          if (
-            contentRatingDifference <= differenceThreshold &&
-            actingRatingDifference <= differenceThreshold &&
-            visualEffectsRatingDifference <= differenceThreshold &&
-            soundRatingDifference <= differenceThreshold &&
-            directingRatingDifference <= differenceThreshold &&
-            entertainmentRatingDifference <= differenceThreshold
-          ) {
-            isAnyRatingValid = true;
-            break;
-          }
-        }
-
-        if (!isAnyRatingValid) {
-          fake_rating = true;
-        }
-      }
-    }
-
     const totalRating = (
       content_rating +
       acting_rating +
@@ -93,8 +51,7 @@ const addMovieRating = async (req, res) => {
         entertainment_rating,
         total_rating: totalRating,
         comment,
-        is_expert_rating: is_expert_rating || false,
-        fake_rating
+        is_expert_rating: is_expert_rating || false, 
       },
     });
 
@@ -104,7 +61,6 @@ const addMovieRating = async (req, res) => {
     return res.status(500).json({ error: 'An error occurred while adding the rating.' });
   }
 };
-
 
 
 const deleteMovieRating = async (req, res) => {
@@ -133,15 +89,14 @@ const getMovieRatings = async (req, res) => {
     }
     const ratings = await prisma.movie_rating.findMany({
       where: { 
-        movie_id: movieIdInt,
-        fake_rating: false 
+        movie_id: movieIdInt
+     
       },
-      // include: {
-      //   users: true
-      // }
     });
     const userRatings = ratings.filter(rating => !rating.is_expert_rating);
     const expertRatings = ratings.filter(rating => rating.is_expert_rating);
+    userRatings.reverse();
+    expertRatings.reverse();
 
     const totalUserContentRatingSum = userRatings.reduce((sum, rating) => sum + rating.content_rating, 0);
     const totalUserActingRatingSum = userRatings.reduce((sum, rating) => sum + rating.acting_rating, 0);
@@ -210,59 +165,9 @@ const getMovieRatings = async (req, res) => {
 };
 
 
-const getFakeOrReportedMovieRatings = async (req, res) => {
-  try {
-    const ratings = await prisma.movie_rating.findMany({
-      where: {
-        OR: [
-          { fake_rating: true },
-          { reported: true }
-        ]
-      },
-    });
-
-    return res.status(200).json(ratings);
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ error: 'An error occurred while retrieving fake or reported ratings.' });
-  }
-};
-
-const updateFakeandReportRating = async (req, res) => {
-  const { movie_rating_id } = req.params;
-
-  try {
-    const updatedRating = await prisma.movie_rating.update({
-      where: { movie_rating_id: parseInt(movie_rating_id) },
-      data: { 
-        fake_rating: false,
-        reported: false,
-      },
-    });
-
-    return res.status(200).json(updatedRating);
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ error: 'An error occurred while updating the rating.' });
-  }
-};
 
 
-const reportMovieRating = async (req, res) => {
-  const { movie_rating_id } = req.params;
 
-  try {
-    const updatedRating = await prisma.movie_rating.update({
-      where: { movie_rating_id: parseInt(movie_rating_id) },
-      data: { reported: true },
-    });
-
-    return res.status(200).json(updatedRating);
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ error: 'An error occurred while reporting the rating.' });
-  }
-};
 
 const getMovieRatingById = async (req, res) => {
   const { movie_rating_id } = req.params;
@@ -292,85 +197,8 @@ const getMovieRatingById = async (req, res) => {
   }
 };
   
-const getLeverMovieRating = async (req, res) => {
-  try {
-    const movieRatings = await prisma.movie_rating.groupBy({
-      by: ['movie_id'],
-      _avg: {
-        total_rating: true,
-      },
-      where: {
-        fake_rating: false,
-        reported: false,
-      },
-    });
 
-    const highRatedMovieIds = movieRatings
-      .filter(movie => movie._avg.total_rating >= 8)
-      .map(movie => movie.movie_id);
 
-    const mediumRatedMovieIds = movieRatings
-      .filter(movie => movie._avg.total_rating >= 5 && movie._avg.total_rating < 8)
-      .map(movie => movie.movie_id);
-
-    const lowRatedMovieIds = movieRatings
-      .filter(movie => movie._avg.total_rating < 5)
-      .map(movie => movie.movie_id);
-
-    const highRatedMovies = await prisma.movies.findMany({
-      where: {
-        movie_id: {
-          in: highRatedMovieIds,
-        },
-      },
-    });
-
-    const mediumRatedMovies = await prisma.movies.findMany({
-      where: {
-        movie_id: {
-          in: mediumRatedMovieIds,
-        },
-      },
-    });
-
-    const lowRatedMovies = await prisma.movies.findMany({
-      where: {
-        movie_id: {
-          in: lowRatedMovieIds,
-        },
-      },
-    });
-
-    return res.status(200).json({
-      highRatedMovies,
-      mediumRatedMovies,
-      lowRatedMovies,
-    });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ error: 'An error occurred while retrieving the movie ratings.' });
-  }
-};
-
-const deleteMovieRatingAndIncreaseSuspicion = async (req, res) => {
-  const { movie_rating_id } = req.params;
-
-  try {
-    const deletedRating = await prisma.movie_rating.delete({
-      where: { movie_rating_id: parseInt(movie_rating_id) },
-    });
-
-    await prisma.users.update({
-      where: { user_id: deletedRating.user_id },
-      data: { suspicion_level: { increment: 1 } },
-    });
-
-    return res.status(200).json({ message: 'Rating deleted successfully and suspicion level increased', deletedRating });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ error: 'An error occurred while deleting the rating and updating suspicion level.' });
-  }
-};
 
 const getMovieRatingsForAdmin = async (req, res) => {
   try {
@@ -388,46 +216,94 @@ const getMovieRatingsForAdmin = async (req, res) => {
 };
 
 
-const getGlobalAverageRating = async () => {
-  const ratings = await prisma.movie_rating.findMany({
-    where: {
-      fake_rating: false,
-      reported: false
-    }
-  });
-  const totalRatingSum = ratings.reduce((sum, rating) => sum + rating.total_rating, 0);
-  const totalRatingsCount = ratings.length;
-  return totalRatingsCount > 0 ? totalRatingSum / totalRatingsCount : 0;
+const getMoviesWithBayesRating = async (req, res) => {
+  const MIN_RATINGS_REQUIRED = 20; 
+  try {
+    const movies = await prisma.movies.findMany({
+      include: {
+        movie_rating: true,
+      },
+    });
+
+
+    const allRatings = movies.flatMap(movie => movie.movie_rating);
+    const globalAverageRating = allRatings.reduce((sum, rating) => sum + rating.total_rating, 0) / allRatings.length || 0;
+
+    const moviesWithBayesRating = movies
+      .filter(movie => movie.movie_rating.length > 0) 
+      .map(movie => {
+        const ratingsCount = movie.movie_rating.length;
+        const averageRating = movie.movie_rating.reduce((sum, rating) => sum + rating.total_rating, 0) / ratingsCount || 0;
+
+        const bayesAverageRating = ((ratingsCount * averageRating) + (MIN_RATINGS_REQUIRED * globalAverageRating)) / (ratingsCount + MIN_RATINGS_REQUIRED);
+
+        return {
+          movie_id: movie.movie_id,
+          name_movie: movie.name_movie,
+          ratingsCount,
+          averageRating,
+          minRatingsRequired: MIN_RATINGS_REQUIRED,
+          globalAverageRating,
+          bayesAverageRating: parseFloat(bayesAverageRating.toFixed(2)),
+        };
+      });
+
+    return res.status(200).json(moviesWithBayesRating);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'An error occurred while retrieving movie ratings.' });
+  }
 };
 
 
-const getAverageRatingCountPerMovie = async () => {
-  const ratingsCount = await prisma.movie_rating.groupBy({
-    by: ['movie_id'],
-    _count: {
-      movie_id: true
-    },
-    where: {
-      fake_rating: false,
-      reported: false
-    }
-  });
-  const totalRatingsCount = ratingsCount.length;
-  const totalMoviesCount = await prisma.movies.count();
-  return totalMoviesCount > 0 ? totalRatingsCount / totalMoviesCount : 0;
-};
+const toggleMovieRatingLike = async (req, res) => {
+  const { movie_rating_id } = req.params;
+  let { user_id } = req.body;
+  
+  // Chuyển đổi user_id thành kiểu Int
+  user_id = parseInt(user_id);
 
+  try {
+    // Kiểm tra xem người dùng đã thích đánh giá này của người dùng khác chưa
+    const existingLike = await prisma.movie_rating_likes.findFirst({
+      where: {
+        movie_rating_id: parseInt(movie_rating_id),
+        user_id,
+      },
+    });
+
+    if (existingLike) {
+      // Nếu đã thích, xóa thích
+      await prisma.movie_rating_likes.delete({
+        where: {
+          like_id: existingLike.like_id,
+        },
+      });
+
+      return res.status(200).json({ message: 'Đã bỏ thích thành công.' });
+    } else {
+      await prisma.movie_rating_likes.create({
+        data: {
+          movie_rating_id: parseInt(movie_rating_id),
+          user_id,
+        },
+      });
+
+      return res.status(200).json({ message: 'Đã thích thành công.' });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Đã xảy ra lỗi khi thực hiện thích/bỏ thích.' });
+  }
+};
 
   module.exports = {
     addMovieRating,
     getMovieRatings,
     deleteMovieRating,
-    getFakeOrReportedMovieRatings,
-    updateFakeandReportRating,
-    reportMovieRating,
     getMovieRatingById,
-    getLeverMovieRating,
-    deleteMovieRatingAndIncreaseSuspicion,
-    getMovieRatingsForAdmin
+    getMovieRatingsForAdmin,
+    getMoviesWithBayesRating,
+    toggleMovieRatingLike
   };
 

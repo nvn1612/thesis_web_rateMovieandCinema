@@ -1,7 +1,7 @@
 const express = require('express');
 const { getAllPosts, getMoviePosts, getTheaterPosts, createPost, getCommentCountByPostId,
     getEarliestPosts, getCommentsByPostId, deletePost, deleteComment, getPostById, moderatePost, createComment, getModeratedPostsByUser,
-    searchPostsByTitle, getAudPosts, getExpertPosts } = require('../controllers/postControllers');
+    searchPostsByTitle, getAudPosts, getExpertPosts,getModeratedPosts,getUnmoderatedPosts } = require('../controllers/postControllers');
 
 const router = express.Router();
 
@@ -21,5 +21,6 @@ router.get('/getmoderatedposts/:userId', getModeratedPostsByUser);
 router.get('/searchposts', searchPostsByTitle);
 router.get('/getaudposts', getAudPosts);
 router.get('/getexpertposts', getExpertPosts);
-
+router.get('/getmoderatedposts', getModeratedPosts);
+router.get('/getunmoderatedposts', getUnmoderatedPosts);
 module.exports = router;

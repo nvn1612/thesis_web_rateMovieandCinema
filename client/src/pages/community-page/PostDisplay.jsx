@@ -11,9 +11,8 @@ import { SearchInput } from '../../components/search-input/SearchInput';
 import { PostTypeSelect } from '../../components/select-box/PostTypeSelect';
 import { UserPostSelect } from '../../components/select-box/UserPostSelect';
 import { ModalAddPost } from '../../components/modal-add-post/ModalAddPost';
-import { PostSuccessModal } from '../../components/Completed-modal/PostSuccessModal'
+import { PostSuccessModal } from '../../components/Completed-modal/PostSuccessModal';
 import { Footer } from '../../layouts/footer/Footer';
-import UserContext from '../../context/UserContext';
 
 export const PostDisplay = () => {
   const [posts, setPosts] = useState([]);
@@ -26,6 +25,8 @@ export const PostDisplay = () => {
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false); 
   const [currentPage, setCurrentPage] = useState(1);
   const [filteredPosts, setFilteredPosts] = useState([]); 
+  const [showCompletedModal, setShowCompletedModal] = useState(false);
+
   const postsPerPage = 7;
 
   const openModal = () => setIsModalOpen(true);
@@ -35,13 +36,13 @@ export const PostDisplay = () => {
   const closeSuccessModal = () => setIsSuccessModalOpen(false);
 
   const navigate = useNavigate();
-  const { user } = React.useContext(UserContext);
 
   const fetchPosts = async () => {
     try {
       const response = await axios.get('/post/getallposts');
       const postsData = response.data.filter(post => post.is_moderated);
       setPosts(postsData);
+      setFilteredPosts(postsData); 
 
       const usersData = {};
       const commentsCountData = {};
@@ -96,7 +97,7 @@ export const PostDisplay = () => {
   const handleSearch = async searchTerm => {
     try {
       const response = await axios.get(`/post/searchposts?title=${encodeURIComponent(searchTerm)}`);
-      setFilteredPosts(response.data);
+      setFilteredPosts(response.data.filter(post => post.is_moderated));
     } catch (error) {
       setError(error);
     }
@@ -108,6 +109,11 @@ export const PostDisplay = () => {
 
   const handlePostTypeChange = filteredPosts => {
     setFilteredPosts(filteredPosts);
+  };
+
+  const handleUserChange = filteredPosts => {
+    setFilteredPosts(filteredPosts);
+    setCurrentPage(1); 
   };
 
   return (
@@ -133,7 +139,7 @@ export const PostDisplay = () => {
               Tạo bài viết
             </button>
             <PostTypeSelect onPostTypeChange={handlePostTypeChange} />
-            <UserPostSelect onUserChange={setFilteredPosts} />
+            <UserPostSelect onUserChange={handleUserChange} is_admin={false} />
           </div>
 
           <div className="bg-white w-2/4 mt-4 rounded-md">

@@ -13,11 +13,11 @@ export const PostTypeSelect = ({ onPostTypeChange }) => {
       switch (event.target.value) {
         case 'bài viết về phim':
           response = await axios.get('/post/getmovieposts');
-          onPostTypeChange(response.data);
+          onPostTypeChange(response.data.filter(post => post.is_moderated));
           break;
         case 'bài viết về rạp chiếu':
           response = await axios.get('/post/gettheaterposts');
-          onPostTypeChange(response.data);
+          onPostTypeChange(response.data.filter(post => post.is_moderated));
           break;
         default:
           response = await axios.get('/post/getallposts');

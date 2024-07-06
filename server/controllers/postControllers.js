@@ -292,6 +292,39 @@ const getModeratedPostsByUser = async (req, res) => {
   }
 };
 
+const getModeratedPosts = async (req, res) => {
+  try {
+    const posts = await prisma.posts.findMany({
+      where: {
+        is_moderated: true,
+      },
+      include: {
+        users: true,
+      },
+    });
+    res.json(posts);
+  } catch (error) {
+    res.status(500).json({ error: 'Could not retrieve moderated posts' });
+  }
+};
+
+const getUnmoderatedPosts = async (req, res) => {
+  try {
+    const posts = await prisma.posts.findMany({
+      where: {
+        is_moderated: false,
+      },
+      include: {
+        users: true,
+      },
+    });
+    res.json(posts);
+  } catch (error) {
+    res.status(500).json({ error: 'Could not retrieve unmoderated posts' });
+  }
+};
+
+
 module.exports = {
   getAllPosts,
   getMoviePosts,
@@ -308,5 +341,7 @@ module.exports = {
   createComment,
   getModeratedPostsByUser,
   searchPostsByTitle,
-  getAudPosts
-};
+  getAudPosts,
+  getModeratedPosts,
+  getUnmoderatedPosts
+}

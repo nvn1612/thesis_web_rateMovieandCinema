@@ -36,7 +36,6 @@
     const deleteUser = async (userID) => {
       try {
         const response = await axios.delete(`/user/deleteuser/${userID}`);
-        console.log(response.data);
         setFilteredUsers((prevUsers) => prevUsers.filter((user) => user.user_id !== userID));
         setShowCompletedModal(true);
       } catch (error) {

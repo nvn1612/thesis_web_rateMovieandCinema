@@ -6,14 +6,30 @@ import { useNavigate } from 'react-router-dom';
 import { UserPostSelect } from '../../../components/select-box/UserPostSelect';
 import { SearchInput } from '../../../components/search-input/SearchInput';
 import { ModeratePostSelect } from '../../../components/select-box/ModeratePostSelect';
+import { CompletedModal } from '../../../components/Completed-modal/CompletedModal';
 
 export const PostList = () => {
   const [posts, setPosts] = useState([]);
+  const [filteredPosts, setFilteredPosts] = useState([]);
+  const [showCompletedModal, setShowCompletedModal] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchPosts();
   }, []);
+
+  const handleSearchPosts = async (title) => {
+    if (title === '') {
+      fetchPosts();
+      return;
+    }
+    try {
+      const response = await axios.get(`/post/searchposts?title=${title}`);
+      setPosts(response.data);
+    } catch (error) {
+      console.error("Có lỗi xảy ra khi tìm bài viết:", error);
+    }
+  };
 
   const fetchPosts = async () => {
     try {
@@ -29,7 +45,7 @@ export const PostList = () => {
       await axios.delete(`/post/deletepost/${postId}`);
       const updatedPosts = posts.filter((post) => post.post_id !== postId);
       setPosts(updatedPosts);
-      console.log(`Deleted post with ID ${postId}`);
+      setShowCompletedModal(true);
     } catch (error) {
       console.error(`Error deleting post with ID ${postId}:`, error);
     }
@@ -43,10 +59,22 @@ export const PostList = () => {
         post.post_id === postId ? { ...post, is_moderated: updatedPost.is_moderated } : post
       );
       setPosts(updatedPosts);
-      console.log(`Moderated post with ID ${postId}`);
+      setShowCompletedModal(true);
     } catch (error) {
       console.error(`Error moderating post with ID ${postId}:`, error);
     }
+  };
+
+  const handleModeratedPostsChange = (posts) => {
+    setPosts(posts);
+  };
+
+  const handleUserPostsChange = (posts) => {
+    setFilteredPosts(posts); 
+  };
+  const closeModal = () => {
+    setShowCompletedModal(false);
+    navigate('/admin/posts');
   };
 
   return (
@@ -55,13 +83,13 @@ export const PostList = () => {
         <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8 h-full">
           <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg h-full flex flex-col">
             <div className="flex items-center mb-4 justify-between m-2">
-              <SearchInput contentSearch="Tìm kiếm bài viết" />
-                <ModeratePostSelect/>
-                <div>
-                  <span className="inline-block h-3 w-3 rounded-full bg-red-200 mr-2"></span>
-                  <span>Chưa kiểm duyệt</span>
-                </div>  
-              <UserPostSelect />
+              <SearchInput contentSearch="Tìm kiếm bài viết" onSearch={handleSearchPosts} />
+              <ModeratePostSelect onPostChange={handleModeratedPostsChange} />
+              <div>
+                <span className="inline-block h-3 w-3 rounded-full bg-red-200 mr-2"></span>
+                <span>Chưa kiểm duyệt</span>
+              </div>  
+              <UserPostSelect onUserChange={handleUserPostsChange} is_admin={true} /> 
             </div>
             <div className="flex-grow overflow-y-auto">
               <table className="min-w-full divide-y divide-gray-200">
@@ -79,8 +107,8 @@ export const PostList = () => {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {posts.map((post, index) => (
-                    <tr key={post.post_id} className={post.is_moderated ? '' :'bg-red-100' }>
+                  {(filteredPosts.length ? filteredPosts : posts).map((post, index) => ( // Cập nhật logic render
+                    <tr key={post.post_id} className={post.is_moderated ? '' : 'bg-red-100'}>
                       <td className="px-6 py-4 whitespace-nowrap">{index + 1}</td>
                       <td className="px-6 py-4 whitespace-nowrap">{post.users?.name}</td>
                       <td className="px-6 py-4 whitespace-nowrap">{post.title}</td>
@@ -113,6 +141,9 @@ export const PostList = () => {
           </div>
         </div>
       </div>
+      {showCompletedModal && (
+          <CompletedModal isOpen={showCompletedModal} onClose={closeModal} />
+        )}
     </div>
   );
 };

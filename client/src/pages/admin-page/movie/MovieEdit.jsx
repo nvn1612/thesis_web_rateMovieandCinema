@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
+import { CompletedModal } from '../../../components/Completed-modal/CompletedModal';
 
 export const MovieEdit = () => {
   const [formData, setFormData] = useState({
@@ -13,13 +15,15 @@ export const MovieEdit = () => {
     duration: '',
     genre: []
   });
-
+  const navigate = useNavigate();
   const [genres, setGenres] = useState([]);
   const [posterImage, setPosterImage] = useState(null);
   const [posterImageUrl, setPosterImageUrl] = useState('');
   const [backdropImage, setBackdropImage] = useState(null);
   const [backdropImageUrl, setBackdropImageUrl] = useState('');
   const [countries, setCountries] = useState([]);
+  const [showCompletedModal, setShowCompletedModal] = useState(false);
+
   const { movieId } = useParams();
 
   useEffect(() => {
@@ -111,14 +115,16 @@ export const MovieEdit = () => {
           'Content-Type': 'multipart/form-data'
         }
       });
-      alert('Cập nhật thành công!');
-      console.log(response.data);
+      setShowCompletedModal(true);
     } catch (error) {
       alert('Cập nhật thất bại. Vui lòng thử lại.');
-      console.error('There was an error updating the movie!', error);
+      console.error('Có vấn đề khi cập nhập phim !', error);
     }
   };
-
+  const closeModal = () => {
+    setShowCompletedModal(false);
+    navigate('/admin/movies');
+  };
   return (
     <div className="flex justify-center items-center min-h-screen">
       <form className="w-full max-w-lg" onSubmit={handleSubmit}>
@@ -311,10 +317,13 @@ export const MovieEdit = () => {
             className="shadow bg-green-500 hover:bg-green-600 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded"
             type="submit"
           >
-            Update
+            Cập nhập phim
           </button>
         </div>
       </form>
+      {showCompletedModal && (
+          <CompletedModal isOpen={showCompletedModal} onClose={closeModal} />
+        )}
     </div>
   );
 };

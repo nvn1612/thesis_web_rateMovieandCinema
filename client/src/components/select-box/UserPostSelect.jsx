@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-export const UserPostSelect = ({ onUserChange }) => {
+export const UserPostSelect = ({ onUserChange,is_admin }) => {
   const [selectedUser, setSelectedUser] = useState('');
 
   const users = ['Tất cả', 'Bài viết từ khán giả', 'Bài viết từ chuyên gia'];
@@ -13,14 +13,17 @@ export const UserPostSelect = ({ onUserChange }) => {
       switch (event.target.value) {
         case 'Bài viết từ khán giả':
           response = await axios.get('/post/getaudposts');
-          onUserChange(response.data);
+          is_admin ? onUserChange(response.data) :
+          onUserChange(response.data.filter(post => post.is_moderated));
           break;
         case 'Bài viết từ chuyên gia':
           response = await axios.get('/post/getexpertposts');
-          onUserChange(response.data);
+          is_admin ? onUserChange(response.data) :
+          onUserChange(response.data.filter(post => post.is_moderated));
           break;
         default:
           response = await axios.get('/post/getallposts');
+          is_admin ? onUserChange(response.data) :
           onUserChange(response.data.filter(post => post.is_moderated));
           break;
       }

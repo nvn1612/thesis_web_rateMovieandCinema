@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { CompletedModal } from '../../../components/Completed-modal/CompletedModal';
+import { useNavigate } from "react-router-dom";
+
 
 export const MovieCreate = () => {
+  const [showCompletedModal, setShowCompletedModal] = useState(false);
   const [genres, setGenres] = useState([]);
   const [countries, setCountries] = useState([]);
   const [posterImage, setPosterImage] = useState(null);
@@ -17,6 +21,7 @@ export const MovieCreate = () => {
     genre: [],
   });
 
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchGenres = async () => {
       const response = await axios.get("/movie/getgenres");
@@ -78,14 +83,16 @@ export const MovieCreate = () => {
           "Content-Type": "multipart/form-data",
         },
       });
-      alert("Movie created successfully!");
-      console.log("Movie created successfully:", response.data);
+      setShowCompletedModal(true);
     } catch (error) {
       alert("Error creating movie.");
       console.error("Error creating movie:", error);
     }
   };
-
+  const closeModal = () => {
+    setShowCompletedModal(false);
+    navigate('/admin/movies');
+  };
   return (
     <div className="flex justify-center items-center min-h-screen">
       <form className="w-full max-w-lg" onSubmit={handleSubmit}>
@@ -274,6 +281,9 @@ export const MovieCreate = () => {
           </button>
         </div>
       </form>
+      {showCompletedModal && (
+          <CompletedModal isOpen={showCompletedModal} onClose={closeModal} />
+        )}
     </div>
   );
 };

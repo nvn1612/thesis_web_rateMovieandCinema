@@ -1,9 +1,12 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { CompletedModal } from '../../../components/Completed-modal/CompletedModal';
 
 export const TheaterCreate = () => {
   const navigate = useNavigate();
+  const [showCompletedModal, setShowCompletedModal] = useState(false);
+
   const [formData, setFormData] = useState({
     theater_name: "",
     address: "",
@@ -64,7 +67,7 @@ export const TheaterCreate = () => {
 
     try {
       await axios.post(
-        "http://localhost:8000/movie-theater/createtheater",
+        "/movie-theater/createtheater",
         form,
         {
           headers: {
@@ -72,13 +75,15 @@ export const TheaterCreate = () => {
           },
         }
       );
-      alert("Tạo rạp chiếu thành công");
-      navigate("/admin/TheaterList");
+      setShowCompletedModal(true);
     } catch (error) {
       console.error("Error creating theater:", error);
     }
   };
-
+  const closeModal = () => {
+    setShowCompletedModal(false);
+    navigate('/admin/theaters');
+  };
   return (
     <div className="flex justify-center items-center min-h-screen">
       <form className="w-full max-w-lg" onSubmit={handleSubmit}>
@@ -265,6 +270,9 @@ export const TheaterCreate = () => {
           </button>
         </div>
       </form>
+      {showCompletedModal && (
+          <CompletedModal isOpen={showCompletedModal} onClose={closeModal} />
+        )}
     </div>
   );
 };

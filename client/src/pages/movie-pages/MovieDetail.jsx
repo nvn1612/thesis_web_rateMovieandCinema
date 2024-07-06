@@ -14,7 +14,7 @@ import { ProgressBarGroup } from "../../layouts/progress-bar-group/ProgressBarGr
 import { CountRate } from "../../components/count-rate/CountRate";
 import { DetailRateUser } from "../../components/detail-rate-user/DetailRateUser";
 import { ModalCompletedRate } from "../../components/modal-completed-rate/ModalCompletedRate";
-
+import { BtnHelfulRate } from "../../components/btn-helpful-rate/BtnHelpfulRate";
 export const MovieDetail = () => {
 
   const [isTrailerOpen, setIsTrailerOpen] = useState(false);
@@ -323,6 +323,9 @@ export const MovieDetail = () => {
                       <div className="flex flex-col">
                         <div className="flex space-x-2">
                           <p>{users[rating.user_id]?.username || "Unknown User"}</p>
+                          {users[rating.user_id]?.occupation ? (
+                            <p className="text-white bg-yellow-500 rounded-md pl-1 pr-1">{users[rating.user_id]?.occupation || null }</p>
+                          ) : null}
                           <p>
                             {(rating.total_rating).toFixed(1)}/10
                           </p>
@@ -330,7 +333,12 @@ export const MovieDetail = () => {
                         <div className="text-gray-400">
                           {new Date(rating.created_at).toLocaleDateString()}
                         </div>
-                      </div>     
+                      </div>  
+                      {isUserRatings && (
+                      <div>
+                          <BtnHelfulRate/>
+                      </div>
+                      )}  
                     </div>
                 
                   </div>

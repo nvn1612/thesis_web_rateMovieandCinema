@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
+import { CompletedModal } from '../../../components/Completed-modal/CompletedModal';
+
 
 export const TheaterEdit = () => {
   const { theaterId } = useParams(); 
   const navigate = useNavigate();
+  const [showCompletedModal, setShowCompletedModal] = useState(false);
+
   const [formData, setFormData] = useState({
     theater_name: "",
     address: "",
@@ -35,9 +39,9 @@ export const TheaterEdit = () => {
           theater_image_2: theater.theater_image_2,
         });
         setImagePreviewUrls({
-          theater_logo: theater.theater_logo ? `http://localhost:8000/${theater.theater_logo}` : "",
-          theater_image_1: theater.theater_image_1 ? `http://localhost:8000/${theater.theater_image_1}` : "",
-          theater_image_2: theater.theater_image_2 ? `http://localhost:8000/${theater.theater_image_2}` : ""
+          theater_logo: theater.theater_logo ? `/${theater.theater_logo}` : "",
+          theater_image_1: theater.theater_image_1 ? `/${theater.theater_image_1}` : "",
+          theater_image_2: theater.theater_image_2 ? `/${theater.theater_image_2}` : ""
         });
       } catch (error) {
         console.error("Error fetching theater:", error);
@@ -91,18 +95,21 @@ export const TheaterEdit = () => {
     }
 
     try {
-      await axios.put(`http://localhost:8000/movie-theater/updatetheater/${theaterId}`, form, {
+      await axios.put(`/movie-theater/updatetheater/${theaterId}`, form, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
-      alert("Cập nhật rạp chiếu thành công");
-      navigate("/admin/TheaterList");
+      setShowCompletedModal(true);
+
     } catch (error) {
       console.error("Error updating theater:", error);
     }
   };
-
+  const closeModal = () => {
+    setShowCompletedModal(false);
+    navigate('/admin/theaters');
+  };
   return (
     <div className="flex justify-center items-center min-h-screen">
       <form className="w-full max-w-lg" onSubmit={handleSubmit}>
@@ -281,13 +288,16 @@ export const TheaterEdit = () => {
         </div>
         <div className="flex justify-center">
           <button
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            className="shadow bg-green-500 hover:bg-green-600 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded"
             type="submit"
           >
             Cập nhật rạp chiếu
           </button>
         </div>
       </form>
+      {showCompletedModal && (
+          <CompletedModal isOpen={showCompletedModal} onClose={closeModal} />
+        )}
     </div>
   );
 };

@@ -4,28 +4,46 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faTrash, faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 import { SearchInput } from "../../../components/search-input/SearchInput";
+import { CompletedModal } from '../../../components/Completed-modal/CompletedModal';
 
 export const TheaterList = () => {
   const [theaters, setTheaters] = useState([]);
+  const [showCompletedModal, setShowCompletedModal] = useState(false);
+
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchTheaters = async () => {
-      try {
-        const response = await axios.get('/movie-theater/getalltheaters');
-        setTheaters(response.data);
-      } catch (error) {
-        console.error('Error fetching theaters:', error);
-      }
-    };
+    
+  const fetchTheaters = async () => {
+    try {
+      const response = await axios.get('/movie-theater/getalltheaters');
+      setTheaters(response.data);
+    } catch (error) {
+      console.error('Error fetching theaters:', error);
+    }
+  };
 
+  useEffect(() => {
     fetchTheaters();
   }, []);
+
+  const handleSearchTheaters = async (name) => {
+    if (name === '') {
+      fetchTheaters();
+      return;
+    }
+    try {
+      const response = await axios.get(`/movie-theater/search/theaters?name=${name}`);
+      setTheaters(response.data);
+    } catch (error) {
+      console.error("Có lỗi xảy ra khi tìm kiếm rạp chiếu:", error);
+    }
+  };
 
   const handleDeleteTheater = async (theater_id) => {
     try {
       await axios.delete(`/movie-theater/deletetheater/${theater_id}`);
       setTheaters(theaters.filter(theater => theater.theater_id !== theater_id));
+      setShowCompletedModal(true);
     } catch (error) {
       console.error('Có lỗi khi xóa rạp chiếu:', error);
     }
@@ -33,7 +51,10 @@ export const TheaterList = () => {
   const handleViewTheaterRatings = (theaterId) => {
     navigate(`/admin/theaters/ratings/${theaterId}`);
   };
-
+  const closeModal = () => {
+    setShowCompletedModal(false);
+    navigate('/admin/theaters');
+  };
   return (
     <div className="flex flex-col w-full h-screen">
       <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8 h-full">
@@ -48,7 +69,9 @@ export const TheaterList = () => {
                 Thêm rạp chiếu
                 <FontAwesomeIcon className="ml-2" icon={faPlus} />
               </button>
-              <SearchInput contentSearch="Tìm kiếm rạp chiếu"/>
+              <button className="text-black bg-white p-1 rounded-lg border border-black hover:bg-black hover:text-white transition" onClick={() => navigate('/admin/theaters/rank')}>Xếp hạng rạp chiếu</button>
+
+              <SearchInput contentSearch="Tìm kiếm rạp chiếu" onSearch={handleSearchTheaters}/>
 
             </div>
             <div className="flex-grow overflow-y-auto">
@@ -86,7 +109,7 @@ export const TheaterList = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <img
-                          src={theater.theater_logo ? `http://localhost:8000/${theater.theater_logo}` : 'Không có ảnh'}
+                          src={theater.theater_logo ? `/${theater.theater_logo}` : 'Không có ảnh'}
                           alt="Không có ảnh"
                           className="w-12 h-12 object-cover"
                         />
@@ -123,6 +146,9 @@ export const TheaterList = () => {
           </div>
         </div>
       </div>
+      {showCompletedModal && (
+          <CompletedModal isOpen={showCompletedModal} onClose={closeModal} />
+        )}
     </div>
   );
 };
