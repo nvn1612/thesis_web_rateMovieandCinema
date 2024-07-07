@@ -14,7 +14,29 @@ const addTheaterRating = async (req, res) => {
     comment,
     is_expert_rating
   } = req.body;
+  const blacklist = ["ngu", "dốt"];
+  const containsBlacklistedWords = (text) => {
+    return blacklist.some(word => text.toLowerCase().includes(word));
+  };
 
+  const hasMinimumRating = (ratings) => {
+    return ratings.every(rating => rating >= 1);
+  };
+
+  if (containsBlacklistedWords(comment)) {
+    return res.status(400).json({ error_code: 'BLACKLISTED_WORDS' });
+  }
+
+  if (!hasMinimumRating([
+    image_quality_rating,
+    sound_quality_rating,
+    seating_rating,
+    theater_space_rating,
+    customer_service_rating,
+    ticket_price_rating
+  ])) {
+    return res.status(400).json({ error_code: 'MINIMUM_RATING_REQUIRED' });
+  }
   try {
     const existingRating = await prisma.theater_rating.findUnique({
       where: {
@@ -26,7 +48,7 @@ const addTheaterRating = async (req, res) => {
     });
 
     if (existingRating) {
-      return res.status(400).json({ error: 'User has already rated this theater.' });
+      return res.status(400).json({ error_code: 'ALREADY_RATED' });
     }
 
     const totalRating = (
@@ -57,7 +79,7 @@ const addTheaterRating = async (req, res) => {
     return res.status(201).json(newRating);
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ error: 'An error occurred while adding the rating.' });
+    return res.status(500).json({ error: 'Có lỗi trong quá trình thực hiện đánh giá !.' });
   }
 };
 
@@ -245,7 +267,79 @@ const getTheaterRatings = async (req, res) => {
     }
   };
  
-
+  const toggleTheaterRatingLike = async (req, res) => {
+    const { theater_rating_id } = req.params;
+    let { user_id } = req.body;
+  
+    user_id = parseInt(user_id);
+  
+    try {
+      const existingLike = await prisma.theater_rating_likes.findFirst({
+        where: {
+          theater_rating_id: parseInt(theater_rating_id),
+          user_id,
+        },
+      });
+  
+      if (existingLike) {
+        await prisma.theater_rating_likes.delete({
+          where: {
+            like_id: existingLike.like_id,
+          },
+        });
+  
+        return res.status(200).json({ message: 'Đã bỏ thích thành công.' });
+      } else {
+        await prisma.theater_rating_likes.create({
+          data: {
+            theater_rating_id: parseInt(theater_rating_id),
+            user_id,
+          },
+        });
+  
+        return res.status(200).json({ message: 'Đã thích thành công.' });
+      }
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: 'Đã xảy ra lỗi khi thực hiện thích/bỏ thích.' });
+    }
+  };
+  
+  const checkTheaterRatingLike = async (req, res) => {
+    const { theater_rating_id } = req.params;
+    const { user_id } = req.query;
+  
+    try {
+      const existingLike = await prisma.theater_rating_likes.findFirst({
+        where: {
+          theater_rating_id: parseInt(theater_rating_id),
+          user_id: parseInt(user_id),
+        },
+      });
+  
+      res.status(200).json({ isLiked: !!existingLike });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Đã xảy ra lỗi khi kiểm tra trạng thái thích.' });
+    }
+  };
+  
+  const getTheaterRatingLikeCount = async (req, res) => {
+    const { theater_rating_id } = req.params;
+  
+    try {
+      const likeCount = await prisma.theater_rating_likes.count({
+        where: {
+          theater_rating_id: parseInt(theater_rating_id, 10),
+        },
+      });
+  
+      return res.status(200).json({ likeCount });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: 'Đã xảy ra lỗi khi lấy số lượng thích.' });
+    }
+  };
 
   
 
@@ -256,5 +350,8 @@ module.exports = {
   deleteTheaterRating,
   getTheaterRatingById,
   getTheaterRatingsForAdmin,
-  getTheatersWithBayesRating
+  getTheatersWithBayesRating,
+  getTheaterRatingLikeCount,
+  toggleTheaterRatingLike,
+  checkTheaterRatingLike
 };

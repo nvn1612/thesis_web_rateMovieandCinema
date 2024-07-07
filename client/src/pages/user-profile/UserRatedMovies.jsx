@@ -3,8 +3,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import UserContext from "../../context/UserContext";
-
+import { useNavigate } from "react-router-dom";
+import { CompletedModal } from "../../components/Completed-modal/CompletedModal";
 export const UserRatedMovies = () => {
+  const [showCompletedModal, setShowCompletedModal] = useState(false);
+  const navigate = useNavigate();
   const [ratings, setRatings] = useState({
     movieRatings: [],
   });
@@ -60,6 +63,7 @@ export const UserRatedMovies = () => {
       if (response && response.data) {
         setRatings(response.data);
       }
+      setShowCompletedModal(true);
     } catch (error) {
       console.error("Error deleting rating:", error);
     } finally {
@@ -71,8 +75,12 @@ export const UserRatedMovies = () => {
   if (loading) {
     return <div>Loading...</div>;
   }
-
+  const closeModal = () => {
+    setShowCompletedModal(false);
+    navigate('/profile/rated-movies');
+  };
   return (
+    <>
     <div className="flex space-x-3">
         {detailLoading ? (
           <p>Loading details...</p>
@@ -204,12 +212,7 @@ export const UserRatedMovies = () => {
                       >
                         Tổng Đáng Giá
                       </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                      >
-                        Trạng Thái
-                      </th>
+                    
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
@@ -233,15 +236,6 @@ export const UserRatedMovies = () => {
                             {rating.total_rating}
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">
-                            {rating.fake_rating ? (
-                              <p className="text-red-500">Chưa xác thực</p>
-                            ) : (
-                              <p className="text-green-500">Đã xác thực</p>
-                            )}
-                          </div>
-                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -251,6 +245,11 @@ export const UserRatedMovies = () => {
           </div>
         </div>
       </div>
+     
     </div>
+     {showCompletedModal && (
+      <CompletedModal isOpen={showCompletedModal} onClose={closeModal} />
+    )}
+    </>
   );
 };

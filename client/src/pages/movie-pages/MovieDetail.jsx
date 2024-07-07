@@ -1,10 +1,10 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { Header } from "../../layouts/header/Header";
 import { Footer } from "../../layouts/footer/Footer";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faClock,faCalendarWeek,faThumbsUp,faFaceSmile,faCalculator } from "@fortawesome/free-solid-svg-icons";
+import { faClock,faCalendarWeek,faThumbsUp,faFaceSmile,faCalculator,faCrown } from "@fortawesome/free-solid-svg-icons";
 import { BtnRate } from "../../components/btn-rate/BtnRate";
 import { TrailerModal } from "../../components/trailer-modal/TrailerModal";
 import { ModalRateMovie } from "../modal-rate/modal-rate-movie/ModalRateMovie";
@@ -304,7 +304,7 @@ export const MovieDetail = () => {
               <p>{movie.name_movie}</p>
             </div>
             <div className="flex flex-col p-2 space-y-3">
-              {currentRatings.slice(0, visibleUserRatingsCount).map((rating) => (
+              {currentRatings.slice(0, visibleUserRatingsCount).map((rating, index) => (
                 <div
                   key={rating.movie_rating_id}
                   className="flex flex-col p-2 border rounded-md bg-slate-200 space-y-2"
@@ -333,10 +333,18 @@ export const MovieDetail = () => {
                         <div className="text-gray-400">
                           {new Date(rating.created_at).toLocaleDateString()}
                         </div>
-                      </div>  
+                      </div>
+                      {isUserRatings &&  index === 0 &&(
+                        <div>
+                          <FontAwesomeIcon className="text-yellow-500" icon={faCrown} />
+                          <span className="ml-1 p-1 bg-yellow-400 rounded-lg text-white">Đáng giá hữu ích nhất</span>
+                        </div>
+                      )
+                      }
+                        
                       {isUserRatings && (
                       <div>
-                          <BtnHelfulRate/>
+                          <BtnHelfulRate ratingId={rating.movie_rating_id} isMovie={true}/>
                       </div>
                       )}  
                     </div>

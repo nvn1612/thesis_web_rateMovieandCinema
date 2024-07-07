@@ -6,25 +6,32 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilm, faTheaterMasks, faPen, faSignOutAlt, faUser,faBook } from '@fortawesome/free-solid-svg-icons';
 import { Routes, Route, Link } from "react-router-dom";
 import { UserDetail } from './UserDetail';
-
-import UserContext from '../../context/UserContext';
+import {Footer} from "../../layouts/footer/Footer";
+import {useNavigate} from "react-router-dom";
+import { useUser } from "../../context/UserContext";
 import { UserRatedMovies } from './UserRatedMovies';
 import { UserRatedTheaters } from './UserRatedTheaters';
 
 
 
 export const UserProfile = () => {
+  const navigate = useNavigate();
+  const {logout } = useUser();
+  const handleLogout = () => {
+    logout();
+    localStorage.removeItem('token');
+    navigate('/login');
+  };
   
-  const { user } = useContext(UserContext);
   return (
-    <>
+    <div className="flex flex-col min-h-screen">
       <Header />
       <BgTop
         title="Trang cá nhân"
         decribe="Trang hiện thị thông tin cá nhân của bạn "
         CinemaBG={userBG}
       />
-      <div className=" ml-7 mt-8 flex">
+      <div className=" flex-grow ml-7 mt-8 flex">
         <ul className="bg-white shadow rounded-lg divide-y divide-gray-200 self-start">
           
         <li className="px-6 py-4 flex items-center hover:bg-green-300 transition">
@@ -46,42 +53,39 @@ export const UserProfile = () => {
             </Link>
         </li>
           <li className="px-6 py-4 flex items-center hover:bg-green-300 transition">
-            <FontAwesomeIcon icon={faPen} className="mr-4 text-yellow-500" />
-            <span className="font-medium text-gray-700">Đổi mật khẩu</span>
+            <Link to="/forgot-password" className="flex items-center w-full">
+              <FontAwesomeIcon icon={faPen} className="mr-4 text-yellow-500" />
+              <span className="font-medium text-gray-700">Đổi mật khẩu</span>
+            </Link>
           </li>
           <li
             className="px-6 py-4 flex items-center cursor-pointer hover:bg-green-300 transition"
           >
-            <FontAwesomeIcon icon={faSignOutAlt} className="mr-4 text-gray-700" />
-            <span className="font-medium text-gray-700">Đăng xuất</span>
+             <div className="flex items-center w-full" onClick={handleLogout}>
+              <FontAwesomeIcon icon={faSignOutAlt} className="mr-4 text-gray-700" />
+              <span className="font-medium text-gray-700">Đăng xuất</span>
+            </div>
           </li>
         </ul>
 
 
 
-        <div className="flex ml-16"> 
+        <div className="flex ml-16 flex-grow"> 
 
               <Routes>
                 <Route path="/detail" element={<UserDetail />} />
                 <Route path="/rated-movies" element={<UserRatedMovies />} />
                 <Route path="/rated-theaters" element={<UserRatedTheaters />} />
+              
 
-                {/* <Route path="movie-rating" element={<MovieRating />} />
-                <Route path="theater-rating" element={<TheaterRating />} />
-                <Route path="post" element={<Post />} />
-                <Route path="change-password" element={<ChangePassword />} /> */}
 
               </Routes>
 
 
         </div>
 
-
       </div>
-
-
-
-      
-    </>
+      <Footer />
+    </div>
   );
 };

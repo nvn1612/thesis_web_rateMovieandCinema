@@ -71,8 +71,8 @@ export const Header = () => {
             {dropdownVisible && (
               <div className="absolute right-0 mt-2 w-48 bg-white text-black rounded-md shadow-lg z-10">
                 <Link to="/profile/detail" className="block px-4 py-2 hover:bg-green-200 hover:rounded-md text-sm transition">Trang cá nhân</Link>
-                <Link to="/rated-theaters" className="block px-4 py-2 hover:bg-green-200 text-sm transition">Các đánh giá rạp chiếu</Link>
-                <Link to="/rated-theaters" className="block px-4 py-2 hover:bg-green-200 text-sm transition">Các đánh giá Phim</Link>
+                <Link to="/profile/rated-theaters" className="block px-4 py-2 hover:bg-green-200 text-sm transition">Các đánh giá rạp chiếu</Link>
+                <Link to="/profile/rated-movies" className="block px-4 py-2 hover:bg-green-200 text-sm transition">Các đánh giá Phim</Link>
 
                 <Link to="/rated-movies" className="block px-4 py-2 hover:bg-green-200 text-sm transition">Đổi mật khẩu</Link>
                 <button 

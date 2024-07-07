@@ -246,9 +246,9 @@ export const PostDisplay = () => {
             ))}
           </div>
         </div>
-        <Footer />
+       
       </div>
-
+      <Footer />
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-4 rounded-md">
@@ -260,6 +260,7 @@ export const PostDisplay = () => {
       {isSuccessModalOpen && (
         <PostSuccessModal isOpen={isSuccessModalOpen} onClose={closeSuccessModal} />
       )}
+      
     </div>
   );
 };

@@ -59,7 +59,7 @@ export const PostDetail = () => {
       setNewComment('');
       setError(null);
 
-      // Calculate new current page based on the position of the new comment
+      
       const newCurrentPage = Math.ceil((post.post_comments.length + 1) / commentsPerPage);
       setCurrentPage(newCurrentPage);
     } catch (error) {

@@ -15,6 +15,30 @@ const addMovieRating = async (req, res) => {
     comment,
     is_expert_rating
   } = req.body;
+  const blacklist = ["ngu", "dốt"];
+
+  const containsBlacklistedWords = (text) => {
+    return blacklist.some(word => text.toLowerCase().includes(word));
+  };
+
+  const hasMinimumRating = (ratings) => {
+    return ratings.every(rating => rating >= 1);
+  };
+
+  if (containsBlacklistedWords(comment)) {
+    return res.status(400).json({ error_code: 'BLACKLISTED_WORDS' });
+  }
+
+  if (!hasMinimumRating([
+    content_rating,
+    acting_rating,
+    visual_effects_rating,
+    sound_rating,
+    directing_rating,
+    entertainment_rating
+  ])) {
+    return res.status(400).json({ error_code: 'MINIMUM_RATING_REQUIRED' });
+  }
 
   try {
     const existingRating = await prisma.movie_rating.findUnique({
@@ -27,7 +51,7 @@ const addMovieRating = async (req, res) => {
     });
 
     if (existingRating) {
-      return res.status(400).json({ error: 'User has already rated this movie.' });
+      return res.status(400).json({ error_code: 'ALREADY_RATED' });
     }
 
     const totalRating = (
@@ -58,7 +82,7 @@ const addMovieRating = async (req, res) => {
     return res.status(201).json(newRating);
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ error: 'An error occurred while adding the rating.' });
+    return res.status(500).json({ error: 'Có lỗi trong quá trình thực hiện đánh giá !.' });
   }
 };
 
@@ -90,12 +114,25 @@ const getMovieRatings = async (req, res) => {
     const ratings = await prisma.movie_rating.findMany({
       where: { 
         movie_id: movieIdInt
-     
       },
+      include: {
+        movie_rating_likes: {
+          select: {
+            like_id: true,
+          }
+        }
+      }
     });
+
+    // Sắp xếp userRatings theo số lượt thích giảm dần
     const userRatings = ratings.filter(rating => !rating.is_expert_rating);
+    userRatings.sort((a, b) => {
+      const likeCountA = a.movie_rating_likes.length;
+      const likeCountB = b.movie_rating_likes.length;
+      return likeCountB - likeCountA;
+    });
     const expertRatings = ratings.filter(rating => rating.is_expert_rating);
-    userRatings.reverse();
+    
     expertRatings.reverse();
 
     const totalUserContentRatingSum = userRatings.reduce((sum, rating) => sum + rating.content_rating, 0);
@@ -260,11 +297,11 @@ const toggleMovieRatingLike = async (req, res) => {
   const { movie_rating_id } = req.params;
   let { user_id } = req.body;
   
-  // Chuyển đổi user_id thành kiểu Int
+
   user_id = parseInt(user_id);
 
   try {
-    // Kiểm tra xem người dùng đã thích đánh giá này của người dùng khác chưa
+
     const existingLike = await prisma.movie_rating_likes.findFirst({
       where: {
         movie_rating_id: parseInt(movie_rating_id),
@@ -273,7 +310,7 @@ const toggleMovieRatingLike = async (req, res) => {
     });
 
     if (existingLike) {
-      // Nếu đã thích, xóa thích
+     
       await prisma.movie_rating_likes.delete({
         where: {
           like_id: existingLike.like_id,
@@ -297,6 +334,41 @@ const toggleMovieRatingLike = async (req, res) => {
   }
 };
 
+const checkMovieRatingLike = async (req, res) => {
+  const { movie_rating_id } = req.params;
+  const { user_id } = req.query;
+  
+  try {
+    const existingLike = await prisma.movie_rating_likes.findFirst({
+      where: {
+        movie_rating_id: parseInt(movie_rating_id),
+        user_id: parseInt(user_id),
+      },
+    });
+
+    res.status(200).json({ isLiked: !!existingLike });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Đã xảy ra lỗi khi kiểm tra trạng thái thích.' });
+  }
+};
+
+const getMovieRatingLikeCount = async (req, res) => {
+  const { movie_rating_id } = req.params;
+
+  try {
+    const likeCount = await prisma.movie_rating_likes.count({
+      where: {
+        movie_rating_id: parseInt(movie_rating_id, 10),
+      },
+    });
+
+    return res.status(200).json({ likeCount });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'An error occurred while retrieving the like count.' });
+  }
+};
   module.exports = {
     addMovieRating,
     getMovieRatings,
@@ -304,6 +376,8 @@ const toggleMovieRatingLike = async (req, res) => {
     getMovieRatingById,
     getMovieRatingsForAdmin,
     getMoviesWithBayesRating,
-    toggleMovieRatingLike
+    toggleMovieRatingLike,
+    checkMovieRatingLike,
+    getMovieRatingLikeCount
   };
 

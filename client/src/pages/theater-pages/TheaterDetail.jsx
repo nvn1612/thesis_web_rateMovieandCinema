@@ -1,10 +1,10 @@
-import React, { useEffect, useState,useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Header } from '../../layouts/header/Header';
 import { BtnRate } from '../../components/btn-rate/BtnRate';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMap,faThumbsUp,faFaceSmile,faCalculator } from '@fortawesome/free-solid-svg-icons';
+import { faMap,faThumbsUp,faFaceSmile,faCalculator,faCrown } from '@fortawesome/free-solid-svg-icons';
 import { ModalRateCinema } from '../modal-rate/modal-rate-cinema/ModalRateCinema';
 import noAvatarUser from '../../assets/images/no_user_avatar.jpg';
 import { ProgressBarGroup } from '../../layouts/progress-bar-group/ProgressBarGroup';
@@ -12,11 +12,10 @@ import { TotalRate } from '../../components/total-rate/TotalRate';
 import { CountRate } from '../../components/count-rate/CountRate';
 import { DetailRateUser } from '../../components/detail-rate-user/DetailRateUser';
 import { ModalCompletedRate } from "../../components/modal-completed-rate/ModalCompletedRate";
-import UserContext from "../../context/UserContext"; 
+import { BtnHelfulRate } from "../../components/btn-helpful-rate/BtnHelpfulRate";
 
 
 export const TheaterDetail = () => {
-  const { user } = useContext(UserContext);
 
   const { id } = useParams();
   const [theater, setTheater] = useState(null);
@@ -254,7 +253,7 @@ export const TheaterDetail = () => {
                 <p>{theater.theater_name}</p>
               </div>
               <div className="flex flex-col p-2 space-y-3">
-                {currentRatings.slice(0, visibleRatingsCount).map((rating) => (
+                {currentRatings.slice(0, visibleRatingsCount).map((rating,index) => (
                   <div
                     key={rating.theater_rating_id}
                     className="flex flex-col p-2 border rounded-md bg-slate-200 space-y-2"
@@ -265,7 +264,7 @@ export const TheaterDetail = () => {
                         className="w-12 h-12 rounded-full object-cover"
                         src={
                           users[rating.user_id]?.avatar
-                            ? `http://localhost:8000/${users[rating.user_id].avatar}`
+                            ? `/${users[rating.user_id].avatar}`
                             : noAvatarUser
                         }
                         alt="User Avatar"
@@ -273,6 +272,9 @@ export const TheaterDetail = () => {
                       <div className="flex flex-col">
                         <div className="flex space-x-2">
                           <p>{users[rating.user_id]?.username || "Unknown User"}</p>
+                          {users[rating.user_id]?.occupation ? (
+                            <p className="text-white bg-yellow-500 rounded-md pl-1 pr-1">{users[rating.user_id]?.occupation || null }</p>
+                          ) : null}
                           <p>
                             {(rating.total_rating).toFixed(1)}/10
                           </p>
@@ -280,7 +282,19 @@ export const TheaterDetail = () => {
                         <div className="text-gray-400">
                           {new Date(rating.created_at).toLocaleDateString()}
                         </div>
-                      </div>     
+                      </div>
+                      {isUserRatings &&  index === 0 &&(
+                        <div>
+                          <FontAwesomeIcon className="text-yellow-500" icon={faCrown} />
+                          <span className="ml-1 p-1 bg-yellow-400 rounded-lg text-white">Đáng giá hữu ích nhất</span>
+                        </div>
+                      )
+                      }  
+                      {isUserRatings && (
+                      <div>
+                            <BtnHelfulRate ratingId={rating.theater_rating_id} isMovie={false}/>
+                      </div>
+                      )}     
                     </div>
                   </div>
                     <DetailRateUser
@@ -320,7 +334,7 @@ export const TheaterDetail = () => {
         onClose={handleCloseRateModal}
         onCompleted={handleOpenCompletedModal}
         theaterId={theater.theater_id}
-        theaterImageUrl={`http://localhost:8000/${theater.theater_logo}`}
+        theaterImageUrl={`/${theater.theater_logo}`}
       />
        <ModalCompletedRate
         isOpen={isCompletedModalOpen} 

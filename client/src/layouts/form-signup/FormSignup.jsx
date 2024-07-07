@@ -19,20 +19,20 @@ export const FormSignup = () => {
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      setMessage('Email không hợp lệ, vui lòng thử lại.');
+      setMessage('Email không hợp lệ, vui lòng thử lại !');
       return;
     }
 
     if (username.length < 3) {
-      setMessage('Tên tài khoản không hợp lệ, vui lòng thử lại.');
+      setMessage('Tên tài khoản không hợp lệ, vui lòng thử lại !');
       return;
     }
     if (password.length < 3 || confirmPassword.length < 3) {
-      setMessage('Mật khẩu không hợp lệ, vui lòng thử lại.');
+      setMessage('Mật khẩu không hợp lệ, vui lòng thử lại !');
       return;
     }
     if (password !== confirmPassword) {
-      setMessage('Mật khẩu không khớp, vui lòng thử lại.');
+      setMessage('Mật khẩu không khớp, vui lòng thử lại !');
       return;
     }
 

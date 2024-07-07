@@ -33,6 +33,7 @@ import { ContentPost } from "./pages/admin-page/post/ContentPost";
 import { useUser } from "./context/UserContext";
 import { MovieRank } from "./pages/admin-page/movie/MovieRank";
 import {TheaterRank} from "./pages/admin-page/theater/TheaterRank";
+import { PostDetail } from "./pages/community-page/PostDetail";
 const PrivateRoute = ({ element: Element, is_admin_route, ...rest }) => {
   const { user } = useUser();
 
@@ -61,6 +62,7 @@ const AppRoutes = () => {
       <Route path="/theaters" element={<TheaterDisplay />} />
       <Route path="/theaters/detail/:id" element={<TheaterDetail />} />
       <Route path="/community" element={<PostDisplay />} />
+      <Route path="/community/post-detail/:postId" element={<PostDetail />} />
       <Route path="/profile/*" element={<UserProfile />} />
       <Route path="/reset-password/:token" element={<ResetPassword />} />
 

@@ -61,9 +61,19 @@ export const ModalRateMovie = ({
     } catch (error) {
       console.error("Error adding rating:", error);
       if (error.response && error.response.status === 400) {
-        setErrorMessage(
-          "Bạn đã đánh giá bộ phim này rồi."
-        );
+        switch (error.response.data.error_code) {
+          case 'ALREADY_RATED':
+            setErrorMessage("Bạn đã đánh giá bộ phim này rồi !");
+            break;
+          case 'MINIMUM_RATING_REQUIRED':
+            setErrorMessage("Không được bỏ trống đánh giá !");
+            break;
+          case 'BLACKLISTED_WORDS':
+            setErrorMessage("Đánh giá của bạn đang chứa những từ ngữ không đúng chuẩn mực !");
+            break;
+          default:
+            setErrorMessage("Đã xảy ra lỗi khi đánh giá phim.");
+        }
       } else {
         setErrorMessage("Đã xảy ra lỗi khi đánh giá phim.");
       }
