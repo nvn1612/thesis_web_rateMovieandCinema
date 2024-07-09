@@ -6,20 +6,23 @@ import { SearchInput } from "../../../components/search-input/SearchInput";
 import { UserRatingSelect } from "../../../components/select-box/UserRatingSelect";
 import { useParams } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
+import { CompletedModal } from '../../../components/Completed-modal/CompletedModal';
+
 
 export const TheaterRatingList = () => {
   const [ratings, setRatings] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedUser, setSelectedUser] = useState('Đánh giá từ người dùng');
   const [users, setUsers] = useState({});
   const [theaters, setTheaters] = useState({});
   const { theaterId } = useParams();
   const navigate = useNavigate();
+  const [showCompletedModal, setShowCompletedModal] = useState(false);
+
 
   const fetchRatingsForAdmin = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('http://localhost:8000/theater-rating/get-theater-ratings-for-admin');
+      const response = await axios.get(`/theater-rating/get-theater-ratings-for-admin/${theaterId}`);
       setRatings(response.data);
 
       await Promise.all(response.data.map(async (rating) => {
@@ -37,7 +40,7 @@ export const TheaterRatingList = () => {
   const fetchUser = async (user_id) => {
     if (!users[user_id]) {
       try {
-        const response = await axios.get(`http://localhost:8000/user/getuser/${user_id}`);
+        const response = await axios.get(`/user/getuser/${user_id}`);
         setUsers((prevUsers) => ({ ...prevUsers, [user_id]: response.data }));
       } catch (error) {
         console.error("Error fetching user:", error);
@@ -48,7 +51,7 @@ export const TheaterRatingList = () => {
   const fetchTheater = async (theater_id) => {
     if (!theaters[theater_id]) {
       try {
-        const response = await axios.get(`http://localhost:8000/movie-theater/gettheater/${theater_id}`);
+        const response = await axios.get(`/movie-theater/gettheater/${theater_id}`);
         setTheaters((prevTheaters) => ({ ...prevTheaters, [theater_id]: response.data }));
       } catch (error) {
         console.error("Error fetching theater:", error);
@@ -60,22 +63,44 @@ export const TheaterRatingList = () => {
     fetchRatingsForAdmin();
   }, [theaterId]);
 
-  const handleUserChange = (user) => {
-    setSelectedUser(user);
-  };
+
 
   const handleDeleteRating = async (theater_rating_id) => {
     try {
-      await axios.delete(`http://localhost:8000/theater-rating/delete-theater-rating/${theater_rating_id}`);
+      await axios.delete(`/theater-rating/delete-theater-rating/${theater_rating_id}`);
       setRatings((prevRatings) => prevRatings.filter(rating => rating.theater_rating_id !== theater_rating_id));
+      setShowCompletedModal(true);
     } catch (error) {
       console.error("Error deleting rating:", error);
     }
   };
 
+  const handleSearchRatings = async (username) => {
+    if (username === '') {
+      fetchRatingsForAdmin();
+      return;
+    }
+    try {
+      const response = await axios.get(`/theater-rating/search-theater-ratings-by-username?username=${username}`);
+      setRatings(response.data);
+      await Promise.all(response.data.map(async (rating) => {
+        await fetchUser(rating.user_id);
+        await fetchTheater(rating.movie_id);
+      }));
+    } catch (error) {
+      console.error("Error searching ratings:", error);
+    }
+  };
+  const handleUserRatingChange = (ratings) => {
+    setRatings(ratings);
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
+  const closeModal = () => {
+    setShowCompletedModal(false);
+  };
 
   return (
     <div className="flex flex-col w-full h-screen">
@@ -83,13 +108,18 @@ export const TheaterRatingList = () => {
         <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8 h-full">
           <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg h-full flex flex-col">
             <div className="flex items-center mb-4 justify-between m-2">
-              <SearchInput contentSearch="Tìm kiếm người dùng"/>
+              <SearchInput contentSearch="Tìm kiếm người dùng" onSearch={handleSearchRatings}/>
               {ratings.length > 0 && (
                 <p className="font-bold">Tên rạp chiếu : {theaters[ratings[0].theater_id]?.theater_name}</p>
               )}
-              <UserRatingSelect selectedUser={selectedUser} onUserChange={handleUserChange} />
+              <UserRatingSelect onUserChange={handleUserRatingChange} isMovie={false} theater_id={theaterId} />
             </div>
             <div className="flex-grow overflow-y-auto">
+            {ratings.length === 0 ? (
+                <div className="text-center py-4">
+                  <p className="text-gray-500">Rạp chiếu chưa có đánh giá.</p>
+                </div>
+              ) : (
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50 sticky top-0 z-10">
                   <tr>
@@ -128,10 +158,14 @@ export const TheaterRatingList = () => {
                   ))}
                 </tbody>
               </table>
+              )}
             </div>
           </div>
         </div>
       </div>
+      {showCompletedModal && (
+          <CompletedModal isOpen={showCompletedModal} onClose={closeModal} />
+        )}
     </div>
   );
 };

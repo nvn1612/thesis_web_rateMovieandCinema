@@ -4,7 +4,9 @@ import { Header } from "../../layouts/header/Header";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faComment, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useParams } from 'react-router-dom';
-import UserContext from "../../context/UserContext"; 
+import UserContext from "../../context/UserContext";
+import noAvatarUser from '../../assets/images/no_user_avatar.jpg';
+
 
 export const PostDetail = () => {
   const [post, setPost] = useState(null);
@@ -41,7 +43,12 @@ export const PostDetail = () => {
       setError('Bạn chưa nhập bình luận.');
       return;
     }
-    
+
+    if (newComment.trim().length < 3) {
+      setError('Bình luận quá ngắn!');
+      return;
+    }
+
     try {
       const response = await axios.post("/post/createcomment", {
         postId: post.post_id,
@@ -59,7 +66,6 @@ export const PostDetail = () => {
       setNewComment('');
       setError(null);
 
-      
       const newCurrentPage = Math.ceil((post.post_comments.length + 1) / commentsPerPage);
       setCurrentPage(newCurrentPage);
     } catch (error) {
@@ -87,7 +93,6 @@ export const PostDetail = () => {
     return <p>Post not found.</p>;
   }
 
-  // Calculate pagination
   const totalComments = post.post_comments ? post.post_comments.length : 0;
   const indexOfLastComment = currentPage * commentsPerPage;
   const indexOfFirstComment = indexOfLastComment - commentsPerPage;
@@ -106,7 +111,7 @@ export const PostDetail = () => {
             <div className="flex">
               <div className="flex flex-col space-y-2 m-2 flex-shrink-0">
                 <img
-                  src={`/${post.users.avatar}`} 
+                  src={post.users.avatar ? `/${post.users.avatar}` : noAvatarUser} 
                   className="h-48 w-48 rounded-full object-cover"
                   alt=""
                 />
@@ -175,7 +180,7 @@ export const PostDetail = () => {
                   <div className="bg-gray-400">
                     <div className="flex m-2">
                       <img
-                        src={`/${comment.users.avatar}`} 
+                        src={comment.users.avatar ? `/${comment.users.avatar}` : noAvatarUser} 
                         className="h-12 w-12 rounded-full object-cover"
                         alt=""
                       />
@@ -195,7 +200,7 @@ export const PostDetail = () => {
                   </div>
                 </div>
               ))}
-              {/* If there are no comments to display */}
+            
               {totalComments === 0 && (
                 <p className="m-2">Không có bình luận nào.</p>
               )}

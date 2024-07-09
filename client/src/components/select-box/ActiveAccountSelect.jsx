@@ -33,7 +33,6 @@ export const ActiveAccountSelect = ({ onSelectionChange }) => {
         onChange={handleChange}
         className="border rounded-md p-2 flex items-center cursor-pointer"
       >
-        <option value="">Tài khoản</option>
         {AA.map((active, index) => (
           <option key={index} value={active}>
             {active}

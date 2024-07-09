@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { Login } from "./pages/login/Login";
 import { Signup } from "./pages/signup/Signup";
 import { VerifySignup } from "./pages/verification-page/VerifySignup";
@@ -34,8 +34,21 @@ import { useUser } from "./context/UserContext";
 import { MovieRank } from "./pages/admin-page/movie/MovieRank";
 import {TheaterRank} from "./pages/admin-page/theater/TheaterRank";
 import { PostDetail } from "./pages/community-page/PostDetail";
+import { Dashboard } from "./pages/admin-page/dashboard/Dashboard";
+  
+const AuthRoute = ({ element: Element, ...rest }) => {
+  const { user } = useUser();
+
+  if (user) {
+    return <Navigate to="/" />;
+  }
+
+  return <Element {...rest} />;
+};
 const PrivateRoute = ({ element: Element, is_admin_route, ...rest }) => {
   const { user } = useUser();
+  const location = useLocation();
+
 
   if (!user) {
       return <Navigate to="/login" />;
@@ -45,18 +58,21 @@ const PrivateRoute = ({ element: Element, is_admin_route, ...rest }) => {
       return <Navigate to="/" />;  
   }
 
+  if (location.pathname === "/" && user.is_Admin) {
+    return <Navigate to="/admin" />;
+  }
   return <Element {...rest} />;
 };
 
 const AppRoutes = () => {
   return (
     <Routes>
-      <Route path="/login" element={<Login />} />
-      <Route path="/signup" element={<Signup />} />
+      <Route path="/login" element={<AuthRoute element={Login} />} />
+      <Route path="/signup" element={<AuthRoute element={Signup} />} />
       <Route path="/verify-signup" element={<VerifySignup />} />
       <Route path="/notify-success" element={<NotifySuccess />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
-      <Route path="/" element={<Home />} />
+      <Route path="/" element={<PrivateRoute element={Home} />} />
       <Route path="/movies" element={<MovieDisplay />} />
       <Route path="/movies/movie/detail/:id" element={<MovieDetail />} />
       <Route path="/theaters" element={<TheaterDisplay />} />
@@ -67,6 +83,7 @@ const AppRoutes = () => {
       <Route path="/reset-password/:token" element={<ResetPassword />} />
 
       <Route path="/admin/*" element={<PrivateRoute element={AdminPage} is_admin_route={true} />}>
+        <Route path="dashboard" element={<Dashboard/>} />
         <Route path="users" element={<UserList />} />
         <Route path="user/add" element={<UserCreate />} />
         <Route path="user/edit/:userId" element={<UserEdit />} />

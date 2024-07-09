@@ -10,6 +10,8 @@ export const MovieCreate = () => {
   const [countries, setCountries] = useState([]);
   const [posterImage, setPosterImage] = useState(null);
   const [backdropImage, setBackdropImage] = useState(null);
+  const [error, setError] = useState("");
+
   const [formData, setFormData] = useState({
     name_movie: "",
     trailer_link: "",
@@ -85,7 +87,11 @@ export const MovieCreate = () => {
       });
       setShowCompletedModal(true);
     } catch (error) {
-      alert("Error creating movie.");
+      if (error.response && error.response.status === 400) {
+        setError(error.response.data.error);
+      } else {
+        setError("Error creating movie.");
+      }
       console.error("Error creating movie:", error);
     }
   };
@@ -96,7 +102,7 @@ export const MovieCreate = () => {
   return (
     <div className="flex justify-center items-center min-h-screen">
       <form className="w-full max-w-lg" onSubmit={handleSubmit}>
-        <div className="flex flex-wrap -mx-3 mb-6">
+        <div className="flex flex-wrap -mx-3 mb-1">
           <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
             <label
               className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
@@ -130,7 +136,7 @@ export const MovieCreate = () => {
             />
           </div>
         </div>
-        <div className="flex flex-wrap -mx-3 mb-6">
+        <div className="flex flex-wrap -mx-3 mb-1">
           <div className="w-full px-3">
             <label
               className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
@@ -272,14 +278,19 @@ export const MovieCreate = () => {
             )}
           </div>
         </div>
-        <div className="md:flex md:items-center flex items-center justify-center">
+        <div className="md:flex md:items-center flex items-center justify-center mt-3">
           <button
             className="shadow bg-green-500 hover:bg-green-600 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded"
             type="submit"
           >
-            Create
+            Thêm phim
           </button>
         </div>
+        {error && 
+          <div className="flex justify-center mt-2">
+                <div className="text-red-500 ">{error}</div>
+          </div>  }
+
       </form>
       {showCompletedModal && (
           <CompletedModal isOpen={showCompletedModal} onClose={closeModal} />

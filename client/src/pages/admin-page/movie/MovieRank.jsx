@@ -70,7 +70,7 @@ export const MovieRank = () => {
                         {movie.ratingsCount}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        {movie.averageRating}
+                        {movie.averageRating.toFixed(2)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         {movie.minRatingsRequired}

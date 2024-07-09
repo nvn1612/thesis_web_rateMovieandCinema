@@ -107,10 +107,10 @@ export const PostList = () => {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {(filteredPosts.length ? filteredPosts : posts).map((post, index) => ( // Cập nhật logic render
+                  {(filteredPosts.length ? filteredPosts : posts).map((post, index) => ( 
                     <tr key={post.post_id} className={post.is_moderated ? '' : 'bg-red-100'}>
                       <td className="px-6 py-4 whitespace-nowrap">{index + 1}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">{post.users?.name}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">{post.users?.username}</td>
                       <td className="px-6 py-4 whitespace-nowrap">{post.title}</td>
                       <td className="px-6 py-4 whitespace-nowrap">{post.is_movie_related ? 'Phim ảnh' : 'Rạp chiếu'}</td>
                       <td className="px-6 py-4 whitespace-nowrap">

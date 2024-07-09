@@ -6,7 +6,7 @@ import { CompletedModal } from '../../../components/Completed-modal/CompletedMod
 export const TheaterCreate = () => {
   const navigate = useNavigate();
   const [showCompletedModal, setShowCompletedModal] = useState(false);
-
+  const [error, setError] = useState("");
   const [formData, setFormData] = useState({
     theater_name: "",
     address: "",
@@ -77,6 +77,11 @@ export const TheaterCreate = () => {
       );
       setShowCompletedModal(true);
     } catch (error) {
+      if (error.response && error.response.status === 400) {
+        setError(error.response.data.error);
+      } else {
+        setError("Error creating theater.");
+      }
       console.error("Error creating theater:", error);
     }
   };
@@ -261,13 +266,17 @@ export const TheaterCreate = () => {
           </div>
         </div>
 
-        <div className="md:flex md:items-center flex items-center justify-center">
+        <div className="md:flex md:items-center flex  flex-col items-center justify-center">
           <button
             className="shadow bg-green-500 hover:bg-green-600 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded"
             type="submit"
           >
-            Tạo rạp chiếu
+            Thêm rạp chiếu
           </button>
+          {error && 
+          <div className="flex justify-center mt-2">
+                <div className="text-red-500 ">{error}</div>
+          </div>  }
         </div>
       </form>
       {showCompletedModal && (

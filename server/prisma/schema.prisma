@@ -14,12 +14,13 @@ model users {
   password              String           @db.VarChar(255)
   avatar                String?          @db.VarChar(255)
   name                  String?          @db.VarChar(255)
-  phone_number          String?          @unique(map: "phone_number") @db.VarChar(20)
+  phone_number          String?          @db.VarChar(20)
   address               String?          @db.VarChar(255)
   is_active             Boolean          @default(false)
   is_Admin              Boolean          @default(false)
   is_expert             Boolean          @default(false)
   occupation            String?          @db.VarChar(255)
+  createdAt             DateTime         @default(now())
   movie_rating          movie_rating[]
   post_comments         post_comments[]
   posts                 posts[]

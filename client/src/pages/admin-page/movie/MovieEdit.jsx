@@ -128,7 +128,7 @@ export const MovieEdit = () => {
   return (
     <div className="flex justify-center items-center min-h-screen">
       <form className="w-full max-w-lg" onSubmit={handleSubmit}>
-        <div className="flex flex-wrap -mx-3 mb-6">
+        <div className="flex flex-wrap -mx-3 mb-2">
           <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
             <label
               className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
@@ -162,7 +162,7 @@ export const MovieEdit = () => {
             />
           </div>
         </div>
-        <div className="flex flex-wrap -mx-3 mb-6">
+        <div className="flex flex-wrap -mx-3 mb-2">
           <div className="w-full px-3">
             <label
               className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
@@ -179,7 +179,7 @@ export const MovieEdit = () => {
             />
           </div>
         </div>
-        <div className="flex flex-wrap -mx-3 mb-6">
+        <div className="flex flex-wrap -mx-3 mb-2">
           <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
             <label
               className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
@@ -306,13 +306,13 @@ export const MovieEdit = () => {
               onChange={handleBackdropImageChange}
             />
             {backdropImage ? (
-              <img src={URL.createObjectURL(backdropImage)} alt="Backdrop preview" className="mt-2 w-24 h-24 object-cover float-left" />
+              <img src={URL.createObjectURL(backdropImage)} alt="Backdrop preview" className="mt-2 h-24 object-cover float-left" />
             ) : (
-              <img src={backdropImageUrl} alt="Backdrop" className="mt-2 w-24 h-24 object-cover float-left" />
+              <img src={backdropImageUrl} alt="Backdrop" className="mt-2  h-24 object-cover float-left" />
             )}
           </div>
         </div>
-        <div className="md:flex md:items-center flex items-center justify-center">
+        <div className="md:flex md:items-center flex items-center justify-center mt-3">
           <button
             className="shadow bg-green-500 hover:bg-green-600 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded"
             type="submit"

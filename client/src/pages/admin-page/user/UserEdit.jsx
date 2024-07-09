@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { CompletedModal } from "../../../components/Completed-modal/CompletedModal";
 import axios from "axios";
-import { useNavigate } from "react-router-dom"; 
-
+import { useNavigate } from "react-router-dom";
+import noAvatarUser from '../../../assets/images/no_user_avatar.jpg';
+  
 
 export const UserEdit = () => {
   const [name, setName] = useState("");
@@ -24,7 +25,7 @@ export const UserEdit = () => {
         setIsActive(data.is_active);
         setIsAdmin(data.is_Admin);
         setIsExpert(data.is_expert);
-        setImagePreviewUrl(`/${data.avatar}`);
+        setImagePreviewUrl(data.avatar ? `/${data.avatar}` : noAvatarUser);
       })
       .catch((error) => {
         console.error("There was an error fetching the user data!", error);
@@ -157,7 +158,7 @@ export const UserEdit = () => {
               type="button"
               onClick={handleSubmit}
             >
-              Sửa
+              Sửa người dùng
             </button>
           </div>
         </div>

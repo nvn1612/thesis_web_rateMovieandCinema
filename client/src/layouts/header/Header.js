@@ -53,7 +53,7 @@ export const Header = () => {
           Phim
         </Link>
         <Link to="/theaters" className="mx-2 font-bold hover:text-gray-500 transition">
-          Rạp chiếu
+          Rạp chiếu phim
         </Link>
       
         <Link to="/community" className="mx-2 font-bold hover:text-yellow-500 transition">

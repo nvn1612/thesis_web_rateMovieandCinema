@@ -8,6 +8,7 @@ export const ModalAddPost = ({ isOpen, onClose, onPostCreated }) => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [isMovieRelated, setIsMovieRelated] = useState(false);
+  const [error, setError] = useState("");
   const { user } = useContext(UserContext);
 
   const handleImageChange = (e) => {
@@ -16,6 +17,20 @@ export const ModalAddPost = ({ isOpen, onClose, onPostCreated }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
+
+    if (title.trim() === "" || content.trim() === "") {
+      setError("Không được bỏ trống tiêu đề hoặc nội dung");
+      return;
+    }
+    if (title.length < 19) {
+      setError("Tiêu đề quá ngắn !");
+      return;
+    }
+    if (content.length < 50) {
+      setError("Nội dung quá ngắn !");
+      return;
+    }
 
     const formData = new FormData();
     formData.append('user_id', user.user_id); 
@@ -122,9 +137,14 @@ export const ModalAddPost = ({ isOpen, onClose, onPostCreated }) => {
               </div>
               <div className="flex justify-center">
                 <button type="submit" className="bg-green-500 pl-2 pr-2 pt-2 pb-2 rounded-lg text-white hover:bg-green-600">
-                  Tạo bài viết
+                  Đăng bài
                 </button>
               </div>
+              {error && (
+                <div className="text-red-500 mt-2 text-center">
+                  {error}
+                </div>
+              )}
             </div>
           </form>
         )}

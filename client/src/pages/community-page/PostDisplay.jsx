@@ -27,7 +27,7 @@ export const PostDisplay = () => {
   const [filteredPosts, setFilteredPosts] = useState([]); 
   const [showCompletedModal, setShowCompletedModal] = useState(false);
 
-  const postsPerPage = 7;
+  const postsPerPage = 5;
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);

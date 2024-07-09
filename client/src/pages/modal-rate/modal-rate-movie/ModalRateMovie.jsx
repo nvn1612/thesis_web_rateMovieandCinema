@@ -71,6 +71,9 @@ export const ModalRateMovie = ({
           case 'BLACKLISTED_WORDS':
             setErrorMessage("Đánh giá của bạn đang chứa những từ ngữ không đúng chuẩn mực !");
             break;
+          case 'COMMENT_TOO_SHORT':
+            setErrorMessage("Đánh giá của bạn có nội dung quá ngắn !");
+            break;
           default:
             setErrorMessage("Đã xảy ra lỗi khi đánh giá phim.");
         }

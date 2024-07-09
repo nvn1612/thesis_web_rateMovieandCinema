@@ -51,6 +51,7 @@ export const TheaterList = () => {
   const handleViewTheaterRatings = (theaterId) => {
     navigate(`/admin/theaters/ratings/${theaterId}`);
   };
+  
   const closeModal = () => {
     setShowCompletedModal(false);
     navigate('/admin/theaters');
@@ -66,10 +67,10 @@ export const TheaterList = () => {
                 onClick={() => navigate("/admin/theaters/add")}
                 className="p-2 border text-white bg-green-400 rounded-lg hover:bg-green-500 transition"
               >
-                Thêm rạp chiếu
+                Thêm rạp chiếu phim
                 <FontAwesomeIcon className="ml-2" icon={faPlus} />
               </button>
-              <button className="text-black bg-white p-1 rounded-lg border border-black hover:bg-black hover:text-white transition" onClick={() => navigate('/admin/theaters/rank')}>Xếp hạng rạp chiếu</button>
+              <button className="text-black bg-white p-1 rounded-lg border border-black hover:bg-black hover:text-white transition" onClick={() => navigate('/admin/theaters/rank')}>Xếp hạng rạp chiếu phim</button>
 
               <SearchInput contentSearch="Tìm kiếm rạp chiếu" onSearch={handleSearchTheaters}/>
 

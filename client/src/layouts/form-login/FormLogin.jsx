@@ -27,7 +27,7 @@ export const FormLogin = () => {
   
               const { is_Admin } = response.data.user;  
               if (is_Admin) {
-                  navigate('/admin'); 
+                  navigate('/admin/dashboard'); 
               } else {
                   navigate('/');  
               }

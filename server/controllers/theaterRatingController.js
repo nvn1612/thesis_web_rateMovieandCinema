@@ -15,6 +15,7 @@ const addTheaterRating = async (req, res) => {
     is_expert_rating
   } = req.body;
   const blacklist = ["ngu", "dốt"];
+  const MIN_WORD_COUNT = 3;
   const containsBlacklistedWords = (text) => {
     return blacklist.some(word => text.toLowerCase().includes(word));
   };
@@ -22,11 +23,16 @@ const addTheaterRating = async (req, res) => {
   const hasMinimumRating = (ratings) => {
     return ratings.every(rating => rating >= 1);
   };
+  const countWords = (text) => {
+    return text.trim().split(/\s+/).length;
+  };
 
   if (containsBlacklistedWords(comment)) {
     return res.status(400).json({ error_code: 'BLACKLISTED_WORDS' });
   }
-
+  if (countWords(comment) < MIN_WORD_COUNT) {
+    return res.status(400).json({ error_code: 'COMMENT_TOO_SHORT' });
+  }
   if (!hasMinimumRating([
     image_quality_rating,
     sound_quality_rating,
@@ -215,15 +221,30 @@ const getTheaterRatings = async (req, res) => {
   };
   
   const getTheaterRatingsForAdmin = async (req, res) => {
+    const { theater_id } = req.params; 
+  
+    if (!theater_id) {
+      return res.status(400).json({ error: 'theater_id is required' });
+    }
+  
     try {
-      const ratings = await prisma.theater_rating.findMany();
+      const ratings = await prisma.theater_rating.findMany({
+        where: {
+          theater_id: parseInt(theater_id), 
+        },
+        include: {
+          users: true, 
+          movie_theaters: true 
+        }
+      });
   
       return res.status(200).json(ratings);
     } catch (error) {
       console.error(error);
       return res.status(500).json({ error: 'An error occurred while retrieving theater ratings.' });
     }
-  }
+  };
+  
   
 
  
@@ -341,8 +362,100 @@ const getTheaterRatings = async (req, res) => {
     }
   };
 
-  
+  const getTotalTheaterRatings = async (req, res) => {
+    try {
+      const totalTheaterRatings = await prisma.theater_rating.count();
+      res.status(200).json({ totalTheaterRatings });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'An error occurred while fetching the total number of theater ratings.' });
+    }
+  }
 
+  const searchTheaterRatingsByUsername = async (req, res) => {
+    const { username } = req.query;
+  
+    try {
+      const users = await prisma.users.findMany({
+        where: {
+          username: {
+            contains: username,
+          },
+        },
+        select: {
+          user_id: true,
+          username: true,
+        },
+      });
+  
+      if (users.length === 0) {
+        return res.status(404).json({ error: 'No users found with the given username.' });
+      }
+  
+      const userIds = users.map(user => user.user_id);
+  
+      const ratings = await prisma.theater_rating.findMany({
+        where: {
+          user_id: {
+            in: userIds,
+          },
+        },
+        include: {
+          users: true,
+          movie_theaters: true,
+        },
+      });
+  
+      return res.status(200).json(ratings);
+    } catch (error) {
+      console.error('Error searching theater ratings by username:', error);
+      return res.status(500).json({ error: 'An error occurred while searching for theater ratings.' });
+    }
+  };
+  const getExpertRatings = async (req, res) => {
+    const { theater_id } = req.params;
+    if (!theater_id) {
+      return res.status(400).json({ error: 'theater_id is required' });
+    }
+    try {
+      const expertRatings = await prisma.theater_rating.findMany({
+        where: {
+          theater_id: parseInt(theater_id),
+          is_expert_rating: true,
+        },
+        include: {
+          users: true, 
+        },
+      });
+  
+      return res.status(200).json(expertRatings);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: 'An error occurred while retrieving expert ratings' });
+    }
+  };
+  const getAudiRatings = async (req, res) => {
+    const { theater_id } = req.params;
+    if (!theater_id) {
+      return res.status(400).json({ error: 'theater_id is required' });
+    }
+    try {
+      const expertRatings = await prisma.theater_rating.findMany({
+        where: {
+          theater_id: parseInt(theater_id),
+          is_expert_rating: false
+        },
+        include: {
+          users: true, 
+        },
+      });
+  
+      return res.status(200).json(expertRatings);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: 'An error occurred while retrieving expert ratings' });
+    }
+  };
   
 module.exports = {
   addTheaterRating,
@@ -353,5 +466,9 @@ module.exports = {
   getTheatersWithBayesRating,
   getTheaterRatingLikeCount,
   toggleTheaterRatingLike,
-  checkTheaterRatingLike
+  checkTheaterRatingLike,
+  getTotalTheaterRatings,
+  searchTheaterRatingsByUsername,
+  getAudiRatings,
+  getExpertRatings
 };

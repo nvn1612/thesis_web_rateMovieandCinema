@@ -233,7 +233,19 @@ const createUser = async (req, res) => {
 
     const { email, username, password, name, phone_number, address, is_Admin, is_expert, occupation } = req.body;
     const avatarPath = req.file ? req.file.path : null;
-
+    if (!email || !username || !password) {
+      return res.status(400).json({ error: 'Tên tài khoản, mật khẩu và email không được bỏ trống !' });
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ error: 'Email không hợp lệ, vui lòng thử lại !' });
+    }
+    if (username.length < 5) {
+      return res.status(400).json({ error: 'Tên tài khoản không hợp lệ, vui lòng thử lại !' });
+    }
+    if (password.length < 5) {
+      return res.status(400).json({ error: 'Mật khẩu không hợp lệ, vui lòng thử lại !' });
+    }
     try {
       const existingUser = await prisma.users.findFirst({
         where: {
@@ -245,9 +257,12 @@ const createUser = async (req, res) => {
         if (avatarPath) {
           fs.unlinkSync(avatarPath);
         }
-        return res.status(400).json({ error: 'Email hoặc username đã tồn tại !' });
+        return res.status(400).json({ error: 'Email hoặc tài khoản đã tồn tại !' });
       }
-
+      if (phone_number && !(/^\d{1,11}$/.test(phone_number))) {
+        return res.status(400).json({ error: 'Số điện thoại không hợp lệ !' });
+      }
+      
       const hashedPassword = await bcrypt.hash(password, 10);
       const isAdminBool = is_Admin === 'true';
       const isExpertBool = is_expert === 'true';
@@ -303,12 +318,15 @@ const updateUser = async (req, res) => {
       return res.status(400).json({ error: 'Error uploading files.' });
     }
 
-    const { name, is_Admin, is_expert } = req.body;
+    const { name, address, phone_number,is_Admin, is_expert } = req.body;
     const { user_id } = req.params;
     const avatarPath = req.file ? req.file.path : null;
     const isAdminBool = is_Admin === 'true';
     const isExpertBool = is_expert === 'true';
 
+    if (phone_number && !(/^\d{1,11}$/.test(phone_number))) {
+      return res.status(400).json({ error: 'Số điện thoại không hợp lệ !' });
+    }
     try {
       const oldUser = await prisma.users.findUnique({
         where: { user_id: Number(user_id) },
@@ -319,7 +337,9 @@ const updateUser = async (req, res) => {
       const updatedUser = await prisma.users.update({
         where: { user_id: Number(user_id) },
         data: {
-          name,
+          name:name,
+          address: address,
+          phone_number: phone_number,
           avatar: avatarPath,
           is_Admin: isAdminBool,
           is_expert: isExpertBool,
@@ -449,6 +469,51 @@ const getExpert = async (req, res) => {
   }
 };
 
+const getTotalUsers = async (req, res) => {
+  try {
+    const totalUsers = await prisma.users.count({
+      where: {
+        is_Admin: false,
+        is_active: true,
+      },
+    });
+    res.status(200).json({ totalUsers });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred while fetching the total number of users.' });
+  }
+};
+
+const getUserRegistrationsPerMonth = async (req, res) => {
+  try {
+    const registrations = await prisma.users.groupBy({
+      by: ['createdAt'],
+      _count: {
+        user_id: true,
+      },
+    });
+
+    const monthlyRegistrations = {};
+
+    registrations.forEach(reg => {
+      const month = new Date(reg.createdAt).getMonth() + 1;
+      if (!monthlyRegistrations[month]) {
+        monthlyRegistrations[month] = 0;
+      }
+      monthlyRegistrations[month] += reg._count.user_id;
+    });
+
+    const result = Object.keys(monthlyRegistrations).map(month => ({
+      month: parseInt(month, 10),
+      count: monthlyRegistrations[month],
+    }));
+
+    return res.status(200).json(result);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'An error occurred while retrieving user registrations.' });
+  }
+};
 
 module.exports = {
   registerUser,
@@ -467,5 +532,7 @@ module.exports = {
   getUnactiveUsers,
   getExpert,
   getAudience,
-  getAdmin
+  getAdmin,
+  getTotalUsers,
+  getUserRegistrationsPerMonth
 };

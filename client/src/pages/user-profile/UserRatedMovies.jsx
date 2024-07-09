@@ -92,7 +92,7 @@ export const UserRatedMovies = () => {
               <div className="flex flex-col space-y-2">
                 <img
                   src={selectedRating.movies.poster_image ? `/${selectedRating.movies.poster_image}` : null}
-                  className="h-72 rounded"
+                  className="h-72 rounded max-w-lg"
                 ></img>
                 <div className="flex flex-col space-x-2">
                   <p className="font-bold">Nhận xét</p>
@@ -130,7 +130,7 @@ export const UserRatedMovies = () => {
                 <input
                   className="border border-black rounded-sm w-5 bg-slate-300 ml-16"
                   disabled
-                  value={selectedRating.effects_rating || 0}
+                  value={selectedRating.visual_effects_rating || 0}
                 ></input>
                 <FontAwesomeIcon
                   icon={faStar}
@@ -154,7 +154,7 @@ export const UserRatedMovies = () => {
                 <input
                   className="border border-black rounded-sm w-5 bg-slate-300 ml-11"
                   disabled
-                  value={selectedRating.direction_rating || 0}
+                  value={selectedRating.directing_rating || 0}
                 ></input>
                 <FontAwesomeIcon
                   icon={faStar}
@@ -187,7 +187,7 @@ export const UserRatedMovies = () => {
   
 
       <div>
-        <div className="flex flex-col">
+        <div className="flex flex-col mb-4">
           <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
             <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
               <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">

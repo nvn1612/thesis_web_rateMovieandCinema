@@ -90,7 +90,9 @@ const createTheater = async (req, res) => {
     const theaterLogoPath = req.files['theater_logo'] ? req.files['theater_logo'][0].path : null;
     const theaterImage1Path = req.files['theater_image_1'] ? req.files['theater_image_1'][0].path : null;
     const theaterImage2Path = req.files['theater_image_2'] ? req.files['theater_image_2'][0].path : null;
-
+    if (!theater_name || !address || !region || !description) {
+      return res.status(400).json({ error: 'Các thông tin phải được nhập đầy đủ !' });
+    }
     try {
       const newTheater = await prisma.movie_theaters.create({
         data: {
@@ -190,6 +192,15 @@ const deleteTheater = async (req, res) => {
     }
   }
 };
+const getTotalTheaters = async (req, res) => {
+  try {
+    const totalTheaters = await prisma.movie_theaters.count();
+    res.status(200).json({ totalTheaters });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred while fetching the total number of theaters.' });
+  }
+}
 
 module.exports = {
   getAllTheaters,
@@ -198,5 +209,6 @@ module.exports = {
   updateTheater,
   deleteTheater,
   searchTheatersByName,
-  getTheatersByRegion
+  getTheatersByRegion,
+  getTotalTheaters
 };

@@ -6,6 +6,7 @@ import { SearchInput } from "../../../components/search-input/SearchInput";
 import { UserRatingSelect } from "../../../components/select-box/UserRatingSelect";
 import { useParams } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
+import { CompletedModal } from '../../../components/Completed-modal/CompletedModal';
 
 export const MovieRatingList = () => {
   const [ratings, setRatings] = useState([]);
@@ -15,14 +16,15 @@ export const MovieRatingList = () => {
   const [movies, setMovies] = useState({});
   const { movieId } = useParams();
   const navigate = useNavigate();
+  const [showCompletedModal, setShowCompletedModal] = useState(false);
+
 
   const fetchRatings = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`/movie-rating/get-movie-ratings-for-admin`);
+      const response = await axios.get(`/movie-rating/get-movie-ratings-for-admin/${movieId}`);
       setRatings(response.data);
 
-     
       await Promise.all(response.data.map(async (rating) => {
         await fetchUser(rating.user_id);
         await fetchMovie(rating.movie_id);
@@ -59,7 +61,7 @@ export const MovieRatingList = () => {
 
   useEffect(() => {
     fetchRatings();
-  }, []);
+  }, [movieId]);
 
   const handleUserChange = (user) => {
     setSelectedUser(user);
@@ -69,14 +71,39 @@ export const MovieRatingList = () => {
     try {
       await axios.delete(`/movie-rating/delete-movie-rating/${movie_rating_id}`);
       setRatings((prevRatings) => prevRatings.filter(rating => rating.movie_rating_id !== movie_rating_id));
+      setShowCompletedModal(true);
     } catch (error) {
       console.error("Error deleting rating:", error);
     }
   };
 
+  const handleSearchRatings = async (username) => {
+    if (username === '') {
+      fetchRatings();
+      return;
+    }
+    try {
+      const response = await axios.get(`/movie-rating/search-movie-ratings-by-username?username=${username}`);
+      setRatings(response.data);
+      await Promise.all(response.data.map(async (rating) => {
+        await fetchUser(rating.user_id);
+        await fetchMovie(rating.movie_id);
+      }));
+    } catch (error) {
+      console.error("Error searching ratings:", error);
+    }
+  };
+
+  const handleUserRatingChange = (ratings) => {
+    setRatings(ratings);
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
+  const closeModal = () => {
+    setShowCompletedModal(false);
+  };
 
   return (
     <div className="flex flex-col w-full h-screen">
@@ -84,13 +111,18 @@ export const MovieRatingList = () => {
         <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8 h-full">
           <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg h-full flex flex-col">
             <div className="flex items-center mb-4 justify-between m-2">
-              <SearchInput contentSearch="Tìm kiếm người dùng"/>
+              <SearchInput contentSearch="Tìm kiếm người dùng" onSearch={handleSearchRatings} />
               {ratings.length > 0 && (
                 <p className="font-bold">Tên phim : {movies[ratings[0].movie_id]?.name_movie}</p>
               )}
-              <UserRatingSelect selectedUser={selectedUser} onUserChange={handleUserChange} />
+              <UserRatingSelect selectedUser={selectedUser} onUserChange={handleUserRatingChange} isMovie={true} movie_id={movieId}/>
             </div>
             <div className="flex-grow overflow-y-auto">
+            {ratings.length === 0 ? (
+                <div className="text-center py-4">
+                  <p className="text-gray-500">Phim chưa có đánh giá.</p>
+                </div>
+              ) : (
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50 sticky top-0 z-10">
                   <tr>
@@ -129,10 +161,14 @@ export const MovieRatingList = () => {
                   ))}
                 </tbody>
               </table>
+              )}
             </div>
           </div>
         </div>
       </div>
+      {showCompletedModal && (
+          <CompletedModal isOpen={showCompletedModal} onClose={closeModal} />
+        )}
     </div>
   );
 };

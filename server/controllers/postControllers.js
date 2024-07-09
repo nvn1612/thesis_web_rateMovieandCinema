@@ -67,6 +67,9 @@ const getExpertPosts = async (req, res) => {
       where: {
         is_expert_post: true,
       },
+      include: {
+        users: true,
+      },
     });
     res.json(expertPosts);
   } catch (error) {
@@ -79,6 +82,9 @@ const getAudPosts = async (req, res) => {
     const expertPosts = await prisma.posts.findMany({
       where: {
         is_expert_post: false,
+      },
+      include: {
+        users: true,
       },
     });
     res.json(expertPosts);
@@ -98,8 +104,6 @@ const createPost = async (req, res) => {
     const imagePostPath = req.file ? req.file.path : null;
 
     try {
-      const isExpertPost = is_expert === 'true' || is_expert === true;
-      const isModerated = isExpertPost;
 
       const newPost = await prisma.posts.create({
         data: {
@@ -108,8 +112,8 @@ const createPost = async (req, res) => {
           content,
           image_post: imagePostPath,
           is_movie_related: is_movie_related === 'true',
-          is_expert_post: isExpertPost,
-          is_moderated: isModerated,
+          is_expert_post: is_expert === 'true',
+          is_moderated: false,
           created_at: new Date(),
           updated_at: new Date(),
         },
@@ -323,7 +327,15 @@ const getUnmoderatedPosts = async (req, res) => {
     res.status(500).json({ error: 'Could not retrieve unmoderated posts' });
   }
 };
-
+const getTotalPosts = async (req, res) => {
+  try {
+    const totalPosts = await prisma.posts.count();
+    res.status(200).json({ totalPosts });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred while fetching the total number of posts.' });
+  }
+}
 
 module.exports = {
   getAllPosts,
@@ -343,5 +355,6 @@ module.exports = {
   searchPostsByTitle,
   getAudPosts,
   getModeratedPosts,
-  getUnmoderatedPosts
+  getUnmoderatedPosts,
+  getTotalPosts
 }

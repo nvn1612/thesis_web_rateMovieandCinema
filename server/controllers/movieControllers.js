@@ -122,6 +122,10 @@ const createMovie = async (req, res) => {
     const posterImagePath = req.files.poster_image ? req.files.poster_image[0].path : null;
     const backdropImagePath = req.files.backdrop_image ? req.files.backdrop_image[0].path : null;
 
+    if (!name_movie || !trailer_link || !country || !description || !director || !release_date || !duration || !genre) {
+      return res.status(400).json({ error: 'Các thông tin phải được nhập đầy đủ !' });
+    }
+    
     try {
       const newMovie = await prisma.movies.create({
         data: {
@@ -279,10 +283,19 @@ const updateMovie = async (req, res) => {
     }
   });
 };
+const getTotalMovies = async (req, res) => {
+  try {
+    const totalMovies = await prisma.movies.count();
+    res.status(200).json({ totalMovies });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred while fetching the total number of movies.' });
+  }
+}
 
 module.exports = { 
   createMovie, getGenres, getAllMovies, 
   getMovieById, deleteMovie, updateMovie,
   searchMoviesByName, getMoviesByGenre, getAllCountries,
-  getMoviesByCountry
+  getMoviesByCountry, getTotalMovies
 };

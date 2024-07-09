@@ -1,6 +1,7 @@
 const express = require('express');
 const { registerUser,activateUser,loginUser,forgotPassword,getUsers,getUser,createUser,deleteUser, updateUser,
-    getUserRatings,resetPassword,searchUsersByUsername,getUnactiveUsers,getActiveUsers,getExpert,getAudience,getAdmin
+    getUserRatings,resetPassword,searchUsersByUsername,getUnactiveUsers,getActiveUsers,getExpert,getAudience,getAdmin,
+    getTotalUsers,getUserRegistrationsPerMonth
  } = require('../controllers/userControllers');
 
 const router = express.Router();
@@ -22,5 +23,6 @@ router.get('/user-unactive',getUnactiveUsers);
 router.get('/user-expert',getExpert);
 router.get('/user-audience',getAudience);
 router.get('/user-admin',getAdmin)
-
+router.get('/total-users',getTotalUsers);
+router.get('/user-registrations-per-month',getUserRegistrationsPerMonth);
 module.exports = router;

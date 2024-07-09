@@ -23,11 +23,11 @@ export const FormSignup = () => {
       return;
     }
 
-    if (username.length < 3) {
+    if (username.length < 5) {
       setMessage('Tên tài khoản không hợp lệ, vui lòng thử lại !');
       return;
     }
-    if (password.length < 3 || confirmPassword.length < 3) {
+    if (password.length < 5 || confirmPassword.length < 5) {
       setMessage('Mật khẩu không hợp lệ, vui lòng thử lại !');
       return;
     }
