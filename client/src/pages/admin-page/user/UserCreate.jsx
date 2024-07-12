@@ -293,7 +293,7 @@ export const UserCreate = () => {
             type="button"
             onClick={handleSubmit}
           >
-            Tạo người dùng
+            Thêm người dùng
           </button>
         </div>
         {errorMessage && (

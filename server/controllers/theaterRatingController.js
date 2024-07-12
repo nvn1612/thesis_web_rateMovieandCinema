@@ -287,6 +287,41 @@ const getTheaterRatings = async (req, res) => {
       return res.status(500).json({ error: 'An error occurred while retrieving theater ratings.' });
     }
   };
+
+  const getTheaterBayesRatingById = async (req, res) => {
+    const MIN_RATINGS_REQUIRED = 20; 
+    const { theater_id } = req.params;
+    
+    try {
+      const theater = await prisma.movie_theaters.findUnique({
+        where: { theater_id: parseInt(theater_id) },
+        include: {
+          theater_rating: true,
+        },
+      });
+  
+      if (!theater) {
+        return res.status(404).json({ error: 'theater not found.' });
+      }
+  
+      const allRatings = await prisma.theater_rating.findMany();
+      const globalAverageRating = allRatings.reduce((sum, rating) => sum + rating.total_rating, 0) / allRatings.length || 0;
+  
+      const ratingsCount = theater.theater_rating.length;
+      const averageRating = theater.theater_rating.reduce((sum, rating) => sum + rating.total_rating, 0) / ratingsCount || 0;
+  
+      const bayesAverageRating = ((ratingsCount * averageRating) + (MIN_RATINGS_REQUIRED * globalAverageRating)) / (ratingsCount + MIN_RATINGS_REQUIRED);
+  
+      return res.status(200).json({
+        bayesAverageRating: parseFloat(bayesAverageRating.toFixed(2)),
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: 'An error occurred while retrieving the theater rating.' });
+    }
+  };
+
+
  
   const toggleTheaterRatingLike = async (req, res) => {
     const { theater_rating_id } = req.params;
@@ -470,5 +505,6 @@ module.exports = {
   getTotalTheaterRatings,
   searchTheaterRatingsByUsername,
   getAudiRatings,
-  getExpertRatings
+  getExpertRatings,
+  getTheaterBayesRatingById
 };

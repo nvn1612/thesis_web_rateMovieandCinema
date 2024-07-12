@@ -318,11 +318,13 @@ const updateUser = async (req, res) => {
       return res.status(400).json({ error: 'Error uploading files.' });
     }
 
-    const { name, address, phone_number,is_Admin, is_expert } = req.body;
+    const { name, address, phone_number,is_Admin, is_expert,is_active  } = req.body;
     const { user_id } = req.params;
     const avatarPath = req.file ? req.file.path : null;
     const isAdminBool = is_Admin === 'true';
     const isExpertBool = is_expert === 'true';
+    const isActiveBool = is_active === 'true';
+
 
     if (phone_number && !(/^\d{1,11}$/.test(phone_number))) {
       return res.status(400).json({ error: 'Số điện thoại không hợp lệ !' });
@@ -343,6 +345,8 @@ const updateUser = async (req, res) => {
           avatar: avatarPath,
           is_Admin: isAdminBool,
           is_expert: isExpertBool,
+          is_active: isActiveBool,
+
         },
       });
 

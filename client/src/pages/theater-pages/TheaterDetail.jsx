@@ -37,6 +37,25 @@ export const TheaterDetail = () => {
   const [visibleRatingsCount, setVisibleRatingsCount] = useState(5);
   const [totalRating, setTotalRating] = useState(0);
   const [totalNumberRating, setTotalNumberRating] = useState(0);
+  const [isRank, setIsRank] = useState(0);
+
+  useEffect(() => {
+    const getTheatersRank = async () => {
+      try {
+        const response = await axios.get(
+          `/theater-rating/get-theater-bayes-rating/${id}`
+        );
+        setIsRank(response.data.bayesAverageRating);
+      } catch (error) {
+        console.error(
+          "Có lỗi xảy ra khi lấy dữ liệu xếp hạng rạp chiếu phim:",
+          error
+        );
+      }
+    };
+
+    getTheatersRank();
+  }, []);
 
   useEffect(() => {
     const fetchTheater = async () => {
@@ -192,16 +211,16 @@ export const TheaterDetail = () => {
               <div className="flex flex-col">
                 <div className="flex space-x-2 items-center">
                   <FontAwesomeIcon className="text-black" icon={faFaceSmile} />
-                  <p className="text-black">Mức đánh giá</p>
+                  <p className="text-black">Xếp hạng</p>
                 </div>
                 <div className="flex justify-center">
                   <p className="text-white">
-                    {totalRating >= 8 ? (
+                    {isRank >= 7 ? (
                       <p className="text-green-500">Cao</p>
-                    ) : totalRating >= 5 ? (
+                    ) : isRank >= 5 ? (
                       <p className="text-orange-500">Trung bình</p>
                     ) : (
-                      <p className="text-red-500">Kém</p>
+                      <p className="text-red-500">Thấp</p>
                     )}
                   </p>
                 </div>

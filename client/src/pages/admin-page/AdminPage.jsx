@@ -38,7 +38,7 @@ export const AdminPage = () => {
           <hr />
         </div>
       </div>
-      <div className="page-management flex-1">
+      <div className="page-management flex-1 overflow-x-auto ">
         <Outlet />
       </div>
     </div>

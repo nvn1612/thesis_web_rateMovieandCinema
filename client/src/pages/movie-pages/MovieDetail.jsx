@@ -39,7 +39,23 @@ export const MovieDetail = () => {
   const [users, setUsers] = useState({});
   const [visibleUserRatingsCount, setVisibleUserRatingsCount] = useState(5);
   const [isCompletedModalOpen, setIsCompletedModalOpen] = useState(false);
+  const [isRank, setIsRank] = useState(0);
   const { id } = useParams();
+
+  useEffect(() => {
+    const getMoviesRank = async () => {
+      try {
+        const response = await axios.get(
+          `/movie-rating/get-movie-bayes-rating/${id}`
+        );
+        setIsRank(response.data.bayesAverageRating);
+      } catch (error) {
+        console.error("Có lỗi xảy ra khi lấy dữ liệu xếp hạng phim:", error);
+      }
+    };
+
+    getMoviesRank();
+  }, []);
 
   useEffect(() => {
     const fetchMovie = async () => {
@@ -268,18 +284,16 @@ export const MovieDetail = () => {
                       className="text-white"
                       icon={faFaceSmile}
                     />
-                    <p className="text-white">Mức đánh giá</p>
+                    <p className="text-white">Xếp hạng</p>
                   </div>
                   <div className="flex justify-center">
-                    <p className="text-white">
-                      {totalRating >= 8 ? (
-                        <p className="text-green-500">Cao</p>
-                      ) : totalRating >= 5 ? (
-                        <p className="text-orange-500">Trung bình</p>
-                      ) : (
-                        <p className="text-red-500">Kém</p>
-                      )}
-                    </p>
+                      {isRank >= 7 ? (
+                          <p className="text-green-500">Cao</p>
+                        ) : isRank >= 5 ? (
+                          <p className="text-orange-500">Trung bình</p>
+                        ) : (
+                          <p className="text-red-500">Thấp</p>
+                        )}
                   </div>
                 </div>
               </div>

@@ -102,7 +102,6 @@ export const PostList = () => {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nội dung</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bình luận</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày đăng</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày sửa</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Chức năng</th>
                   </tr>
                 </thead>
@@ -120,7 +119,6 @@ export const PostList = () => {
                         <button className="hover:text-orange-500 transition" onClick={() => navigate(`/admin/posts/comments/${post.post_id}`)}>Xem chi tiết</button>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">{new Date(post.created_at).toLocaleDateString()}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">{new Date(post.updated_at).toLocaleDateString()}</td>
                       <td className="px-6 py-4 whitespace-nowrap space-x-3">
                         {post.is_moderated ? (
                           ''

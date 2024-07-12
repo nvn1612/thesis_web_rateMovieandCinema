@@ -115,7 +115,6 @@ const createPost = async (req, res) => {
           is_expert_post: is_expert === 'true',
           is_moderated: false,
           created_at: new Date(),
-          updated_at: new Date(),
         },
       });
 
@@ -263,7 +262,6 @@ const createComment = async (req, res) => {
         user_id: Number(userId),
         content,
         created_at: new Date(),
-        updated_at: new Date(),
       },
       include: {
         users: true,

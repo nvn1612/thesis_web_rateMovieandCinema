@@ -29,11 +29,11 @@ model users {
   theater_rating_likes  theater_rating_likes[]
 }
 
-model genres {
-  genre_id     Int            @id @default(autoincrement())
-  name         String         @db.VarChar(255)
-  movie_genres movie_genres[]
-}
+  model genres {
+    genre_id     Int            @id @default(autoincrement())
+    name         String         @db.VarChar(255)
+    movie_genres movie_genres[]
+  }
 
 
 
@@ -56,26 +56,23 @@ model countries {
 model movies {
   movie_id       Int            @id @default(autoincrement())
   name_movie     String         @db.VarChar(255)
-  trailer_link   String?        @db.VarChar(255)
-  poster_image   String?        @db.VarChar(255)
-  backdrop_image String?        @db.VarChar(255)
-  country_id     Int?
+  trailer_link   String         @db.VarChar(255)
+  poster_image   String         @db.VarChar(255)
+  backdrop_image String         @db.VarChar(255)
+  country_id     Int
   description    String         @db.Text
-  director       String?        @db.VarChar(255)
-  release_date   DateTime?      @db.Date
-  duration       Int?
-  created_at     DateTime?      @default(now()) @db.Timestamp(0)
-  updated_at     DateTime?      @default(now()) @db.Timestamp(0)
+  director       String         @db.VarChar(255)
+  release_date   DateTime       @db.Date
+  duration       Int
   movie_genres   movie_genres[]
   movie_rating   movie_rating[]
-  countries      countries?     @relation(fields: [country_id], references: [country_id])
+  countries      countries      @relation(fields: [country_id], references: [country_id])
 }
 
 model movie_rating_likes {
   like_id          Int      @id @default(autoincrement())
   movie_rating_id  Int
   user_id          Int
-  created_at       DateTime @default(now()) @db.Timestamp(0)
 
   @@unique([movie_rating_id, user_id], map: "unique_movie_rating_user")
   @@index([movie_rating_id], map: "movie_rating_id_index")
@@ -97,9 +94,8 @@ model movie_rating {
   entertainment_rating  Int
   total_rating          Float
   comment               String?   @db.Text
-  created_at            DateTime? @default(now()) @db.Timestamp(0)
-  updated_at            DateTime? @default(now()) @db.Timestamp(0)
-  is_expert_rating      Boolean?  @default(false)
+  created_at            DateTime  @default(now()) @db.Timestamp(0)
+  is_expert_rating      Boolean   @default(false)
   users                 users     @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "movie_rating_ibfk_1")
   movies                movies    @relation(fields: [movie_id], references: [movie_id], onDelete: Cascade, onUpdate: NoAction, map: "movie_rating_ibfk_2")
   movie_rating_likes    movie_rating_likes[]
@@ -114,12 +110,12 @@ model movie_rating {
 model movie_theaters {
   theater_id      Int              @id @default(autoincrement())
   theater_name    String           @db.VarChar(255)
-  theater_logo    String?          @db.VarChar(255)
-  theater_image_1 String?          @db.VarChar(255)
-  theater_image_2 String?          @db.VarChar(255)
+  theater_logo    String           @db.VarChar(255)
+  theater_image_1 String           @db.VarChar(255)
+  theater_image_2 String           @db.VarChar(255)
   address         String           @db.Text
   region          String           @db.VarChar(100)
-  description     String?          @db.Text
+  description     String           @db.Text
   theater_rating  theater_rating[]
 }
 
@@ -135,9 +131,8 @@ model theater_rating {
   ticket_price_rating     Int
   total_rating            Float          @db.Float
   comment                 String?        @db.Text
-  created_at              DateTime?      @default(now()) @db.Timestamp(0)
-  updated_at              DateTime?      @default(now()) @db.Timestamp(0)
-  is_expert_rating        Boolean?       @default(false)
+  created_at              DateTime       @default(now()) @db.Timestamp(0)
+  is_expert_rating        Boolean        @default(false)
   movie_theaters          movie_theaters @relation(fields: [theater_id], references: [theater_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_theater_id")
   users                   users          @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_user_id")
   theater_rating_likes    theater_rating_likes[]
@@ -151,7 +146,6 @@ model theater_rating_likes {
   like_id           Int              @id @default(autoincrement())
   theater_rating_id Int
   user_id           Int
-  created_at        DateTime         @default(now()) @db.Timestamp(0)
 
   @@unique([theater_rating_id, user_id], map: "unique_theater_rating_user")
   @@index([theater_rating_id], map: "theater_rating_id_index")
@@ -163,13 +157,12 @@ model theater_rating_likes {
 
 model post_comments {
   comment_id Int       @id @default(autoincrement())
-  post_id    Int?
-  user_id    Int?
-  content    String?   @db.Text
-  created_at DateTime? @default(now()) @db.Timestamp(0)
-  updated_at DateTime? @default(now()) @db.Timestamp(0)
-  posts      posts?    @relation(fields: [post_id], references: [post_id], onDelete: Cascade, onUpdate: NoAction, map: "post_comments_ibfk_1")
-  users      users?    @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "post_comments_ibfk_2")
+  post_id    Int
+  user_id    Int
+  content    String    @db.Text
+  created_at DateTime  @default(now()) @db.Timestamp(0)
+  posts      posts     @relation(fields: [post_id], references: [post_id], onDelete: Cascade, onUpdate: NoAction, map: "post_comments_ibfk_1")
+  users      users     @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "post_comments_ibfk_2")
 
   @@index([post_id], map: "post_id")
   @@index([user_id], map: "user_id")
@@ -177,17 +170,16 @@ model post_comments {
 
 model posts {
   post_id            Int             @id @default(autoincrement())
-  user_id            Int?
+  user_id            Int
   title              String          @db.VarChar(255)
   content            String          @db.Text
   image_post         String?         @db.VarChar(255)
-  is_movie_related   Boolean?        @default(false)
-  is_expert_post     Boolean?        @default(false)
-  is_moderated       Boolean?        @default(false) 
-  created_at         DateTime?       @default(now()) @db.Timestamp(0)
-  updated_at         DateTime?       @default(now()) @db.Timestamp(0)
+  is_movie_related   Boolean         @default(false)
+  is_expert_post     Boolean         @default(false)
+  is_moderated       Boolean         @default(false) 
+  created_at         DateTime        @default(now()) @db.Timestamp(0)
   post_comments      post_comments[]
-  users              users?          @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "posts_ibfk_1")
+  users              users          @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "posts_ibfk_1")
 
   @@index([user_id], map: "user_id")
 }

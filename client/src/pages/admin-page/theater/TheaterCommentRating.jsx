@@ -34,7 +34,6 @@ export const TheaterCommentRating = () => {
           <tr>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nhận xét</th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày tạo</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày chỉnh sửa</th>
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
@@ -42,7 +41,6 @@ export const TheaterCommentRating = () => {
             <tr>
               <td className="px-6 py-4 whitespace-nowrap">{ratingData.comment}</td>
               <td className="px-6 py-4 whitespace-nowrap">{new Date(ratingData.created_at).toLocaleDateString()}</td>
-              <td className="px-6 py-4 whitespace-nowrap">{new Date(ratingData.updated_at).toLocaleDateString()}</td>
             </tr>
           )}
         </tbody>

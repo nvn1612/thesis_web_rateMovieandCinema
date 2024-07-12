@@ -57,7 +57,6 @@ export const CommentPostList = () => {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Người đăng</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nội dung bình luận</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày tạo</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày sửa</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Chức năng</th>
                   </tr>
                 </thead>
@@ -68,7 +67,6 @@ export const CommentPostList = () => {
                       <td className="px-6 py-4 whitespace-nowrap">{comment.users?.name}</td>
                       <td className="px-6 py-4 whitespace-nowrap">{comment.content}</td>
                       <td className="px-6 py-4 whitespace-nowrap">{new Date(comment.created_at).toLocaleDateString()}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">{new Date(comment.updated_at).toLocaleDateString()}</td>
                       <td className="px-6 py-4 whitespace-nowrap space-x-3">
                         <button className="text-red-400 hover:text-red-500 transition" onClick={()=>handleDeleteComment(comment.comment_id)}>
                           <FontAwesomeIcon icon={faTrash} />

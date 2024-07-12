@@ -2,7 +2,8 @@ const express = require('express');
 const { addMovieRating,getMovieRatings,deleteMovieRating,getMovieRatingById,
     getMovieRatingsForAdmin,getMoviesWithBayesRating,toggleMovieRatingLike,
     checkMovieRatingLike,getMovieRatingLikeCount,getTotalMovieRatings,searchMovieRatingsByUsername,
-    getExpertRatings,getAudiRatings
+    getExpertRatings,getAudiRatings,getMovieBayesRatingById
+
   } = require('../controllers/movieRatingController');
 const router = express.Router();
 
@@ -18,5 +19,6 @@ router.get('/get-movie-rating-like-count/:movie_rating_id', getMovieRatingLikeCo
 router.get('/total-movie-ratings',getTotalMovieRatings);
 router.get('/search-movie-ratings-by-username',searchMovieRatingsByUsername);
 router.get('/get-expert-movie-ratings/:movie_id',getExpertRatings);
-router.get('/get-audi-movie-ratings/:movie_id',getAudiRatings)
+router.get('/get-audi-movie-ratings/:movie_id',getAudiRatings);
+router.get('/get-movie-bayes-rating/:movie_id',getMovieBayesRatingById)
 module.exports = router;

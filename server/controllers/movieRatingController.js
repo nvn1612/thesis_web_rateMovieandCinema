@@ -308,6 +308,39 @@ const getMoviesWithBayesRating = async (req, res) => {
   }
 };
 
+const getMovieBayesRatingById = async (req, res) => {
+  const MIN_RATINGS_REQUIRED = 20; 
+  const { movie_id } = req.params;
+  
+  try {
+    const movie = await prisma.movies.findUnique({
+      where: { movie_id: parseInt(movie_id) },
+      include: {
+        movie_rating: true,
+      },
+    });
+
+    if (!movie) {
+      return res.status(404).json({ error: 'Movie not found.' });
+    }
+
+    const allRatings = await prisma.movie_rating.findMany();
+    const globalAverageRating = allRatings.reduce((sum, rating) => sum + rating.total_rating, 0) / allRatings.length || 0;
+
+    const ratingsCount = movie.movie_rating.length;
+    const averageRating = movie.movie_rating.reduce((sum, rating) => sum + rating.total_rating, 0) / ratingsCount || 0;
+
+    const bayesAverageRating = ((ratingsCount * averageRating) + (MIN_RATINGS_REQUIRED * globalAverageRating)) / (ratingsCount + MIN_RATINGS_REQUIRED);
+
+    return res.status(200).json({
+      bayesAverageRating: parseFloat(bayesAverageRating.toFixed(2)),
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'An error occurred while retrieving the movie rating.' });
+  }
+};
+
 
 const toggleMovieRatingLike = async (req, res) => {
   const { movie_rating_id } = req.params;
@@ -494,6 +527,7 @@ const getAudiRatings = async (req, res) => {
     getTotalMovieRatings,
     searchMovieRatingsByUsername,
     getExpertRatings,
-    getAudiRatings
+    getAudiRatings,
+    getMovieBayesRatingById
   };
 

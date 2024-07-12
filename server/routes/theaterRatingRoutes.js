@@ -2,7 +2,7 @@ const express = require('express');
 const { addTheaterRating, getTheaterRatings,deleteTheaterRating,getTheaterRatingById,getTheatersWithBayesRating,
     getTheaterRatingsForAdmin,getTheaterRatingLikeCount,checkTheaterRatingLike,
     toggleTheaterRatingLike,getTotalTheaterRatings,searchTheaterRatingsByUsername,
-    getExpertRatings,getAudiRatings
+    getExpertRatings,getAudiRatings,getTheaterBayesRatingById
  } = require('../controllers/theaterRatingController');
 const router = express.Router();
 
@@ -19,4 +19,5 @@ router.get('/total-theater-ratings',getTotalTheaterRatings);
 router.get('/search-theater-ratings-by-username',searchTheaterRatingsByUsername);
 router.get('/get-expert-theater-ratings/:theater_id',getExpertRatings);
 router.get('/get-audi-theater-ratings/:theater_id',getAudiRatings);
+router.get('/get-theater-bayes-rating/:theater_id',getTheaterBayesRatingById)
 module.exports = router;
