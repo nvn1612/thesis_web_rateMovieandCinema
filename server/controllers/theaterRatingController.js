@@ -116,14 +116,24 @@ const getTheaterRatings = async (req, res) => {
       const ratings = await prisma.theater_rating.findMany({
         where: { theater_id: theaterIdInt
          },
-        
+         include: {
+          theater_rating_likes: {
+            select: {
+              like_id: true,
+            }
+          }
+        }
       });
   
   
       const userRatings = ratings.filter(rating => !rating.is_expert_rating);
+      userRatings.sort((a, b) => {
+        const likeCountA = a.theater_rating_likes.length;
+        const likeCountB = b.theater_rating_likes.length;
+        return likeCountB - likeCountA;
+      });
       const expertRatings = ratings.filter(rating => rating.is_expert_rating);
 
-      userRatings.reverse();
       expertRatings.reverse();
   
       const totalUserImageQualityRatingSum = userRatings.reduce((sum, rating) => sum + rating.image_quality_rating, 0);

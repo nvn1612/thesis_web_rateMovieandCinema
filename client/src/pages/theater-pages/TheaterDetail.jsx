@@ -38,6 +38,7 @@ export const TheaterDetail = () => {
   const [totalRating, setTotalRating] = useState(0);
   const [totalNumberRating, setTotalNumberRating] = useState(0);
   const [isRank, setIsRank] = useState(0);
+  const [likeCount, setLikeCount] = useState(0);
 
   useEffect(() => {
     const getTheatersRank = async () => {
