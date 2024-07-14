@@ -22,6 +22,8 @@ import { CountRate } from "../../components/count-rate/CountRate";
 import { DetailRateUser } from "../../components/detail-rate-user/DetailRateUser";
 import { ModalCompletedRate } from "../../components/modal-completed-rate/ModalCompletedRate";
 import { BtnHelfulRate } from "../../components/btn-helpful-rate/BtnHelpfulRate";
+import { Spinner } from "../../components/spinner/Spinner";
+
 export const MovieDetail = () => {
   const [isTrailerOpen, setIsTrailerOpen] = useState(false);
   const [isRateModalOpen, setIsRateModalOpen] = useState(false);
@@ -41,6 +43,22 @@ export const MovieDetail = () => {
   const [isCompletedModalOpen, setIsCompletedModalOpen] = useState(false);
   const [isRank, setIsRank] = useState(0);
   const { id } = useParams();
+  const [likeCounts, setLikeCounts] = useState({});
+  const [loading, setLoading] = useState(true);
+
+
+
+  const fetchLikeCount = async (movieRatingId) => {
+    try {
+      const response = await axios.get(`/movie-rating/get-movie-rating-like-count/${movieRatingId}`);
+      return response.data.likeCount;
+      
+    } catch (error) {
+      console.error('Có lỗi xảy ra khi lấy số lượng lượt thích:', error);
+      return 0;
+    }
+  };
+
 
   useEffect(() => {
     const getMoviesRank = async () => {
@@ -62,8 +80,10 @@ export const MovieDetail = () => {
       try {
         const response = await axios.get(`/movie/getmovie/${id}`);
         setMovie(response.data);
+        setLoading(false);
       } catch (error) {
         console.error("Có lỗi xảy ra", error);
+        setLoading(false);
       }
     };
 
@@ -105,6 +125,7 @@ export const MovieDetail = () => {
         settotalNumberRating(ratingsData.totalNumberRating);
 
         const usersData = {};
+        const likeCounts = {};
         await Promise.all(
           ratingsData.userRatings
             .concat(ratingsData.expertRatings)
@@ -115,11 +136,15 @@ export const MovieDetail = () => {
                 );
                 usersData[rating.user_id] = userResponse.data;
               }
+              likeCounts[rating.movie_rating_id] = await fetchLikeCount(rating.movie_rating_id);
             })
         );
         setUsers(usersData);
+        setLikeCounts(likeCounts);
+        setLoading(false);
       } catch (error) {
         console.error("Có lỗi xảy ra", error);
+        setLoading(false);
       }
     };
 
@@ -160,10 +185,9 @@ export const MovieDetail = () => {
     setIsCompletedModalOpen(false);
   };
 
-  if (!movie) {
-    return <div>Loading...</div>;
+  if (loading) {
+    return <Spinner />;
   }
-
   const currentRatings = isUserRatings ? userRatings : expertRatings;
   const currentAverageRatings = isUserRatings
     ? averageUserRatings
@@ -414,7 +438,7 @@ export const MovieDetail = () => {
                               {new Date(rating.created_at).toLocaleDateString()}
                             </div>
                           </div>
-                          {isUserRatings && index === 0 && (
+                          {isUserRatings && index === 0 && likeCounts[rating.movie_rating_id] >= 10 &&(
                             <div>
                               <FontAwesomeIcon
                                 className="text-yellow-500"

@@ -27,11 +27,13 @@ const addMovieRating = async (req, res) => {
   const countWords = (text) => {
     return text.trim().split(/\s+/).length;
   };
-  if (containsBlacklistedWords(comment)) {
-    return res.status(400).json({ error_code: 'BLACKLISTED_WORDS' });
-  }
-  if (countWords(comment) < MIN_WORD_COUNT) {
-    return res.status(400).json({ error_code: 'COMMENT_TOO_SHORT' });
+  if (comment && comment.trim() !== '') {
+    if (containsBlacklistedWords(comment)) {
+      return res.status(400).json({ error_code: 'BLACKLISTED_WORDS' });
+    }
+    if (countWords(comment) < MIN_WORD_COUNT) {
+      return res.status(400).json({ error_code: 'COMMENT_TOO_SHORT' });
+    }
   }
 
   if (!hasMinimumRating([

@@ -20,9 +20,12 @@ import { DetailRateUser } from "../../components/detail-rate-user/DetailRateUser
 import { ModalCompletedRate } from "../../components/modal-completed-rate/ModalCompletedRate";
 import { BtnHelfulRate } from "../../components/btn-helpful-rate/BtnHelpfulRate";
 import { Footer } from "../../layouts/footer/Footer";
+import { Spinner } from "../../components/spinner/Spinner";
+
 
 export const TheaterDetail = () => {
   const { id } = useParams();
+  const [loading, setLoading] = useState(true);
   const [theater, setTheater] = useState(null);
   const [isRateModalOpen, setIsRateModalOpen] = useState(false);
   const [userRatings, setUserRatings] = useState([]);
@@ -38,7 +41,18 @@ export const TheaterDetail = () => {
   const [totalRating, setTotalRating] = useState(0);
   const [totalNumberRating, setTotalNumberRating] = useState(0);
   const [isRank, setIsRank] = useState(0);
-  const [likeCount, setLikeCount] = useState(0);
+  const [likeCounts, setLikeCounts] = useState({});
+
+
+  const fetchLikeCount = async (theaterRatingId) => {
+    try {
+      const response = await axios.get(`/theater-rating/get-theater-rating-like-count/${theaterRatingId}`);
+      return response.data.likeCount;
+    } catch (error) {
+      console.error('Có lỗi xảy ra khi lấy số lượng lượt thích:', error);
+      return 0;
+    }
+  };
 
   useEffect(() => {
     const getTheatersRank = async () => {
@@ -63,8 +77,10 @@ export const TheaterDetail = () => {
       try {
         const response = await axios.get(`/movie-theater/gettheater/${id}`);
         setTheater(response.data);
+        setLoading(false);
       } catch (error) {
         console.error("Có lỗi xảy ra", error);
+        setLoading(false);
       }
     };
 
@@ -82,8 +98,7 @@ export const TheaterDetail = () => {
           averageSoundQualityRating: ratingsData.averageUserSoundQualityRating,
           averageSeatingRating: ratingsData.averageUserSeatingRating,
           averageTheaterSpaceRating: ratingsData.averageUserTheaterSpaceRating,
-          averageCustomerServiceRating:
-            ratingsData.averageUserCustomerServiceRating,
+          averageCustomerServiceRating:ratingsData.averageUserCustomerServiceRating,
           averageTicketPriceRating: ratingsData.averageUserTicketPriceRating,
         });
 
@@ -107,6 +122,7 @@ export const TheaterDetail = () => {
         setTotalNumberRating(ratingsData.totalNumberRating);
 
         const usersData = {};
+        const likeCounts = {};
         await Promise.all(
           ratingsData.userRatings
             .concat(ratingsData.expertRatings)
@@ -117,11 +133,15 @@ export const TheaterDetail = () => {
                 );
                 usersData[rating.user_id] = userResponse.data;
               }
+              likeCounts[rating.theater_rating_id] = await fetchLikeCount(rating.theater_rating_id);
             })
         );
         setUsers(usersData);
+        setLikeCounts(likeCounts);
+        setLoading(false);
       } catch (error) {
         console.error("Có lỗi xảy ra", error);
+        setLoading(false);
       }
     };
 
@@ -154,8 +174,8 @@ export const TheaterDetail = () => {
     setIsCompletedModalOpen(false);
   };
 
-  if (!theater) {
-    return <div>Loading...</div>;
+  if (loading) {
+    return <Spinner />;
   }
 
   const currentRatings = isUserRatings ? userRatings : expertRatings;
@@ -365,7 +385,7 @@ export const TheaterDetail = () => {
                                 ).toLocaleDateString()}
                               </div>
                             </div>
-                            {isUserRatings && index === 0 && (
+                            {isUserRatings && index === 0 && likeCounts[rating.theater_rating_id] >= 10&&(
                               <div>
                                 <FontAwesomeIcon
                                   className="text-yellow-500"
@@ -409,7 +429,7 @@ export const TheaterDetail = () => {
                 {visibleRatingsCount < currentRatings.length && (
                   <button
                     onClick={handleLoadMoreRatings}
-                    className="p-2 m-2 border border-black rounded-xl bg-green-500 text-white"
+                    className="self-center p-2 border rounded-xl hover:bg-gray-300 transition"
                   >
                     Xem thêm
                   </button>

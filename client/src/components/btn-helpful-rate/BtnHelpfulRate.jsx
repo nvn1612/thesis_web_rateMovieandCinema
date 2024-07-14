@@ -4,9 +4,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faThumbsUp } from '@fortawesome/free-solid-svg-icons';
 import UserContext from "../../context/UserContext";
 
-export const BtnHelfulRate = ({ ratingId, isMovie }) => {
+export const BtnHelfulRate = ({ ratingId, isMovie  }) => {
   const [isClicked, setIsClicked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
+
+
   const { user } = useContext(UserContext);
 
   const apiBase = isMovie ? '/movie-rating' : '/theater-rating';
@@ -28,6 +30,7 @@ export const BtnHelfulRate = ({ ratingId, isMovie }) => {
     const fetchLikeCount = async () => {
       try {
         const response = await axios.get(`${apiBase}/get-${isMovie ? 'movie' : 'theater'}-rating-like-count/${ratingId}`);
+        console.log(response.data.likeCount);
         setLikeCount(response.data.likeCount);
       } catch (error) {
         console.error('Error fetching like count:', error);
