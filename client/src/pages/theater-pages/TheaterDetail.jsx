@@ -22,7 +22,6 @@ import { BtnHelfulRate } from "../../components/btn-helpful-rate/BtnHelpfulRate"
 import { Footer } from "../../layouts/footer/Footer";
 import { Spinner } from "../../components/spinner/Spinner";
 
-
 export const TheaterDetail = () => {
   const { id } = useParams();
   const [loading, setLoading] = useState(true);
@@ -43,13 +42,14 @@ export const TheaterDetail = () => {
   const [isRank, setIsRank] = useState(0);
   const [likeCounts, setLikeCounts] = useState({});
 
-
   const fetchLikeCount = async (theaterRatingId) => {
     try {
-      const response = await axios.get(`/theater-rating/get-theater-rating-like-count/${theaterRatingId}`);
+      const response = await axios.get(
+        `/theater-rating/get-theater-rating-like-count/${theaterRatingId}`
+      );
       return response.data.likeCount;
     } catch (error) {
-      console.error('Có lỗi xảy ra khi lấy số lượng lượt thích:', error);
+      console.error("Có lỗi xảy ra khi lấy số lượng lượt thích:", error);
       return 0;
     }
   };
@@ -98,7 +98,8 @@ export const TheaterDetail = () => {
           averageSoundQualityRating: ratingsData.averageUserSoundQualityRating,
           averageSeatingRating: ratingsData.averageUserSeatingRating,
           averageTheaterSpaceRating: ratingsData.averageUserTheaterSpaceRating,
-          averageCustomerServiceRating:ratingsData.averageUserCustomerServiceRating,
+          averageCustomerServiceRating:
+            ratingsData.averageUserCustomerServiceRating,
           averageTicketPriceRating: ratingsData.averageUserTicketPriceRating,
         });
 
@@ -133,7 +134,9 @@ export const TheaterDetail = () => {
                 );
                 usersData[rating.user_id] = userResponse.data;
               }
-              likeCounts[rating.theater_rating_id] = await fetchLikeCount(rating.theater_rating_id);
+              likeCounts[rating.theater_rating_id] = await fetchLikeCount(
+                rating.theater_rating_id
+              );
             })
         );
         setUsers(usersData);
@@ -189,8 +192,8 @@ export const TheaterDetail = () => {
   return (
     <>
       <Header />
-      <div className="h-[400px] bg-slate-300">
-        <div className="flex h-full">
+      <div className="h-screen">
+        <div className="flex min-h-[400px] bg-slate-300">
           <div className="w-2/5 h-full">
             <div className="flex justify-center items-center h-full">
               <img
@@ -200,7 +203,7 @@ export const TheaterDetail = () => {
               />
             </div>
           </div>
-          <div className="flex flex-col mt-4 space-y-3 w-3/5 h-full">
+          <div className="flex flex-col mt-4 space-y-3 w-3/5 h-full ">
             <div className="flex space-x-2 items-center">
               <p className="text-4xl font-bold uppercase">
                 {theater.theater_name}
@@ -236,7 +239,9 @@ export const TheaterDetail = () => {
                 </div>
                 <div className="flex justify-center">
                   <p className="text-white">
-                    {isRank >= 7 ? (
+                    {currentRatings.length === 0 ? (
+                      <p className="text-black">Chưa có xếp hạng</p>
+                    ) : isRank >= 7 ? (
                       <p className="text-green-500">Cao</p>
                     ) : isRank >= 5 ? (
                       <p className="text-orange-500">Trung bình</p>
@@ -268,7 +273,6 @@ export const TheaterDetail = () => {
             </div>
           </div>
         </div>
-
         <div className="bg-slate-200 min-h-screen flex justify-center">
           <div className="absolute left-0 top-50 p-4 flex flex-col">
             <button
@@ -385,17 +389,19 @@ export const TheaterDetail = () => {
                                 ).toLocaleDateString()}
                               </div>
                             </div>
-                            {isUserRatings && index === 0 && likeCounts[rating.theater_rating_id] >= 10&&(
-                              <div>
-                                <FontAwesomeIcon
-                                  className="text-yellow-500"
-                                  icon={faCrown}
-                                />
-                                <span className="ml-1 p-1 bg-yellow-400 rounded-lg text-white">
-                                  Đáng giá hữu ích nhất
-                                </span>
-                              </div>
-                            )}
+                            {isUserRatings &&
+                              index === 0 &&
+                              likeCounts[rating.theater_rating_id] >= 10 && (
+                                <div>
+                                  <FontAwesomeIcon
+                                    className="text-yellow-500"
+                                    icon={faCrown}
+                                  />
+                                  <span className="ml-1 p-1 bg-yellow-400 rounded-lg text-white">
+                                    Đáng giá hữu ích nhất
+                                  </span>
+                                </div>
+                              )}
                             {isUserRatings && (
                               <div>
                                 <BtnHelfulRate

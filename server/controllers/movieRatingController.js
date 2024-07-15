@@ -209,10 +209,6 @@ const getMovieRatings = async (req, res) => {
 };
 
 
-
-
-
-
 const getMovieRatingById = async (req, res) => {
   const { movie_rating_id } = req.params;
   try {

@@ -195,19 +195,39 @@ const getAllCountries = async (req, res) => {
 const deleteMovie = async (req, res) => {
   const { id } = req.params;
   try {
+    const movie = await prisma.movies.findUnique({
+      where: { movie_id: Number(id) },
+      select: {
+        poster_image: true,
+        backdrop_image: true,
+      },
+    });
+
+    if (!movie) {
+      return res.status(404).json({ error: "Movie not found" });
+    }
     await prisma.movie_genres.deleteMany({
       where: {
-        movie_id: Number(id)
-      }
+        movie_id: Number(id),
+      },
     });
-
     const deletedMovie = await prisma.movies.delete({
-      where: { movie_id: Number(id) }
+      where: { movie_id: Number(id) },
     });
+    if (movie.poster_image) {
+      fs.unlink(movie.poster_image, (err) => {
+        if (err) console.log(`Error deleting poster image: ${err.message}`);
+      });
+    }
 
+    if (movie.backdrop_image) {
+      fs.unlink(movie.backdrop_image, (err) => {
+        if (err) console.log(`Error deleting backdrop image: ${err.message}`);
+      });
+    }
     res.status(200).json(deletedMovie);
   } catch (error) {
-    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
+    if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
       res.status(404).json({ error: "Movie not found" });
     } else {
       res.status(500).json({ error: error.message });
@@ -236,8 +256,8 @@ const updateMovie = async (req, res) => {
       });
 
       if (!existingMovie) {
-        if (posterImagePath) fs.unlinkSync(posterImagePath);
-        if (backdropImagePath) fs.unlinkSync(backdropImagePath);
+        if (posterImagePath && fs.existsSync(posterImagePath)) fs.unlinkSync(posterImagePath);
+        if (backdropImagePath && fs.existsSync(backdropImagePath)) fs.unlinkSync(backdropImagePath);
         return res.status(404).json({ error: 'Movie not found' });
       }
 
@@ -269,20 +289,21 @@ const updateMovie = async (req, res) => {
         }
       });
 
-      if (posterImagePath && existingMovie.poster_image) fs.unlinkSync(existingMovie.poster_image);
-      if (backdropImagePath && existingMovie.backdrop_image) fs.unlinkSync(existingMovie.backdrop_image);
+      if (posterImagePath && existingMovie.poster_image && fs.existsSync(existingMovie.poster_image)) fs.unlinkSync(existingMovie.poster_image);
+      if (backdropImagePath && existingMovie.backdrop_image && fs.existsSync(existingMovie.backdrop_image)) fs.unlinkSync(existingMovie.backdrop_image);
 
       res.json(updatedMovie);
     } catch (error) {
       console.log(error);
 
-      if (posterImagePath) fs.unlinkSync(posterImagePath);
-      if (backdropImagePath) fs.unlinkSync(backdropImagePath);
+      if (posterImagePath && fs.existsSync(posterImagePath)) fs.unlinkSync(posterImagePath);
+      if (backdropImagePath && fs.existsSync(backdropImagePath)) fs.unlinkSync(backdropImagePath);
 
       res.status(500).json({ error: 'Có lỗi xảy ra' });
     }
   });
 };
+
 const getTotalMovies = async (req, res) => {
   try {
     const totalMovies = await prisma.movies.count();

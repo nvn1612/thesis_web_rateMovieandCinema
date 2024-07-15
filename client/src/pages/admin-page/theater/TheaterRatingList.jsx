@@ -7,6 +7,7 @@ import { UserRatingSelect } from "../../../components/select-box/UserRatingSelec
 import { useParams } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
 import { CompletedModal } from '../../../components/Completed-modal/CompletedModal';
+import { Spinner } from "../../../components/spinner/Spinner";
 
 
 export const TheaterRatingList = () => {
@@ -96,7 +97,7 @@ export const TheaterRatingList = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Spinner />;
   }
   const closeModal = () => {
     setShowCompletedModal(false);

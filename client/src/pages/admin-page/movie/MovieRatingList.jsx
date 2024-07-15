@@ -7,6 +7,7 @@ import { UserRatingSelect } from "../../../components/select-box/UserRatingSelec
 import { useParams } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
 import { CompletedModal } from '../../../components/Completed-modal/CompletedModal';
+import { Spinner } from "../../../components/spinner/Spinner";
 
 export const MovieRatingList = () => {
   const [ratings, setRatings] = useState([]);
@@ -63,9 +64,9 @@ export const MovieRatingList = () => {
     fetchRatings();
   }, [movieId]);
 
-  const handleUserChange = (user) => {
-    setSelectedUser(user);
-  };
+    // const handleUserChange = (user) => {
+    //   setSelectedUser(user);
+    // };
 
   const handleDeleteRating = async (movie_rating_id) => {
     try {
@@ -99,7 +100,7 @@ export const MovieRatingList = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Spinner />;
   }
   const closeModal = () => {
     setShowCompletedModal(false);

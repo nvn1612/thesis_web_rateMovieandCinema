@@ -46,19 +46,17 @@ export const MovieDetail = () => {
   const [likeCounts, setLikeCounts] = useState({});
   const [loading, setLoading] = useState(true);
 
-
-
   const fetchLikeCount = async (movieRatingId) => {
     try {
-      const response = await axios.get(`/movie-rating/get-movie-rating-like-count/${movieRatingId}`);
+      const response = await axios.get(
+        `/movie-rating/get-movie-rating-like-count/${movieRatingId}`
+      );
       return response.data.likeCount;
-      
     } catch (error) {
-      console.error('Có lỗi xảy ra khi lấy số lượng lượt thích:', error);
+      console.error("Có lỗi xảy ra khi lấy số lượng lượt thích:", error);
       return 0;
     }
   };
-
 
   useEffect(() => {
     const getMoviesRank = async () => {
@@ -136,7 +134,9 @@ export const MovieDetail = () => {
                 );
                 usersData[rating.user_id] = userResponse.data;
               }
-              likeCounts[rating.movie_rating_id] = await fetchLikeCount(rating.movie_rating_id);
+              likeCounts[rating.movie_rating_id] = await fetchLikeCount(
+                rating.movie_rating_id
+              );
             })
         );
         setUsers(usersData);
@@ -187,6 +187,9 @@ export const MovieDetail = () => {
 
   if (loading) {
     return <Spinner />;
+  }
+  if (!movie) {
+    return <p>Không thể tải thông tin phim.</p>;
   }
   const currentRatings = isUserRatings ? userRatings : expertRatings;
   const currentAverageRatings = isUserRatings
@@ -311,13 +314,15 @@ export const MovieDetail = () => {
                     <p className="text-white">Xếp hạng</p>
                   </div>
                   <div className="flex justify-center">
-                      {isRank >= 7 ? (
-                          <p className="text-green-500">Cao</p>
-                        ) : isRank >= 5 ? (
-                          <p className="text-orange-500">Trung bình</p>
-                        ) : (
-                          <p className="text-red-500">Thấp</p>
-                        )}
+                    {currentRatings.length === 0 ? (
+                      <p className="text-white">Chưa có xếp hạng</p>
+                    ) : isRank >= 7 ? (
+                      <p className="text-green-500">Cao</p>
+                    ) : isRank >= 5 ? (
+                      <p className="text-orange-500">Trung bình</p>
+                    ) : (
+                      <p className="text-red-500">Thấp</p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -438,17 +443,19 @@ export const MovieDetail = () => {
                               {new Date(rating.created_at).toLocaleDateString()}
                             </div>
                           </div>
-                          {isUserRatings && index === 0 && likeCounts[rating.movie_rating_id] >= 10 &&(
-                            <div>
-                              <FontAwesomeIcon
-                                className="text-yellow-500"
-                                icon={faCrown}
-                              />
-                              <span className="ml-1 p-1 bg-yellow-400 rounded-lg text-white">
-                                Đáng giá hữu ích nhất
-                              </span>
-                            </div>
-                          )}
+                          {isUserRatings &&
+                            index === 0 &&
+                            likeCounts[rating.movie_rating_id] >= 10 && (
+                              <div>
+                                <FontAwesomeIcon
+                                  className="text-yellow-500"
+                                  icon={faCrown}
+                                />
+                                <span className="ml-1 p-1 bg-yellow-400 rounded-lg text-white">
+                                  Đáng giá hữu ích nhất
+                                </span>
+                              </div>
+                            )}
 
                           {isUserRatings && (
                             <div>

@@ -5,6 +5,7 @@ import axios from "axios";
 import UserContext from "../../context/UserContext";
 import { useNavigate } from "react-router-dom";
 import { CompletedModal } from "../../components/Completed-modal/CompletedModal";
+import { Spinner } from "../../components/spinner/Spinner";
 export const UserRatedMovies = () => {
   const [showCompletedModal, setShowCompletedModal] = useState(false);
   const navigate = useNavigate();
@@ -73,7 +74,7 @@ export const UserRatedMovies = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Spinner />;
   }
   const closeModal = () => {
     setShowCompletedModal(false);
@@ -184,8 +185,6 @@ export const UserRatedMovies = () => {
         ) : (
           <p>Chọn 1 đánh giá để xem chi tiết</p>
         )}
-  
-
       <div>
         <div className="flex flex-col mb-4">
           <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -233,7 +232,7 @@ export const UserRatedMovies = () => {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm text-gray-900">
-                            {rating.total_rating}
+                            {(rating.total_rating).toFixed(2)}
                           </div>
                         </td>
                       </tr>

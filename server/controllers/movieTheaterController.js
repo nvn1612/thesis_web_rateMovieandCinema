@@ -139,7 +139,7 @@ const updateTheater = async (req, res) => {
 
       if (!existingTheater) {
         [theaterLogoPath, theaterImage1Path, theaterImage2Path].forEach((path) => {
-          if (path) fs.unlinkSync(path);
+          if (path && fs.existsSync(path)) fs.unlinkSync(path);
         });
         return res.status(404).json({ error: 'Movie theater not found.' });
       }
@@ -159,7 +159,7 @@ const updateTheater = async (req, res) => {
 
       [theaterLogoPath, theaterImage1Path, theaterImage2Path].forEach((path, index) => {
         const existingPath = index === 0 ? existingTheater.theater_logo : index === 1 ? existingTheater.theater_image_1 : existingTheater.theater_image_2;
-        if (path && existingPath) fs.unlinkSync(existingPath);
+        if (path && existingPath && fs.existsSync(existingPath)) fs.unlinkSync(existingPath);
       });
 
       res.json(updatedTheater);
@@ -167,7 +167,7 @@ const updateTheater = async (req, res) => {
       console.log(error);
 
       [theaterLogoPath, theaterImage1Path, theaterImage2Path].forEach((path) => {
-        if (path) fs.unlinkSync(path);
+        if (path && fs.existsSync(path)) fs.unlinkSync(path);
       });
 
       res.status(500).json({ error: 'An error occurred while updating the movie theater.' });
@@ -178,6 +178,18 @@ const updateTheater = async (req, res) => {
 const deleteTheater = async (req, res) => {
   const { id } = req.params;
   try {
+    const theater = await prisma.movie_theaters.findUnique({
+      where: { theater_id: parseInt(id) }
+    });
+
+    if (!theater) {
+      return res.status(404).json({ error: 'Movie theater not found.' });
+    }
+    [theater.theater_logo, theater.theater_image_1, theater.theater_image_2].forEach((path) => {
+      if (path && fs.existsSync(path)) {
+        fs.unlinkSync(path);
+      }
+    });
     const deletedTheater = await prisma.movie_theaters.delete({
       where: { theater_id: parseInt(id) }
     });
@@ -192,6 +204,7 @@ const deleteTheater = async (req, res) => {
     }
   }
 };
+
 const getTotalTheaters = async (req, res) => {
   try {
     const totalTheaters = await prisma.movie_theaters.count();

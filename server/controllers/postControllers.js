@@ -177,14 +177,29 @@ const getCommentsByPostId = async (req, res) => {
 const deletePost = async (req, res) => {
   const { postId } = req.params;
   try {
+    const post = await prisma.posts.findUnique({
+      where: { post_id: Number(postId) },
+    });
+
+    if (!post) {
+      return res.status(404).json({ error: 'Post not found' });
+    }
+
     const deletedPost = await prisma.posts.delete({
       where: { post_id: Number(postId) },
     });
+
+    if (post.image_post) {
+      fs.unlinkSync(post.image_post);
+      console.log(`Deleted file: ${post.image_post}`);
+    }
+
     res.json(deletedPost);
   } catch (error) {
     res.status(500).json({ error: 'Could not delete post' });
   }
 };
+
 
 const deleteComment = async (req, res) => {
   const { commentId } = req.params;

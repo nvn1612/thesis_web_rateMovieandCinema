@@ -300,7 +300,21 @@ const createUser = async (req, res) => {
 const deleteUser = async (req, res) => {
   const { id } = req.params;
   try {
+    const user = await prisma.users.findUnique({ 
+      where: { user_id: Number(id) } 
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
     const deletedUser = await prisma.users.delete({ where: { user_id: Number(id) } });
+
+    if (user.avatar) {
+      fs.unlinkSync(user.avatar);
+      console.log(`Deleted file: ${user.avatar}`);
+    }
+
     res.status(200).json(deletedUser);
   } catch (error) {
     if (error instanceof PrismaClientKnownRequestError && error.code === 'p2025') {
@@ -311,6 +325,7 @@ const deleteUser = async (req, res) => {
   }
 };
 
+
 const updateUser = async (req, res) => {
   uploadUserImage(req, res, async (err) => {
     if (err) {
@@ -318,39 +333,43 @@ const updateUser = async (req, res) => {
       return res.status(400).json({ error: 'Error uploading files.' });
     }
 
-    const { name, address, phone_number,is_Admin, is_expert,is_active  } = req.body;
+    const { name, address, phone_number, is_Admin, is_expert, is_active } = req.body;
     const { user_id } = req.params;
     const avatarPath = req.file ? req.file.path : null;
     const isAdminBool = is_Admin === 'true';
     const isExpertBool = is_expert === 'true';
     const isActiveBool = is_active === 'true';
 
-
     if (phone_number && !(/^\d{1,11}$/.test(phone_number))) {
       return res.status(400).json({ error: 'Số điện thoại không hợp lệ !' });
     }
+
     try {
       const oldUser = await prisma.users.findUnique({
         where: { user_id: Number(user_id) },
       });
+
+      if (!oldUser) {
+        if (avatarPath && fs.existsSync(avatarPath)) fs.unlinkSync(avatarPath);
+        return res.status(404).json({ error: 'User not found' });
+      }
 
       const oldAvatarPath = oldUser.avatar;
 
       const updatedUser = await prisma.users.update({
         where: { user_id: Number(user_id) },
         data: {
-          name:name,
-          address: address,
-          phone_number: phone_number,
-          avatar: avatarPath,
+          name,
+          address,
+          phone_number,
+          avatar: avatarPath || oldAvatarPath,
           is_Admin: isAdminBool,
           is_expert: isExpertBool,
           is_active: isActiveBool,
-
         },
       });
 
-      if (avatarPath && oldAvatarPath) {
+      if (avatarPath && oldAvatarPath && fs.existsSync(oldAvatarPath)) {
         fs.unlinkSync(oldAvatarPath);
         console.log(`Deleted old avatar: ${oldAvatarPath}`);
       }
@@ -359,7 +378,7 @@ const updateUser = async (req, res) => {
     } catch (error) {
       console.log(error);
 
-      if (avatarPath) {
+      if (avatarPath && fs.existsSync(avatarPath)) {
         fs.unlinkSync(avatarPath);
         console.log(`Deleted file: ${avatarPath}`);
       }
@@ -367,7 +386,7 @@ const updateUser = async (req, res) => {
       res.status(500).json({ error: 'Có lỗi xảy ra' });
     }
   });
-};
+}
 
 const getUserRatings = async (req, res) => {
   const { user_id } = req.params;

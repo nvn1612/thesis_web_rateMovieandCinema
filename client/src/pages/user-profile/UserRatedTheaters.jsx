@@ -5,7 +5,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import UserContext from "../../context/UserContext";
 import { CompletedModal } from "../../components/Completed-modal/CompletedModal";
-
+import { Spinner } from "../../components/spinner/Spinner";
 export const UserRatedTheaters = () => {
   const [showCompletedModal, setShowCompletedModal] = useState(false);
   const navigate = useNavigate();
@@ -74,7 +74,7 @@ export const UserRatedTheaters = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Spinner />;
   }
   const closeModal = () => {
     setShowCompletedModal(false);
@@ -233,7 +233,7 @@ export const UserRatedTheaters = () => {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm text-gray-900">
-                            {rating.total_rating}
+                            {(rating.total_rating).toFixed(2)}
                           </div>
                         </td>
                       

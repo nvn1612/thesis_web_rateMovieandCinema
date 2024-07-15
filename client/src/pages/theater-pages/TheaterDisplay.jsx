@@ -8,7 +8,6 @@ import { faMap } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 import theaterBg from '../../assets/images/CinemaBG.jpg';
 import { SearchInput } from '../../components/search-input/SearchInput';
-import { TheaterLeverSelect } from '../../components/select-box/TheaterLeverSelect';
 import { RegionSelect } from '../../components/select-box/RegionSelect';
 
 export const TheaterDisplay = () => {
@@ -102,6 +101,9 @@ export const TheaterDisplay = () => {
 
     return pageNumbers;
   };
+  if (!theaters) {
+    return <p>Không thể tải thông tin rạp chiếu.</p>;
+  }
 
   return (
     <div className="flex flex-col h-screen">
@@ -116,7 +118,6 @@ export const TheaterDisplay = () => {
           <div className="w-3/5 h-full bg-white overflow-auto">
             <div className="flex space-x-3 mt-2 ml-2">
                 <SearchInput onSearch={handleSearchTheaters} contentSearch={"Tìm kiếm theo tên rạp chiếu"}/>
-                <TheaterLeverSelect/>
                 <RegionSelect onRegionChange={handleRegionChange}/>
             </div>
             <div className="flex flex-col m-4">
