@@ -54,23 +54,23 @@ export const TheaterDetail = () => {
     }
   };
 
-  useEffect(() => {
-    const getTheatersRank = async () => {
-      try {
-        const response = await axios.get(
-          `/theater-rating/get-theater-bayes-rating/${id}`
-        );
-        setIsRank(response.data.bayesAverageRating);
-      } catch (error) {
-        console.error(
-          "Có lỗi xảy ra khi lấy dữ liệu xếp hạng rạp chiếu phim:",
-          error
-        );
-      }
-    };
+  // useEffect(() => {
+  //   const getTheatersRank = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         `/theater-rating/get-theater-bayes-rating/${id}`
+  //       );
+  //       setIsRank(response.data.bayesAverageRating);
+  //     } catch (error) {
+  //       console.error(
+  //         "Có lỗi xảy ra khi lấy dữ liệu xếp hạng rạp chiếu phim:",
+  //         error
+  //       );
+  //     }
+  //   };
 
-    getTheatersRank();
-  }, []);
+  //   getTheatersRank();
+  // }, []);
 
   useEffect(() => {
     const fetchTheater = async () => {
@@ -195,7 +195,7 @@ export const TheaterDetail = () => {
       <div className="h-screen">
         <div className="flex min-h-[400px] bg-slate-300">
           <div className="w-2/5 h-full">
-            <div className="flex justify-center items-center h-full">
+            <div className="flex justify-center items-center h-full mt-5">
               <img
                 src={`/${theater.theater_logo}`}
                 alt={theater.theater_name}
@@ -214,15 +214,17 @@ export const TheaterDetail = () => {
             </div>
             <div className="flex space-x-5">
               <BtnRate onClick={handleOpenRateModal} />
+              {expertRatings.length > 0 ? (
               <div className="flex flex-col">
                 <div className="flex items-center space-x-1">
-                  <p>Tổng đánh giá</p>
+                  <p>Tổng số lượng đánh giá</p>
                   <FontAwesomeIcon icon={faThumbsUp} />
                 </div>
                 <div className="flex justify-center font-bold">
                   <p>{Math.round((totalRating / 10) * 100)} %</p>
                 </div>
               </div>
+              ):null}
               <div className="flex flex-col">
                 <div className="flex space-x-2 items-center">
                   <FontAwesomeIcon className="text-black" icon={faCalculator} />
@@ -232,25 +234,25 @@ export const TheaterDetail = () => {
                   <p className="text-black">{totalNumberRating}</p>
                 </div>
               </div>
-              <div className="flex flex-col">
-                <div className="flex space-x-2 items-center">
-                  <FontAwesomeIcon className="text-black" icon={faFaceSmile} />
-                  <p className="text-black">Xếp hạng</p>
-                </div>
-                <div className="flex justify-center">
-                  <p className="text-white">
-                    {currentRatings.length === 0 ? (
-                      <p className="text-black">Chưa có xếp hạng</p>
-                    ) : isRank >= 7 ? (
-                      <p className="text-green-500">Cao</p>
-                    ) : isRank >= 5 ? (
-                      <p className="text-orange-500">Trung bình</p>
-                    ) : (
-                      <p className="text-red-500">Thấp</p>
-                    )}
-                  </p>
-                </div>
-              </div>
+                {/* <div className="flex flex-col">
+                  <div className="flex space-x-2 items-center">
+                    <FontAwesomeIcon className="text-black" icon={faFaceSmile} />
+                    <p className="text-black">Xếp hạng</p>
+                  </div>
+                  <div className="flex justify-center">
+                    <p className="text-white">
+                      {currentRatings.length === 0 ? (
+                        <p className="text-black">Chưa có xếp hạng</p>
+                      ) : isRank >= 7 ? (
+                        <p className="text-green-500">Cao</p>
+                      ) : isRank >= 5 ? (
+                        <p className="text-orange-500">Trung bình</p>
+                      ) : (
+                        <p className="text-red-500">Thấp</p>
+                      )}
+                    </p>
+                  </div>
+                </div> */}
             </div>
             <div className="flex space-x-2 items-center">
               <FontAwesomeIcon icon={faMap} />

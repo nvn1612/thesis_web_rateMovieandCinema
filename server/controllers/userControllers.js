@@ -511,6 +511,10 @@ const getUserRegistrationsPerMonth = async (req, res) => {
   try {
     const registrations = await prisma.users.groupBy({
       by: ['createdAt'],
+      where: {
+        is_Admin: false,
+        is_expert: false,
+      },
       _count: {
         user_id: true,
       },

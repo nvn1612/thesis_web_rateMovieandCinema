@@ -52,9 +52,9 @@ export const MovieRank = () => {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Trung bình điểm
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Xếp hạng
-                    </th>
+                    </th> */}
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
@@ -81,7 +81,7 @@ export const MovieRank = () => {
                       <td className="px-6 py-4 whitespace-nowrap">
                         {movie.bayesAverageRating}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      {/* <td className="px-6 py-4 whitespace-nowrap">
                         {movie.bayesAverageRating >= 7 ? (
                           <p className="text-green-500">Cao</p>
                         ) : movie.bayesAverageRating >= 5 ? (
@@ -89,7 +89,7 @@ export const MovieRank = () => {
                         ) : (
                           <p className="text-red-500">Thấp</p>
                         )}
-                      </td>
+                      </td> */}
                     </tr>
                   ))}
                 </tbody>

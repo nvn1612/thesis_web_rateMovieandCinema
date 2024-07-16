@@ -131,7 +131,7 @@ export const ModalRateMovie = ({
             <ImageContent
               width="w-[200px]"
               height="h-[290px]"
-              size_rounded="xl"
+              size_rounded="lg"
               image={posterUrl}
             />
           </div>

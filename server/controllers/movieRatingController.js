@@ -268,7 +268,7 @@ const getMovieRatingsForAdmin = async (req, res) => {
 
 
 const getMoviesWithBayesRating = async (req, res) => {
-  const MIN_RATINGS_REQUIRED = 20; 
+  const MIN_RATINGS_REQUIRED = 10; 
   try {
     const movies = await prisma.movies.findMany({
       include: {

@@ -97,9 +97,9 @@ export const ModalRateCinema = ({ isOpen, onClose, theaterId, theaterName, theat
             <>
               <div className="w-2/4 flex justify-center">
                 <ImageContent
-                  width="w-[200px]"
-                  height="h-[290px]"
-                  size_rounded="xl"
+                  width="w-[300px]"
+                  height="h-[300px]"
+                  size_rounded="full"
                   image={theaterImageUrl}
                 />
               </div>

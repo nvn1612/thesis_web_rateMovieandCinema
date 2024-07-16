@@ -24,7 +24,7 @@ export const ContentModalRate = ({
         ) : (
           <>
             <StarRate label="Chất lượng hình ảnh" rating={ratings.image_quality_rating} setRating={(rating) => setRatings(prev => ({...prev, image_quality_rating: rating}))} />
-            <StarRate label="Chất lượng Âm thanh" rating={ratings.sound_quality_rating} setRating={(rating) => setRatings(prev => ({...prev, sound_quality_rating: rating}))} />
+            <StarRate label="Chất lượng âm thanh" rating={ratings.sound_quality_rating} setRating={(rating) => setRatings(prev => ({...prev, sound_quality_rating: rating}))} />
             <StarRate label="Ghế ngồi" rating={ratings.seating_rating} setRating={(rating) => setRatings(prev => ({...prev, seating_rating: rating}))} />
             <StarRate label="Không gian rạp" rating={ratings.theater_space_rating} setRating={(rating) => setRatings(prev => ({...prev, theater_space_rating: rating}))} />
             <StarRate label="Dịch vụ khách hàng" rating={ratings.customer_service_rating} setRating={(rating) => setRatings(prev => ({...prev, customer_service_rating: rating}))} />

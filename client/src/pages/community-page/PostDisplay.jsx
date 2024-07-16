@@ -229,9 +229,9 @@ export const PostDisplay = () => {
                     />
                     <p className="ml-2">
                       {latestPost.title}{' '}
-                      <span className="bg-slate-400 text-xs p-1 text-white rounded-lg">
+                      {/* <span className="bg-slate-400 text-xs p-1 text-white rounded-lg">
                         {latestPost.is_movie_related ? 'Phim ảnh' : 'Rạp chiếu'}
-                      </span>
+                      </span> */}
                     </p>
                   </div>
                   <div className="flex space-x-2 text-sm text-gray-400 ml-2 mt-1">

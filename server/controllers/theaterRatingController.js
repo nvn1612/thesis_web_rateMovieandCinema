@@ -263,7 +263,7 @@ const getTheaterRatings = async (req, res) => {
   
 
   const getTheatersWithBayesRating = async (req, res) => {
-    const MIN_RATINGS_REQUIRED = 20;
+    const MIN_RATINGS_REQUIRED = 10;
     try {
       const theaters = await prisma.movie_theaters.findMany({
         include: {

@@ -58,20 +58,20 @@ export const MovieDetail = () => {
     }
   };
 
-  useEffect(() => {
-    const getMoviesRank = async () => {
-      try {
-        const response = await axios.get(
-          `/movie-rating/get-movie-bayes-rating/${id}`
-        );
-        setIsRank(response.data.bayesAverageRating);
-      } catch (error) {
-        console.error("Có lỗi xảy ra khi lấy dữ liệu xếp hạng phim:", error);
-      }
-    };
+  // useEffect(() => {
+  //   const getMoviesRank = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         `/movie-rating/get-movie-bayes-rating/${id}`
+  //       );
+  //       setIsRank(response.data.bayesAverageRating);
+  //     } catch (error) {
+  //       console.error("Có lỗi xảy ra khi lấy dữ liệu xếp hạng phim:", error);
+  //     }
+  //   };
 
-    getMoviesRank();
-  }, []);
+  //   getMoviesRank();
+  // }, []);
 
   useEffect(() => {
     const fetchMovie = async () => {
@@ -282,7 +282,8 @@ export const MovieDetail = () => {
                     <p className="text-white">{movie.duration} phút</p>
                   </div>
                 </div>
-                <div className="flex flex-col">
+                {expertRatings.length > 0 ? (
+                  <div className="flex flex-col">
                   <div className="flex space-x-2 items-center">
                     <FontAwesomeIcon className="text-white" icon={faThumbsUp} />
                     <p className="text-white">Tổng đánh giá</p>
@@ -293,19 +294,21 @@ export const MovieDetail = () => {
                     </p>
                   </div>
                 </div>
+                ): null}
+               
                 <div className="flex flex-col">
                   <div className="flex space-x-2 items-center">
                     <FontAwesomeIcon
                       className="text-white"
                       icon={faCalculator}
                     />
-                    <p className="text-white">Số lượng đánh giá</p>
+                    <p className="text-white">Tổng Số lượng đánh giá </p>
                   </div>
                   <div className="flex justify-center">
                     <p className="text-white">{totalNumberRating}</p>
                   </div>
                 </div>
-                <div className="flex flex-col">
+                {/* <div className="flex flex-col">
                   <div className="flex space-x-2 items-center">
                     <FontAwesomeIcon
                       className="text-white"
@@ -324,7 +327,7 @@ export const MovieDetail = () => {
                       <p className="text-red-500">Thấp</p>
                     )}
                   </div>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
