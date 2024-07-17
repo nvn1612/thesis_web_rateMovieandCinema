@@ -41,10 +41,15 @@ export const MovieDetail = () => {
   const [users, setUsers] = useState({});
   const [visibleUserRatingsCount, setVisibleUserRatingsCount] = useState(5);
   const [isCompletedModalOpen, setIsCompletedModalOpen] = useState(false);
-  const [isRank, setIsRank] = useState(0);
+  // const [isRank, setIsRank] = useState(0);
   const { id } = useParams();
   const [likeCounts, setLikeCounts] = useState({});
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [ratingsPerPage] = useState(5);
+
+  const indexOfLastRating = currentPage * ratingsPerPage;
+  const indexOfFirstRating = indexOfLastRating - ratingsPerPage;
 
   const fetchLikeCount = async (movieRatingId) => {
     try {
@@ -156,6 +161,9 @@ export const MovieDetail = () => {
     setIsUserRatings(isUser);
     setVisibleUserRatingsCount(5);
   };
+  // const handleLoadMoreRatings = () => {
+  //   setCurrentPage((prevPage) => prevPage + 1);
+  // };
 
   const handleOpenTrailer = () => {
     setIsTrailerOpen(true);
@@ -173,9 +181,9 @@ export const MovieDetail = () => {
     setIsRateModalOpen(false);
   };
 
-  const handleLoadMoreRatings = () => {
-    setVisibleUserRatingsCount((prevCount) => prevCount + 5);
-  };
+  // const handleLoadMoreRatings = () => {
+  //   setVisibleUserRatingsCount((prevCount) => prevCount + 5);
+  // };
 
   const handleOpenCompletedModal = () => {
     setIsCompletedModalOpen(true);
@@ -284,18 +292,21 @@ export const MovieDetail = () => {
                 </div>
                 {expertRatings.length > 0 ? (
                   <div className="flex flex-col">
-                  <div className="flex space-x-2 items-center">
-                    <FontAwesomeIcon className="text-white" icon={faThumbsUp} />
-                    <p className="text-white">Tổng đánh giá</p>
+                    <div className="flex space-x-2 items-center">
+                      <FontAwesomeIcon
+                        className="text-white"
+                        icon={faThumbsUp}
+                      />
+                      <p className="text-white">Tổng đánh giá</p>
+                    </div>
+                    <div className="flex justify-center">
+                      <p className="text-white">
+                        {Math.round((totalRating / 10) * 100)} %
+                      </p>
+                    </div>
                   </div>
-                  <div className="flex justify-center">
-                    <p className="text-white">
-                      {Math.round((totalRating / 10) * 100)} %
-                    </p>
-                  </div>
-                </div>
-                ): null}
-               
+                ) : null}
+
                 <div className="flex flex-col">
                   <div className="flex space-x-2 items-center">
                     <FontAwesomeIcon
@@ -407,7 +418,7 @@ export const MovieDetail = () => {
               </div>
               <div className="flex flex-col p-2 space-y-3">
                 {currentRatings
-                  .slice(0, visibleUserRatingsCount)
+                  .slice(indexOfFirstRating, indexOfLastRating)
                   .map((rating, index) => (
                     <div
                       key={rating.movie_rating_id}
@@ -489,13 +500,27 @@ export const MovieDetail = () => {
                       </div>
                     </div>
                   ))}
-                {visibleUserRatingsCount < currentRatings.length && (
-                  <button
-                    onClick={handleLoadMoreRatings}
-                    className="self-center p-2 border rounded-xl hover:bg-gray-300 transition"
-                  >
-                    Xem thêm
-                  </button>
+                {currentRatings.length > ratingsPerPage && (
+                  <div className="flex justify-center space-x-2 mt-4">
+                    {Array.from(
+                      {
+                        length: Math.ceil(
+                          currentRatings.length / ratingsPerPage
+                        ),
+                      },
+                      (_, index) => (
+                        <button
+                          key={index}
+                          onClick={() => setCurrentPage(index + 1)}
+                          className={`p-2 border rounded-xl hover:bg-gray-300 transition ${
+                            currentPage === index + 1 ? "bg-gray-300" : ""
+                          }`}
+                        >
+                          {index + 1}
+                        </button>
+                      )
+                    )}
+                  </div>
                 )}
               </div>
             </div>

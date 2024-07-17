@@ -39,8 +39,13 @@ export const TheaterDetail = () => {
   const [visibleRatingsCount, setVisibleRatingsCount] = useState(5);
   const [totalRating, setTotalRating] = useState(0);
   const [totalNumberRating, setTotalNumberRating] = useState(0);
-  const [isRank, setIsRank] = useState(0);
+  // const [isRank, setIsRank] = useState(0);
   const [likeCounts, setLikeCounts] = useState({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const [ratingsPerPage] = useState(5);
+
+  const indexOfLastRating = currentPage * ratingsPerPage;
+  const indexOfFirstRating = indexOfLastRating - ratingsPerPage;
 
   const fetchLikeCount = async (theaterRatingId) => {
     try {
@@ -157,16 +162,15 @@ export const TheaterDetail = () => {
     setVisibleRatingsCount(5);
   };
 
+  const handleLoadMoreRatings = () => {
+    setCurrentPage((prevPage) => prevPage + 1);
+  };
   const handleOpenRateModal = () => {
     setIsRateModalOpen(true);
   };
 
   const handleCloseRateModal = () => {
     setIsRateModalOpen(false);
-  };
-
-  const handleLoadMoreRatings = () => {
-    setVisibleRatingsCount((prevCount) => prevCount + 5);
   };
 
   const handleOpenCompletedModal = () => {
@@ -215,16 +219,16 @@ export const TheaterDetail = () => {
             <div className="flex space-x-5">
               <BtnRate onClick={handleOpenRateModal} />
               {expertRatings.length > 0 ? (
-              <div className="flex flex-col">
-                <div className="flex items-center space-x-1">
-                  <p>Tổng số lượng đánh giá</p>
-                  <FontAwesomeIcon icon={faThumbsUp} />
+                <div className="flex flex-col">
+                  <div className="flex items-center space-x-1">
+                    <p>Tổng số lượng đánh giá</p>
+                    <FontAwesomeIcon icon={faThumbsUp} />
+                  </div>
+                  <div className="flex justify-center font-bold">
+                    <p>{Math.round((totalRating / 10) * 100)} %</p>
+                  </div>
                 </div>
-                <div className="flex justify-center font-bold">
-                  <p>{Math.round((totalRating / 10) * 100)} %</p>
-                </div>
-              </div>
-              ):null}
+              ) : null}
               <div className="flex flex-col">
                 <div className="flex space-x-2 items-center">
                   <FontAwesomeIcon className="text-black" icon={faCalculator} />
@@ -234,7 +238,7 @@ export const TheaterDetail = () => {
                   <p className="text-black">{totalNumberRating}</p>
                 </div>
               </div>
-                {/* <div className="flex flex-col">
+              {/* <div className="flex flex-col">
                   <div className="flex space-x-2 items-center">
                     <FontAwesomeIcon className="text-black" icon={faFaceSmile} />
                     <p className="text-black">Xếp hạng</p>
@@ -350,7 +354,7 @@ export const TheaterDetail = () => {
                 </div>
                 <div className="flex flex-col p-2 space-y-3">
                   {currentRatings
-                    .slice(0, visibleRatingsCount)
+                    .slice(indexOfFirstRating, indexOfLastRating)
                     .map((rating, index) => (
                       <div
                         key={rating.theater_rating_id}
@@ -434,13 +438,27 @@ export const TheaterDetail = () => {
                       </div>
                     ))}
                 </div>
-                {visibleRatingsCount < currentRatings.length && (
-                  <button
-                    onClick={handleLoadMoreRatings}
-                    className="self-center p-2 border rounded-xl hover:bg-gray-300 transition"
-                  >
-                    Xem thêm
-                  </button>
+                {currentRatings.length > ratingsPerPage && (
+                  <div className="flex justify-center space-x-2 mt-4">
+                    {Array.from(
+                      {
+                        length: Math.ceil(
+                          currentRatings.length / ratingsPerPage
+                        ),
+                      },
+                      (_, index) => (
+                        <button
+                          key={index}
+                          onClick={() => setCurrentPage(index + 1)}
+                          className={`p-2 border rounded-xl hover:bg-gray-300 transition ${
+                            currentPage === index + 1 ? "bg-gray-300" : ""
+                          }`}
+                        >
+                          {index + 1}
+                        </button>
+                      )
+                    )}
+                  </div>
                 )}
               </div>
             </div>

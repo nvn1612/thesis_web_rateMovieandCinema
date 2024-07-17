@@ -121,36 +121,36 @@ export const TheaterRatingList = () => {
                   <p className="text-gray-500">Rạp chiếu chưa có đánh giá.</p>
                 </div>
               ) : (
-              <table className="min-w-full divide-y divide-gray-200">
+                <table className="min-w-full divide-y divide-gray-200 max-w-none table-fixed">
                 <thead className="bg-gray-50 sticky top-0 z-10">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">STT</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tài khoản</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Chất lượng hình ảnh</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Chất lượng âm thanh</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Chất lượng Ghế ngồi</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Không gian rạp</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Dịch vụ khách hàng</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Chất lượng giá vé</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tổng điểm</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Khác</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Chức năng</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider overflow-hidden text-ellipsis whitespace-nowrap">STT</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider overflow-hidden text-ellipsis whitespace-nowrap">Tài khoản</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider overflow-hidden text-ellipsis whitespace-nowrap w-52">Chất lượng hình ảnh</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider overflow-hidden text-ellipsis whitespace-nowrap w-52">Chất lượng âm thanh</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider overflow-hidden text-ellipsis whitespace-nowrap">Chất lượng Ghế ngồi</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider overflow-hidden text-ellipsis whitespace-nowrap">Không gian rạp</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider overflow-hidden text-ellipsis whitespace-nowrap">Dịch vụ khách hàng</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider overflow-hidden text-ellipsis whitespace-nowrap">Chất lượng giá vé</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider overflow-hidden text-ellipsis whitespace-nowrap">Tổng điểm</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider overflow-hidden text-ellipsis whitespace-nowrap">Khác</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider overflow-hidden text-ellipsis whitespace-nowrap">Chức năng</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                   {ratings.map((rating, index) => (
                     <tr key={index}>
-                      <td className="px-6 py-4 whitespace-nowrap">{index + 1}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">{users[rating.user_id]?.username || 'Unknown User'}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">{rating.image_quality_rating.toFixed(2)}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">{rating.sound_quality_rating.toFixed(2)}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">{rating.seating_rating.toFixed(2)}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">{rating.theater_space_rating.toFixed(2)}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">{rating.customer_service_rating.toFixed(2)}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">{rating.ticket_price_rating.toFixed(2)}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">{rating.total_rating.toFixed(2)}</td>
-                      <td className="px-6 py-4 whitespace-nowrap"><button className="text-blue-400 hover:text-blue-500 transition" onClick={() => navigate(`/admin/theaters/rating-comment/${rating.theater_rating_id}`)}><FontAwesomeIcon icon={faArrowRight}/></button></td>
-                      <td className="px-6 py-4 whitespace-nowrap space-x-3">
+                      <td className="px-6 py-4 whitespace-nowrap overflow-hidden text-ellipsis">{index + 1}</td>
+                      <td className="px-6 py-4 whitespace-nowrap overflow-hidden text-ellipsis">{users[rating.user_id]?.username || 'Unknown User'}</td>
+                      <td className="px-6 py-4 whitespace-nowrap overflow-hidden text-ellipsis">{rating.image_quality_rating.toFixed(2)}</td>
+                      <td className="px-6 py-4 whitespace-nowrap overflow-hidden text-ellipsis">{rating.sound_quality_rating.toFixed(2)}</td>
+                      <td className="px-6 py-4 whitespace-nowrap overflow-hidden text-ellipsis">{rating.seating_rating.toFixed(2)}</td>
+                      <td className="px-6 py-4 whitespace-nowrap overflow-hidden text-ellipsis">{rating.theater_space_rating.toFixed(2)}</td>
+                      <td className="px-6 py-4 whitespace-nowrap overflow-hidden text-ellipsis">{rating.customer_service_rating.toFixed(2)}</td>
+                      <td className="px-6 py-4 whitespace-nowrap overflow-hidden text-ellipsis">{rating.ticket_price_rating.toFixed(2)}</td>
+                      <td className="px-6 py-4 whitespace-nowrap overflow-hidden text-ellipsis">{rating.total_rating.toFixed(2)}</td>
+                      <td className="px-6 py-4 whitespace-nowrap overflow-hidden text-ellipsis"><button className="text-blue-400 hover:text-blue-500 transition" onClick={() => navigate(`/admin/theaters/rating-comment/${rating.theater_rating_id}`)}><FontAwesomeIcon icon={faArrowRight}/></button></td>
+                      <td className="px-6 py-4 whitespace-nowrap overflow-hidden text-ellipsis space-x-3">
                         <button className="hover:text-red-500 transition" onClick={() => handleDeleteRating(rating.theater_rating_id)}>
                           <FontAwesomeIcon icon={faTrash} />
                         </button>   

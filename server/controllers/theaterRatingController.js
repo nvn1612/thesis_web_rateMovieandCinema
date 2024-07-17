@@ -291,7 +291,8 @@ const getTheaterRatings = async (req, res) => {
             globalAverageRating,
             bayesAverageRating: parseFloat(bayesAverageRating.toFixed(2)),
           };
-        });
+        })
+        .sort((a, b) => b.bayesAverageRating - a.bayesAverageRating);
   
       return res.status(200).json(theatersWithBayesRating);
     } catch (error) {
@@ -301,7 +302,7 @@ const getTheaterRatings = async (req, res) => {
   };
 
   const getTheaterBayesRatingById = async (req, res) => {
-    const MIN_RATINGS_REQUIRED = 20; 
+    const MIN_RATINGS_REQUIRED = 10; 
     const { theater_id } = req.params;
     
     try {
