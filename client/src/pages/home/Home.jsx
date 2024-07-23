@@ -23,7 +23,7 @@ export const Home = () => {
                   <div className="p-3 rounded-lg shadow-xl">
                     <div className="flex items-center">
                           <div className="flex flex-col space-y-3">
-                              <p className="text-2xl font-bold text-green-500">Xem đánh giá và tham gia đáng giá các bộ phim bạn yêu thích</p>
+                              <p className="text-2xl font-bold text-green-500">Xem đánh giá và tham gia đánh giá các bộ phim bạn yêu thích</p>
                               <div className="flex justify-center">
                                   <button className="pt-1 pr-2 pl-2 pb-1 bg-green-500 text-white rounded-lg hover:bg-green-600 transition" onClick={()=>navigate('/movies')}>Tại đây</button>
                               </div>
@@ -35,7 +35,7 @@ export const Home = () => {
                     <div className="flex items-center space-x-2">
                           <img className="h-72" src={homeTheaterBG}></img>
                           <div className="flex flex-col space-y-3">
-                              <p className="text-2xl font-bold text-gray-500">Xem đánh giá và tham gia đáng giá các rạp chiếu phim bạn yêu thích</p>
+                              <p className="text-2xl font-bold text-gray-500">Xem đánh giá và tham gia đánh giá các rạp chiếu phim bạn yêu thích</p>
                               <div className="flex justify-center">
                                   <button className="pt-1 pr-2 pl-2 pb-1 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition" onClick={()=>navigate('/Theaters')}>Tại đây</button>
                               </div>

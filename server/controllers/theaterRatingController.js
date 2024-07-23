@@ -421,7 +421,7 @@ const getTheaterRatings = async (req, res) => {
   }
 
   const searchTheaterRatingsByUsername = async (req, res) => {
-    const { username } = req.query;
+    const { username, theaterId } = req.query;
   
     try {
       const users = await prisma.users.findMany({
@@ -447,13 +447,16 @@ const getTheaterRatings = async (req, res) => {
           user_id: {
             in: userIds,
           },
+          theater_id: theaterId ? Number(theaterId) : undefined,
         },
         include: {
           users: true,
           movie_theaters: true,
         },
       });
-  
+      if (ratings.length === 0) {
+        return res.status(404).json({ error: 'No ratings found for the given theater and username.' });
+      }
       return res.status(200).json(ratings);
     } catch (error) {
       console.error('Error searching theater ratings by username:', error);

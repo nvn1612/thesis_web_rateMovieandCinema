@@ -35,7 +35,7 @@ export const UserProfile = () => {
         title="Trang cá nhân"
         CinemaBG={userBG}
       />
-      <div className=" flex-grow ml-7 mt-8 flex">
+      <div className=" flex-grow ml-7 mt-8 flex mb-4">
         <ul className="bg-white shadow rounded-lg divide-y divide-gray-200 self-start">
           <li className="px-6 py-4 flex items-center hover:bg-green-300 transition">
             <Link to="/profile/detail" className="flex items-center w-full">

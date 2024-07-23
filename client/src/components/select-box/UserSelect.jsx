@@ -1,62 +1,50 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 
 export const UserSelect = ({ onSelectionChange }) => {
   const [selectedUser, setSelectedUser] = useState('');
-  const [users, setUsers] = useState([]);
 
-  const Users = ['Quản trị viên', 'khán giả', 'chuyên gia'];
+  const Users = ['Tất cả', 'Quản trị viên', 'khán giả', 'chuyên gia'];
 
-  const handleChange = (event) => {
-    setSelectedUser(event.target.value);
-  };
+  const handleChange = async (event) => {
+    const selectedValue = event.target.value;
+    setSelectedUser(selectedValue);
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      let url = '';
-      switch (selectedUser) {
+    try {
+      let response;
+      switch (selectedValue) {
         case 'Quản trị viên':
-          url = '/user/user-admin';
+          response = await axios.get('/user/user-admin');
           break;
         case 'khán giả':
-          url = '/user/user-audience';
+          response = await axios.get('/user/user-audience');
           break;
         case 'chuyên gia':
-          url = '/user/user-expert';
+          response = await axios.get('/user/user-expert');
           break;
         case 'Tất cả':
-          url = '/user/getAllUsers'; 
+          response = await axios.get('/user/getalluser');
           break;
         default:
-          setUsers([]);
-          return;
+          response = { data: [] };
       }
 
-      try {
-        const response = await axios.get(url);
-        setUsers(response.data);
-        onSelectionChange(response.data); 
-      } catch (error) {
-        console.error('Error fetching users:', error);
-      }
-    };
-
-    if (selectedUser) {
-      fetchUsers();
+      onSelectionChange(response.data);
+    } catch (error) {
+      console.error('Error fetching users:', error);
     }
-  }, [selectedUser, onSelectionChange]);
+  };
 
   return (
     <div className="relative inline-block">
-      <select 
-        value={selectedUser} 
+      <select
+        value={selectedUser}
         onChange={handleChange}
         className="border rounded-md p-2 flex items-center cursor-pointer"
       >
         <option value="" disabled hidden>
           Lọc người dùng
         </option>
-        <option value="Tất cả">Tất cả</option>
         {Users.map((lever, index) => (
           <option key={index} value={lever}>
             {lever}

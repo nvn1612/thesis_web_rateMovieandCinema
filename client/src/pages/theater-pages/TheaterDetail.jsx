@@ -39,7 +39,7 @@ export const TheaterDetail = () => {
   const [visibleRatingsCount, setVisibleRatingsCount] = useState(5);
   const [totalRating, setTotalRating] = useState(0);
   const [totalNumberRating, setTotalNumberRating] = useState(0);
-  // const [isRank, setIsRank] = useState(0);
+  const [isRank, setIsRank] = useState(0);
   const [likeCounts, setLikeCounts] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const [ratingsPerPage] = useState(5);
@@ -59,23 +59,23 @@ export const TheaterDetail = () => {
     }
   };
 
-  // useEffect(() => {
-  //   const getTheatersRank = async () => {
-  //     try {
-  //       const response = await axios.get(
-  //         `/theater-rating/get-theater-bayes-rating/${id}`
-  //       );
-  //       setIsRank(response.data.bayesAverageRating);
-  //     } catch (error) {
-  //       console.error(
-  //         "Có lỗi xảy ra khi lấy dữ liệu xếp hạng rạp chiếu phim:",
-  //         error
-  //       );
-  //     }
-  //   };
+  useEffect(() => {
+    const getTheatersRank = async () => {
+      try {
+        const response = await axios.get(
+          `/theater-rating/get-theater-bayes-rating/${id}`
+        );
+        setIsRank(response.data.bayesAverageRating);
+      } catch (error) {
+        console.error(
+          "Có lỗi xảy ra khi lấy dữ liệu xếp hạng rạp chiếu phim:",
+          error
+        );
+      }
+    };
 
-  //   getTheatersRank();
-  // }, []);
+    getTheatersRank();
+  }, []);
 
   useEffect(() => {
     const fetchTheater = async () => {
@@ -238,7 +238,7 @@ export const TheaterDetail = () => {
                   <p className="text-black">{totalNumberRating}</p>
                 </div>
               </div>
-              {/* <div className="flex flex-col">
+              <div className="flex flex-col">
                   <div className="flex space-x-2 items-center">
                     <FontAwesomeIcon className="text-black" icon={faFaceSmile} />
                     <p className="text-black">Xếp hạng</p>
@@ -256,7 +256,7 @@ export const TheaterDetail = () => {
                       )}
                     </p>
                   </div>
-                </div> */}
+                </div>
             </div>
             <div className="flex space-x-2 items-center">
               <FontAwesomeIcon icon={faMap} />
@@ -375,7 +375,7 @@ export const TheaterDetail = () => {
                               <div className="flex space-x-2">
                                 <p>
                                   {users[rating.user_id]?.username ||
-                                    "Unknown User"}
+                                    "Đang tải..."}
                                 </p>
                                 {users[rating.user_id]?.occupation ? (
                                   <p className="text-white bg-yellow-500 rounded-md pl-1 pr-1">

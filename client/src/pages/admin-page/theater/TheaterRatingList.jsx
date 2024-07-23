@@ -82,7 +82,7 @@ export const TheaterRatingList = () => {
       return;
     }
     try {
-      const response = await axios.get(`/theater-rating/search-theater-ratings-by-username?username=${username}`);
+      const response = await axios.get(`/theater-rating/search-theater-ratings-by-username?username=${username}&theaterId=${theaterId}`);
       setRatings(response.data);
       await Promise.all(response.data.map(async (rating) => {
         await fetchUser(rating.user_id);
@@ -142,12 +142,12 @@ export const TheaterRatingList = () => {
                     <tr key={index}>
                       <td className="px-6 py-4 whitespace-nowrap overflow-hidden text-ellipsis">{index + 1}</td>
                       <td className="px-6 py-4 whitespace-nowrap overflow-hidden text-ellipsis">{users[rating.user_id]?.username || 'Unknown User'}</td>
-                      <td className="px-6 py-4 whitespace-nowrap overflow-hidden text-ellipsis">{rating.image_quality_rating.toFixed(2)}</td>
-                      <td className="px-6 py-4 whitespace-nowrap overflow-hidden text-ellipsis">{rating.sound_quality_rating.toFixed(2)}</td>
-                      <td className="px-6 py-4 whitespace-nowrap overflow-hidden text-ellipsis">{rating.seating_rating.toFixed(2)}</td>
-                      <td className="px-6 py-4 whitespace-nowrap overflow-hidden text-ellipsis">{rating.theater_space_rating.toFixed(2)}</td>
-                      <td className="px-6 py-4 whitespace-nowrap overflow-hidden text-ellipsis">{rating.customer_service_rating.toFixed(2)}</td>
-                      <td className="px-6 py-4 whitespace-nowrap overflow-hidden text-ellipsis">{rating.ticket_price_rating.toFixed(2)}</td>
+                      <td className="px-6 py-4 whitespace-nowrap overflow-hidden text-ellipsis">{rating.image_quality_rating}</td>
+                      <td className="px-6 py-4 whitespace-nowrap overflow-hidden text-ellipsis">{rating.sound_quality_rating}</td>
+                      <td className="px-6 py-4 whitespace-nowrap overflow-hidden text-ellipsis">{rating.seating_rating}</td>
+                      <td className="px-6 py-4 whitespace-nowrap overflow-hidden text-ellipsis">{rating.theater_space_rating}</td>
+                      <td className="px-6 py-4 whitespace-nowrap overflow-hidden text-ellipsis">{rating.customer_service_rating}</td>
+                      <td className="px-6 py-4 whitespace-nowrap overflow-hidden text-ellipsis">{rating.ticket_price_rating}</td>
                       <td className="px-6 py-4 whitespace-nowrap overflow-hidden text-ellipsis">{rating.total_rating.toFixed(2)}</td>
                       <td className="px-6 py-4 whitespace-nowrap overflow-hidden text-ellipsis"><button className="text-blue-400 hover:text-blue-500 transition" onClick={() => navigate(`/admin/theaters/rating-comment/${rating.theater_rating_id}`)}><FontAwesomeIcon icon={faArrowRight}/></button></td>
                       <td className="px-6 py-4 whitespace-nowrap overflow-hidden text-ellipsis space-x-3">

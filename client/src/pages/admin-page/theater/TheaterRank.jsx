@@ -28,7 +28,7 @@ export const TheaterRank = () => {
               <p className="text-red-500 font-bold">Danh sách xếp hạng rạp chiếu phim</p>
             </div>
             <div className="flex-grow overflow-y-auto">
-              <table className="min-w-full divide-y divide-gray-200">
+              <table className="min-w-full divide-y divide-gray-200  max-w-none table-fixed">
                 <thead className="bg-gray-50 sticky top-0 z-10">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -37,24 +37,24 @@ export const TheaterRank = () => {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Tên rạp
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider overflow-hidden text-ellipsis whitespace-nowrap">
                       Số đánh giá
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider overflow-hidden text-ellipsis whitespace-nowrap">
                       Trung bình đánh giá rạp
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider overflow-hidden text-ellipsis whitespace-nowrap">
                       Số đánh giá tối thiểu
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider overflow-hidden text-ellipsis whitespace-nowrap">
                       Trung bình đánh giá tất cả
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider overflow-hidden text-ellipsis whitespace-nowrap">
                       Điểm trung bình
                     </th>
-                    {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Xếp hạng
-                    </th> */}
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
@@ -81,7 +81,7 @@ export const TheaterRank = () => {
                       <td className="px-6 py-4 whitespace-nowrap">
                         {theater.bayesAverageRating}
                       </td>
-                      {/* <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-6 py-4 whitespace-nowrap">
                         {theater.bayesAverageRating >= 7 ? (
                           <p className="text-green-500">Cao</p>
                         ) : theater.bayesAverageRating >= 5 ? (
@@ -89,7 +89,7 @@ export const TheaterRank = () => {
                         ) : (
                           <p className="text-red-500">Thấp</p>
                         )}
-                      </td> */}
+                      </td>
                     </tr>
                   ))}
                 </tbody>

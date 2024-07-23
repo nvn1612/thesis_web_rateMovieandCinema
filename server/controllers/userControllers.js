@@ -333,7 +333,7 @@ const updateUser = async (req, res) => {
       return res.status(400).json({ error: 'Error uploading files.' });
     }
 
-    const { name, address, phone_number, is_Admin, is_expert, is_active } = req.body;
+    const { name, address, phone_number,occupation, is_Admin, is_expert, is_active } = req.body;
     const { user_id } = req.params;
     const avatarPath = req.file ? req.file.path : null;
     const isAdminBool = is_Admin === 'true';
@@ -362,6 +362,7 @@ const updateUser = async (req, res) => {
           name,
           address,
           phone_number,
+          occupation,
           avatar: avatarPath || oldAvatarPath,
           is_Admin: isAdminBool,
           is_expert: isExpertBool,

@@ -111,7 +111,7 @@ export const MovieCreate = () => {
               Tên phim
             </label>
             <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              className="px-5 py-3 mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-sky-500 focus:outline-none focus:ring-sky-500 sm:text-sm"
               id="name_movie"
               type="text"
               placeholder="Tên phim"
@@ -127,7 +127,7 @@ export const MovieCreate = () => {
               Trailer_link
             </label>
             <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+              className="px-5 py-3 mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-sky-500 focus:outline-none focus:ring-sky-500 sm:text-sm"
               id="trailer_link"
               type="text"
               placeholder="trailer_link"
@@ -137,7 +137,7 @@ export const MovieCreate = () => {
           </div>
         </div>
         <div className="flex flex-wrap -mx-3 mb-1">
-          <div className="w-full px-3">
+          <div className="w-full px-3 mt-2">
             <label
               className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
               htmlFor="description"
@@ -145,7 +145,7 @@ export const MovieCreate = () => {
               Tóm tắt phim
             </label>
             <textarea
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+              className="px-5 py-3 mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-sky-500 focus:outline-none focus:ring-sky-500 sm:text-sm"
               id="description"
               placeholder="Viết tóm tắt"
               value={formData.description}
@@ -155,7 +155,7 @@ export const MovieCreate = () => {
         </div>
 
         <div className="flex flex-wrap -mx-3 mb-6">
-          <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+          <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0 mt-2">
             <label
               className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
               htmlFor="country"
@@ -176,7 +176,7 @@ export const MovieCreate = () => {
               ))}
             </select>
           </div>
-          <div className="w-full md:w-1/2 px-3">
+          <div className="w-full md:w-1/2 px-3 mt-2">
             <label
               className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
               htmlFor="genre"
@@ -207,7 +207,7 @@ export const MovieCreate = () => {
               Đạo diễn
             </label>
             <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+              className="px-5 py-3 mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-sky-500 focus:outline-none focus:ring-sky-500 sm:text-sm"
               id="director"
               placeholder="Tên đạo diễn"
               value={formData.director}
@@ -237,8 +237,9 @@ export const MovieCreate = () => {
               Thời lượng
             </label>
             <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+              className="px-5 py-3 mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-sky-500 focus:outline-none focus:ring-sky-500 sm:text-sm"
               id="duration"
+              type="number"
               value={formData.duration}
               onChange={handleChange}
             />

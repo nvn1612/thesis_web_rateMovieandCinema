@@ -8,7 +8,7 @@ export const ContentPost = () => {
 
 
     const { postId } = useParams();
-  useEffect(() => {
+    useEffect(() => {
     const fetchPost = async () => {
       try {
         const response = await axios.get(`/post/getpost/${postId}`);
@@ -39,7 +39,7 @@ export const ContentPost = () => {
           <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg h-full flex flex-col">
             <div className="flex items-center mb-4 justify-between m-2">
               <h2 className="text-2xl font-bold">{post.title}</h2>
-              <p className="text-sm text-gray-500">Đăng bởi : {post.users?.name} vào ngày {new Date(post.created_at).toLocaleDateString()}</p>
+              <p className="text-sm text-gray-500">Đăng bởi : {post.users?.username} vào ngày {new Date(post.created_at).toLocaleDateString()}</p>
             </div>
             <div className="flex-grow overflow-y-auto p-4">
               <div className="bg-white p-4 rounded shadow">

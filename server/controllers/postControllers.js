@@ -1,5 +1,6 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const fs = require('fs');
 const { uploadPostImage } = require('../uploadMiddleware');
 
 const getAllPosts = async (req, res) => {

@@ -124,7 +124,7 @@ export const TheaterEdit = () => {
                   Tên rạp chiếu
                 </label>
                 <input
-                  className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                  className="px-5 py-3 mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-sky-500 focus:outline-none focus:ring-sky-500 sm:text-sm"
                   id="theater_name"
                   type="text"
                   placeholder="Tên rạp chiếu"
@@ -140,7 +140,7 @@ export const TheaterEdit = () => {
                   Địa chỉ
                 </label>
                 <input
-                  className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                  className="px-5 py-3 mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-sky-500 focus:outline-none focus:ring-sky-500 sm:text-sm"
                   id="address"
                   type="text"
                   placeholder="Địa chỉ"
@@ -229,7 +229,7 @@ export const TheaterEdit = () => {
                 Mô tả
               </label>
               <textarea
-                className="appearance-none block w-96 bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                className="px-5 py-3 mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-sky-500 focus:outline-none focus:ring-sky-500 sm:text-sm"
                 id="description"
                 placeholder="Mô tả"
                 value={formData.description}

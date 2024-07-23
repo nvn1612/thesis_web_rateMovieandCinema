@@ -33,7 +33,6 @@ export const AdminPage = () => {
             <Link to="/admin/theaters" className="block py-2.5 px-4 rounded transition duration-200 hover:bg-green-700">Quản lý rạp chiếu phim</Link>
             <Link to="/admin/posts" className="block py-2.5 px-4 rounded transition duration-200 hover:bg-green-700">Quản lý bài viết</Link>
             <div  onClick={handleLogout}className="block py-2.5 px-4 rounded transition duration-200 hover:bg-green-700">Đăng xuất</div>
-            
           </nav>
           <hr />
         </div>

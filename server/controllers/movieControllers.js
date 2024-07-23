@@ -17,9 +17,9 @@ const prisma = new PrismaClient();
             contains: name,
           },
         },
-        include: {
-          movie_genres: true,
-        },
+        // include: {
+        //   movie_genres: true,
+        // },
       });
       res.json(movies);
     } catch (error) {
@@ -115,7 +115,7 @@ const createMovie = async (req, res) => {
   uploadMovieImage(req, res, async (err) => {
     if (err) {
       console.log(err);
-      return res.status(400).json({ error: 'Error uploading files.' });
+      return res.status(400).json({ error: 'Có lỗi trong quá trình uploadfile.' });
     }
 
     const { name_movie, trailer_link, country, description, director, release_date, duration, genre } = req.body;
@@ -159,11 +159,11 @@ const createMovie = async (req, res) => {
 
       if (posterImagePath) {
         fs.unlinkSync(posterImagePath);
-        console.log(`Deleted file: ${posterImagePath}`);
+        console.log(`Đã xóa file: ${posterImagePath}`);
       }
       if (backdropImagePath) {
         fs.unlinkSync(backdropImagePath);
-        console.log(`Deleted file: ${backdropImagePath}`);
+        console.log(`Đã xóa file: ${backdropImagePath}`);
       }
 
       res.status(500).json({ error: 'Có lỗi xảy ra' });
@@ -204,7 +204,7 @@ const deleteMovie = async (req, res) => {
     });
 
     if (!movie) {
-      return res.status(404).json({ error: "Movie not found" });
+      return res.status(404).json({ error: "Không tìm thấy phim" });
     }
     await prisma.movie_genres.deleteMany({
       where: {
@@ -216,19 +216,19 @@ const deleteMovie = async (req, res) => {
     });
     if (movie.poster_image) {
       fs.unlink(movie.poster_image, (err) => {
-        if (err) console.log(`Error deleting poster image: ${err.message}`);
+        if (err) console.log(`Có lỗi khi xóa poster image: ${err.message}`);
       });
     }
 
     if (movie.backdrop_image) {
       fs.unlink(movie.backdrop_image, (err) => {
-        if (err) console.log(`Error deleting backdrop image: ${err.message}`);
+        if (err) console.log(`Có lỗi khi xóa backdrop image: ${err.message}`);
       });
     }
     res.status(200).json(deletedMovie);
   } catch (error) {
     if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
-      res.status(404).json({ error: "Movie not found" });
+      res.status(404).json({ error: "Không tìm thấy phim" });
     } else {
       res.status(500).json({ error: error.message });
     }
@@ -239,7 +239,7 @@ const updateMovie = async (req, res) => {
   uploadMovieImage(req, res, async (err) => {
     if (err) {
       console.log(err);
-      return res.status(400).json({ error: 'Error uploading files.' });
+      return res.status(400).json({ error: 'Có lỗi trong quá trình uploadfiles.' });
     }
 
     const { id } = req.params;
@@ -258,7 +258,7 @@ const updateMovie = async (req, res) => {
       if (!existingMovie) {
         if (posterImagePath && fs.existsSync(posterImagePath)) fs.unlinkSync(posterImagePath);
         if (backdropImagePath && fs.existsSync(backdropImagePath)) fs.unlinkSync(backdropImagePath);
-        return res.status(404).json({ error: 'Movie not found' });
+        return res.status(404).json({ error: 'Không tìm thấy phim' });
       }
 
       const updatedMovie = await prisma.movies.update({
@@ -310,7 +310,7 @@ const getTotalMovies = async (req, res) => {
     res.status(200).json({ totalMovies });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'An error occurred while fetching the total number of movies.' });
+    res.status(500).json({ error: 'Có lỗi trong quá trình lấy ra tổng phim.' });
   }
 }
 

@@ -102,10 +102,10 @@ const deleteMovieRating = async (req, res) => {
       where: { movie_rating_id: parseInt(movie_rating_id) },
     });
 
-    return res.status(200).json({ message: 'Rating deleted successfully', deletedRating });
+    return res.status(200).json({ message: 'Xóa đánh giá thành công', deletedRating });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ error: 'An error occurred while deleting the rating.' });
+    return res.status(500).json({ error: 'Có lỗi trong quá trình xóa đánh giá.' });
   }
 }
 
@@ -116,7 +116,7 @@ const getMovieRatings = async (req, res) => {
   try {
     const movieIdInt = parseInt(movie_id, 10);
     if (isNaN(movieIdInt)) {
-      return res.status(400).json({ error: 'Invalid movie_id parameter.' });
+      return res.status(400).json({ error: 'movie_id không hợp lệ .' });
     }
     const ratings = await prisma.movie_rating.findMany({
       where: { 
@@ -204,7 +204,7 @@ const getMovieRatings = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ error: 'An error occurred while retrieving the ratings.' });
+    return res.status(500).json({ error: 'Xảy ra lỗi trong quá trình lấy đánh giá.' });
   }
 };
 
@@ -214,7 +214,7 @@ const getMovieRatingById = async (req, res) => {
   try {
     const movieRatingIdInt = parseInt(movie_rating_id, 10);
     if (isNaN(movieRatingIdInt)) {
-      return res.status(400).json({ error: 'Invalid movie_rating_id parameter.' });
+      return res.status(400).json({ error: 'movie_id không hợp lệ.' });
     }
     const rating = await prisma.movie_rating.findUnique({
       where: { 
@@ -227,13 +227,13 @@ const getMovieRatingById = async (req, res) => {
     });
     
     if (!rating) {
-      return res.status(404).json({ error: 'Rating not found.' });
+      return res.status(404).json({ error: 'Không tìm thấy đánh giá.' });
     }
 
     return res.status(200).json(rating);
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ error: 'An error occurred while retrieving the rating.' });
+    return res.status(500).json({ error: 'Xảy ra lỗi trong quá trình lấy đánh giá.' });
   }
 };
   
@@ -244,7 +244,7 @@ const getMovieRatingsForAdmin = async (req, res) => {
   const { movie_id } = req.params; 
 
   if (!movie_id) {
-    return res.status(400).json({ error: 'movie_id is required' });
+    return res.status(400).json({ error: 'chưa có movie_id' });
   }
 
   try {
@@ -261,7 +261,7 @@ const getMovieRatingsForAdmin = async (req, res) => {
     return res.status(200).json(ratings);
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ error: 'An error occurred while retrieving movie ratings.' });
+    return res.status(500).json({ error: 'Xảy ra lỗi trong quá trình lấy đánh giá.' });
   }
 };
 
@@ -303,7 +303,7 @@ const getMoviesWithBayesRating = async (req, res) => {
     return res.status(200).json(moviesWithBayesRating);
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ error: 'An error occurred while retrieving movie ratings.' });
+    return res.status(500).json({ error: 'Xảy ra lỗi' });
   }
 };
 
@@ -417,18 +417,19 @@ const getMovieRatingLikeCount = async (req, res) => {
     return res.status(500).json({ error: 'An error occurred while retrieving the like count.' });
   }
 };
+
 const getTotalMovieRatings = async (req, res) => {
   try {
     const totalMovieRatings = await prisma.movie_rating.count();
     res.status(200).json({ totalMovieRatings });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'An error occurred while fetching the total number of movie ratings.' });
+    res.status(500).json({ error: 'Có lỗi xảy ra trong quá trình lấy tổng đánh giá phim' });
   }
 }
 
 const searchMovieRatingsByUsername = async (req, res) => {
-  const { username } = req.query;
+  const { username, movieId } = req.query; 
 
   try {
     const users = await prisma.users.findMany({
@@ -439,21 +440,21 @@ const searchMovieRatingsByUsername = async (req, res) => {
       },
       select: {
         user_id: true,
-        username: true,
+        // username: true,
       },
     });
 
     if (users.length === 0) {
-      return res.status(404).json({ error: 'No users found with the given username.' });
+      return res.status(404).json({ error: 'Không tìm thấy theo tên yêu cầu.' });
     }
 
     const userIds = users.map(user => user.user_id);
-
     const ratings = await prisma.movie_rating.findMany({
       where: {
         user_id: {
           in: userIds,
         },
+        movie_id: movieId ? Number(movieId) : undefined,
       },
       include: {
         users: true,
@@ -461,17 +462,20 @@ const searchMovieRatingsByUsername = async (req, res) => {
       },
     });
 
+    if (ratings.length === 0) {
+      return res.status(404).json({ error: 'Không tìm thấy đánh giá từ tên và phim yêu cầu' });
+    }
     return res.status(200).json(ratings);
   } catch (error) {
-    console.error('Error searching movie ratings by username:', error);
-    return res.status(500).json({ error: 'An error occurred while searching for movie ratings.' });
+    console.error('Có lỗi trong quá trình tìm đánh giá theo username', error);
+    return res.status(500).json({ error: 'Có lỗi xảy ra' });
   }
 };
 
 const getExpertRatings = async (req, res) => {
   const { movie_id } = req.params;
   if (!movie_id) {
-    return res.status(400).json({ error: 'movie_id is required' });
+    return res.status(400).json({ error: 'Chưa có movie_id' });
   }
   try {
     const expertRatings = await prisma.movie_rating.findMany({
@@ -487,17 +491,17 @@ const getExpertRatings = async (req, res) => {
     return res.status(200).json(expertRatings);
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ error: 'An error occurred while retrieving expert ratings' });
+    return res.status(500).json({ error: 'Xảy ra lỗi trong quá trình lấy ra đánh giá từ chuyên gia' });
   }
 };
 
 const getAudiRatings = async (req, res) => {
   const { movie_id } = req.params;
   if (!movie_id) {
-    return res.status(400).json({ error: 'movie_id is required' });
+    return res.status(400).json({ error: 'Chưa có movie_id' });
   }
   try {
-    const expertRatings = await prisma.movie_rating.findMany({
+    const audiRatings = await prisma.movie_rating.findMany({
       where: {
         movie_id: parseInt(movie_id),
         is_expert_rating: false
@@ -507,10 +511,10 @@ const getAudiRatings = async (req, res) => {
       },
     });
 
-    return res.status(200).json(expertRatings);
+    return res.status(200).json(audiRatings);
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ error: 'An error occurred while retrieving expert ratings' });
+    return res.status(500).json({ error: 'Xảy ra lỗi trong quá trình lấy đánh giá từ khán giả' });
   }
 };
   module.exports = {

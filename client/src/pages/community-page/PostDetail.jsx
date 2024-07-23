@@ -6,6 +6,8 @@ import { faComment, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { useParams } from "react-router-dom";
 import UserContext from "../../context/UserContext";
 import noAvatarUser from "../../assets/images/no_user_avatar.jpg";
+import { Spinner } from "../../components/spinner/Spinner";
+
 
 export const PostDetail = () => {
   const [post, setPost] = useState(null);
@@ -89,11 +91,11 @@ export const PostDetail = () => {
   };
 
   if (loading) {
-    return <p>Loading...</p>;
+    return <Spinner/>;
   }
 
   if (!post) {
-    return <p>Post not found.</p>;
+    return <p>Không tìm thấy bài viết nào!</p>;
   }
 
   const totalComments = post.post_comments ? post.post_comments.length : 0;

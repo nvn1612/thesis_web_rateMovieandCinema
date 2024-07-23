@@ -41,7 +41,7 @@ export const MovieDetail = () => {
   const [users, setUsers] = useState({});
   const [visibleUserRatingsCount, setVisibleUserRatingsCount] = useState(5);
   const [isCompletedModalOpen, setIsCompletedModalOpen] = useState(false);
-  // const [isRank, setIsRank] = useState(0);
+  const [isRank, setIsRank] = useState(0);
   const { id } = useParams();
   const [likeCounts, setLikeCounts] = useState({});
   const [loading, setLoading] = useState(true);
@@ -63,20 +63,20 @@ export const MovieDetail = () => {
     }
   };
 
-  // useEffect(() => {
-  //   const getMoviesRank = async () => {
-  //     try {
-  //       const response = await axios.get(
-  //         `/movie-rating/get-movie-bayes-rating/${id}`
-  //       );
-  //       setIsRank(response.data.bayesAverageRating);
-  //     } catch (error) {
-  //       console.error("Có lỗi xảy ra khi lấy dữ liệu xếp hạng phim:", error);
-  //     }
-  //   };
+  useEffect(() => {
+    const getMoviesRank = async () => {
+      try {
+        const response = await axios.get(
+          `/movie-rating/get-movie-bayes-rating/${id}`
+        );
+        setIsRank(response.data.bayesAverageRating);
+      } catch (error) {
+        console.error("Có lỗi xảy ra khi lấy dữ liệu xếp hạng phim:", error);
+      }
+    };
 
-  //   getMoviesRank();
-  // }, []);
+    getMoviesRank();
+  }, []);
 
   useEffect(() => {
     const fetchMovie = async () => {
@@ -161,9 +161,7 @@ export const MovieDetail = () => {
     setIsUserRatings(isUser);
     setVisibleUserRatingsCount(5);
   };
-  // const handleLoadMoreRatings = () => {
-  //   setCurrentPage((prevPage) => prevPage + 1);
-  // };
+  
 
   const handleOpenTrailer = () => {
     setIsTrailerOpen(true);
@@ -181,9 +179,7 @@ export const MovieDetail = () => {
     setIsRateModalOpen(false);
   };
 
-  // const handleLoadMoreRatings = () => {
-  //   setVisibleUserRatingsCount((prevCount) => prevCount + 5);
-  // };
+  
 
   const handleOpenCompletedModal = () => {
     setIsCompletedModalOpen(true);
@@ -319,7 +315,7 @@ export const MovieDetail = () => {
                     <p className="text-white">{totalNumberRating}</p>
                   </div>
                 </div>
-                {/* <div className="flex flex-col">
+                <div className="flex flex-col">
                   <div className="flex space-x-2 items-center">
                     <FontAwesomeIcon
                       className="text-white"
@@ -338,13 +334,12 @@ export const MovieDetail = () => {
                       <p className="text-red-500">Thấp</p>
                     )}
                   </div>
-                </div> */}
+                </div> 
               </div>
             </div>
           </div>
         </div>
       </div>
-
       <div className="bg-gray-200 flex justify-center min-h-screen">
         <div className="absolute left-0 top-50 p-4 flex flex-col">
           <button
@@ -439,7 +434,7 @@ export const MovieDetail = () => {
                             <div className="flex space-x-2">
                               <p>
                                 {users[rating.user_id]?.username ||
-                                  "Unknown User"}
+                                  "Đang tải..."}
                               </p>
                               {users[rating.user_id]?.occupation ? (
                                 <p className="text-white bg-yellow-500 rounded-md pl-1 pr-1">
