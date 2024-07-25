@@ -16,10 +16,7 @@ const prisma = new PrismaClient();
           name_movie: {
             contains: name,
           },
-        },
-        // include: {
-        //   movie_genres: true,
-        // },
+        }
       });
       res.json(movies);
     } catch (error) {
@@ -75,12 +72,7 @@ const prisma = new PrismaClient();
 
   const getAllMovies = async (req, res) => {
     try {
-      const movies = await prisma.movies.findMany({
-        include: {
-          movie_genres: true,
-          countries: true 
-        }
-      });
+      const movies = await prisma.movies.findMany();
       res.json(movies);
     } catch (error) {
       console.log(error);

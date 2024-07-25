@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { Spinner } from "../../../components/spinner/Spinner";
+
 const {useParams} = require('react-router-dom');
+ 
 export const ContentPost = () => {
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -25,7 +28,7 @@ export const ContentPost = () => {
   }, [postId]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Spinner/>;
   }
 
   if (error) {

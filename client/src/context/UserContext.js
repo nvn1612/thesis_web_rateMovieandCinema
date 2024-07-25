@@ -22,7 +22,7 @@ export const UserProvider = ({ children }) => {
             try {
                 return decryptData(savedUser);
             } catch (error) {
-                console.error('Error decrypting user from localStorage', error);
+                console.error('Có lỗi khi giải mã user localStorage', error);
                 localStorage.removeItem('user');
             }
         }

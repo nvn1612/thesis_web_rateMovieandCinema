@@ -25,7 +25,7 @@ export const MovieRank = () => {
         <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8 h-full">
           <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg h-full flex flex-col">
             <div className="flex justify-center m-4">
-              <p className="text-red-500 font-bold">Danh sách xếp hạng phim</p>
+              <p className="text-red-500 font-bold">Danh sách điểm trung bình đánh giá và xếp hạng phim</p>
             </div>
             <div className="flex-grow overflow-y-auto">
               <table className="min-w-full divide-y divide-gray-200  max-w-none table-fixed">

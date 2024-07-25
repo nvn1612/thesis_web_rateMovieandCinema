@@ -64,9 +64,7 @@ export const MovieRatingList = () => {
     fetchRatings();
   }, [movieId]);
 
-    // const handleUserChange = (user) => {
-    //   setSelectedUser(user);
-    // };
+  
 
   const handleDeleteRating = async (movie_rating_id) => {
     try {

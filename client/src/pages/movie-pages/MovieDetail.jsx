@@ -11,6 +11,7 @@ import {
   faFaceSmile,
   faCalculator,
   faCrown,
+  faChartBar
 } from "@fortawesome/free-solid-svg-icons";
 import { BtnRate } from "../../components/btn-rate/BtnRate";
 import { TrailerModal } from "../../components/trailer-modal/TrailerModal";
@@ -39,7 +40,6 @@ export const MovieDetail = () => {
 
   const [isUserRatings, setIsUserRatings] = useState(true);
   const [users, setUsers] = useState({});
-  const [visibleUserRatingsCount, setVisibleUserRatingsCount] = useState(5);
   const [isCompletedModalOpen, setIsCompletedModalOpen] = useState(false);
   const [isRank, setIsRank] = useState(0);
   const { id } = useParams();
@@ -102,24 +102,20 @@ export const MovieDetail = () => {
           averageRating: ratingsData.averageUserRating,
           averageContentRating: ratingsData.averageUserContentRating,
           averageActingRating: ratingsData.averageUserActingRating,
-          averageVisualEffectsRating:
-            ratingsData.averageUserVisualEffectsRating,
+          averageVisualEffectsRating: ratingsData.averageUserVisualEffectsRating,
           averageSoundRating: ratingsData.averageUserSoundRating,
           averageDirectingRating: ratingsData.averageUserDirectingRating,
-          averageEntertainmentRating:
-            ratingsData.averageUserEntertainmentRating,
+          averageEntertainmentRating: ratingsData.averageUserEntertainmentRating,
         });
 
         setAverageExpertRatings({
           averageRating: ratingsData.averageExpertRating,
           averageContentRating: ratingsData.averageExpertContentRating,
           averageActingRating: ratingsData.averageExpertActingRating,
-          averageVisualEffectsRating:
-            ratingsData.averageExpertVisualEffectsRating,
+          averageVisualEffectsRating: ratingsData.averageExpertVisualEffectsRating,
           averageSoundRating: ratingsData.averageExpertSoundRating,
           averageDirectingRating: ratingsData.averageExpertDirectingRating,
-          averageEntertainmentRating:
-            ratingsData.averageExpertEntertainmentRating,
+          averageEntertainmentRating: ratingsData.averageExpertEntertainmentRating,
         });
 
         setTotalUserRatingsCount(ratingsData.totalUserRatingsCount);
@@ -159,7 +155,6 @@ export const MovieDetail = () => {
 
   const handleToggleRatings = (isUser) => {
     setIsUserRatings(isUser);
-    setVisibleUserRatingsCount(5);
   };
   
 
@@ -286,7 +281,7 @@ export const MovieDetail = () => {
                     <p className="text-white">{movie.duration} phút</p>
                   </div>
                 </div>
-                {expertRatings.length > 0 ? (
+                {expertRatings.length > 0 && userRatings.length > 0 ? (
                   <div className="flex flex-col">
                     <div className="flex space-x-2 items-center">
                       <FontAwesomeIcon
@@ -319,12 +314,32 @@ export const MovieDetail = () => {
                   <div className="flex space-x-2 items-center">
                     <FontAwesomeIcon
                       className="text-white"
+                      icon={faChartBar}
+                    />
+                    <p className="text-white">Trung bình điểm</p>
+                  </div>
+                  <div className="flex justify-center">
+                  {(expertRatings.length === 0 && userRatings.length === 0) ? (
+                      <p className="text-white">Chưa có</p>
+                    ) : isRank >= 7 ? (
+                      <p className="text-green-500">{isRank.toFixed(2)}</p>
+                    ) : isRank >= 5 ? (
+                      <p className="text-orange-500">{isRank.toFixed(2)}</p>
+                    ) : (
+                      <p className="text-red-500">{isRank.toFixed(2)}</p>
+                    )}
+                  </div>
+                </div> 
+                <div className="flex flex-col">
+                  <div className="flex space-x-2 items-center">
+                    <FontAwesomeIcon
+                      className="text-white"
                       icon={faFaceSmile}
                     />
                     <p className="text-white">Xếp hạng</p>
                   </div>
                   <div className="flex justify-center">
-                    {currentRatings.length === 0 ? (
+                  {(expertRatings.length === 0 && userRatings.length === 0) ? (
                       <p className="text-white">Chưa có xếp hạng</p>
                     ) : isRank >= 7 ? (
                       <p className="text-green-500">Cao</p>

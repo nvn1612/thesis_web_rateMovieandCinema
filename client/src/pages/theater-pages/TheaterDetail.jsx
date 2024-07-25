@@ -10,6 +10,7 @@ import {
   faFaceSmile,
   faCalculator,
   faCrown,
+  faChartBar
 } from "@fortawesome/free-solid-svg-icons";
 import { ModalRateCinema } from "../modal-rate/modal-rate-cinema/ModalRateCinema";
 import noAvatarUser from "../../assets/images/no_user_avatar.jpg";
@@ -36,7 +37,6 @@ export const TheaterDetail = () => {
   const [isUserRatings, setIsUserRatings] = useState(true);
   const [users, setUsers] = useState({});
   const [isCompletedModalOpen, setIsCompletedModalOpen] = useState(false);
-  const [visibleRatingsCount, setVisibleRatingsCount] = useState(5);
   const [totalRating, setTotalRating] = useState(0);
   const [totalNumberRating, setTotalNumberRating] = useState(0);
   const [isRank, setIsRank] = useState(0);
@@ -103,22 +103,17 @@ export const TheaterDetail = () => {
           averageSoundQualityRating: ratingsData.averageUserSoundQualityRating,
           averageSeatingRating: ratingsData.averageUserSeatingRating,
           averageTheaterSpaceRating: ratingsData.averageUserTheaterSpaceRating,
-          averageCustomerServiceRating:
-            ratingsData.averageUserCustomerServiceRating,
+          averageCustomerServiceRating: ratingsData.averageUserCustomerServiceRating,
           averageTicketPriceRating: ratingsData.averageUserTicketPriceRating,
         });
 
         setAverageExpertRatings({
           averageRating: ratingsData.averageExpertRating,
-          averageImageQualityRating:
-            ratingsData.averageExpertImageQualityRating,
-          averageSoundQualityRating:
-            ratingsData.averageExpertSoundQualityRating,
+          averageImageQualityRating: ratingsData.averageExpertImageQualityRating,
+          averageSoundQualityRating: ratingsData.averageExpertSoundQualityRating,
           averageSeatingRating: ratingsData.averageExpertSeatingRating,
-          averageTheaterSpaceRating:
-            ratingsData.averageExpertTheaterSpaceRating,
-          averageCustomerServiceRating:
-            ratingsData.averageExpertCustomerServiceRating,
+          averageTheaterSpaceRating: ratingsData.averageExpertTheaterSpaceRating,
+          averageCustomerServiceRating: ratingsData.averageExpertCustomerServiceRating,
           averageTicketPriceRating: ratingsData.averageExpertTicketPriceRating,
         });
 
@@ -159,12 +154,9 @@ export const TheaterDetail = () => {
 
   const handleToggleRatings = (isUser) => {
     setIsUserRatings(isUser);
-    setVisibleRatingsCount(5);
   };
 
-  const handleLoadMoreRatings = () => {
-    setCurrentPage((prevPage) => prevPage + 1);
-  };
+
   const handleOpenRateModal = () => {
     setIsRateModalOpen(true);
   };
@@ -218,11 +210,11 @@ export const TheaterDetail = () => {
             </div>
             <div className="flex space-x-5">
               <BtnRate onClick={handleOpenRateModal} />
-              {expertRatings.length > 0 ? (
+              {expertRatings.length > 0 && userRatings.length > 0  ? (
                 <div className="flex flex-col">
                   <div className="flex items-center space-x-1">
-                    <p>Tổng số lượng đánh giá</p>
                     <FontAwesomeIcon icon={faThumbsUp} />
+                    <p>Tổng đánh giá</p>
                   </div>
                   <div className="flex justify-center font-bold">
                     <p>{Math.round((totalRating / 10) * 100)} %</p>
@@ -232,7 +224,7 @@ export const TheaterDetail = () => {
               <div className="flex flex-col">
                 <div className="flex space-x-2 items-center">
                   <FontAwesomeIcon className="text-black" icon={faCalculator} />
-                  <p className="text-black">Số lượng đánh giá</p>
+                  <p className="text-black">Tổng số lượng đánh giá</p>
                 </div>
                 <div className="flex justify-center">
                   <p className="text-black">{totalNumberRating}</p>
@@ -240,12 +232,32 @@ export const TheaterDetail = () => {
               </div>
               <div className="flex flex-col">
                   <div className="flex space-x-2 items-center">
+                    <FontAwesomeIcon
+                      className="text-black"
+                      icon={faChartBar}
+                    />
+                    <p className="text-black">Trung bình điểm</p>
+                  </div>
+                  <div className="flex justify-center">
+                    {(expertRatings.length === 0 && userRatings.length === 0) ? (
+                      <p className="text-white">Chưa có</p>
+                    ) : isRank >= 7 ? (
+                      <p className="text-green-500">{isRank.toFixed(2)}</p>
+                    ) : isRank >= 5 ? (
+                      <p className="text-orange-500">{isRank.toFixed(2)}</p>
+                    ) : (
+                      <p className="text-red-500">{isRank.toFixed(2)}</p>
+                    )}
+                  </div>
+                </div> 
+              <div className="flex flex-col">
+                  <div className="flex space-x-2 items-center">
                     <FontAwesomeIcon className="text-black" icon={faFaceSmile} />
                     <p className="text-black">Xếp hạng</p>
                   </div>
                   <div className="flex justify-center">
                     <p className="text-white">
-                      {currentRatings.length === 0 ? (
+                      {(expertRatings.length === 0 && userRatings.length === 0) ? (
                         <p className="text-black">Chưa có xếp hạng</p>
                       ) : isRank >= 7 ? (
                         <p className="text-green-500">Cao</p>
@@ -325,8 +337,7 @@ export const TheaterDetail = () => {
                     (currentAverageRatings.averageTheaterSpaceRating / 10) * 100
                   )}
                   average5={Math.round(
-                    (currentAverageRatings.averageCustomerServiceRating / 10) *
-                      100
+                    (currentAverageRatings.averageCustomerServiceRating / 10) * 100
                   )}
                   average6={Math.round(
                     (currentAverageRatings.averageTicketPriceRating / 10) * 100

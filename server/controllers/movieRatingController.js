@@ -275,7 +275,7 @@ const getMoviesWithBayesRating = async (req, res) => {
         movie_rating: true,
       },
     });
-
+    
 
     const allRatings = movies.flatMap(movie => movie.movie_rating);
     const globalAverageRating = allRatings.reduce((sum, rating) => sum + rating.total_rating, 0) / allRatings.length || 0;
@@ -320,7 +320,7 @@ const getMovieBayesRatingById = async (req, res) => {
     });
 
     if (!movie) {
-      return res.status(404).json({ error: 'Movie not found.' });
+      return res.status(404).json({ error: 'Không tìm thấy phim.' });
     }
 
     const allRatings = await prisma.movie_rating.findMany();
@@ -336,7 +336,7 @@ const getMovieBayesRatingById = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ error: 'An error occurred while retrieving the movie rating.' });
+    return res.status(500).json({ error: 'Xảy ra lỗi' });
   }
 };
 

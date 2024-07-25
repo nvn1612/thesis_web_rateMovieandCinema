@@ -41,7 +41,7 @@ const registerUser = async (req, res) => {
       if (error) {
         console.log(error);
       } else {
-        console.log('Email sent: ' + info.response);
+        console.log('Email gửi: ' + info.response);
       }
     });
 
@@ -57,7 +57,7 @@ const activateUser = async (req, res) => {
   if (token) {
     jwt.verify(token, process.env.JWT_SECRET, async function (err, decodedToken) {
       if (err) {
-        return res.status(400).json({ error: 'Incorrect or Expired link.' });
+        return res.status(400).json({ error: 'Đường dẫn sai hoặc hêt hạn.' });
       }
       const { email } = decodedToken;
 
@@ -69,7 +69,7 @@ const activateUser = async (req, res) => {
       return res.redirect('http://localhost:3000/notify-success');
     });
   } else {
-    return res.json({ error: 'Error activating account.' });
+    return res.json({ error: 'Có lỗi trong quá trình kích hoạt tài khoản.' });
   }
 };
 
@@ -82,17 +82,17 @@ const loginUser = async (req, res) => {
     });
 
     if (!user) {
-      return res.status(400).json({ error: 'User not found.' });
+      return res.status(400).json({ error: 'Không tìm thấy người dùng.' });
     }
 
     const validPassword = await bcrypt.compare(password, user.password);
 
     if (!validPassword) {
-      return res.status(400).json({ error: 'Incorrect password.' });
+      return res.status(400).json({ error: ' Mật khẩu không đúng.' });
     }
 
     if (!user.is_active) {
-      return res.status(400).json({ error: 'Account is not activated.' });
+      return res.status(400).json({ error: 'Tài khoản chưa được kích hoạt.' });
     }
 
     const token = jwt.sign({ username: user.username, isAdmin: user.is_Admin }, process.env.JWT_SECRET, {
@@ -137,7 +137,7 @@ const forgotPassword = async (req, res) => {
     if (error) {
       console.log(error);
     } else {
-      console.log('Email sent: ' + info.response);
+      console.log('Email gửi: ' + info.response);
     }
   });
 
@@ -178,8 +178,14 @@ const resetPassword = async (req, res) => {
 };
 
 const getUsers = async (req, res) => {
-  const users = await prisma.users.findMany();
-  res.json(users);
+  try
+  {
+    const users = await prisma.users.findMany();
+    res.json(users);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Có lỗi xảy ra' });
+  }
 };
 
 const searchUsersByUsername = async (req, res) => {
